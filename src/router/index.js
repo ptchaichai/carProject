@@ -1,39 +1,71 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Smanager from '@/components/Smanager'
-import updatePwd from '@/components/updatePwd'
-import sidebar from '@/components/sManagerSidebar'
-import content from '@/components/content'
-import sManagerIndex from '@/components/sManagerIndex'
+import login from '@/page/login'
+import information from '@/page/information'
+import subordinate from '@/page/subordinate'
+import updatePwd from '@/page/updatePwd'
+import saleInformation from '@/page/saleInformation'
+import carInformation from '@/page/carInformation'
+import callClient from '@/page/callClient'
+import comeClient from '@/page/comeClient'
+import buyClient from '@/page/buyClient'
+import announcement from '@/page/announcement'
 
-// Vue.use(Router)
+Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
-      path: '/',
-      name: 'Smanager',
-      component: Smanager
+      path: '/login',
+      name: 'login',
+      component: login
+    },
+
+    {
+      path: '/information',
+      name: 'information',
+      component:information
     },
     {
-      path: '/',
+      path: '/subordinate',
+      name: 'subordinate',
+      component: subordinate
+    },
+    {
+      path: '/updatePwd',
       name: 'updatePwd',
       component: updatePwd
     },
     {
-      path: '/',
-      name: 'sManagerSidebar',
-      component: sidebar
+      path: '/saleInformation',
+      name: 'saleInformation',
+      component: saleInformation
     },
     {
-      path: '/',
-      name: 'content',
-      component: content
+      path: '/carInformation',
+      name: 'carInformation',
+      component: carInformation
     },
     {
-      path: '/',
-      name: 'sManagerIndex',
-      component: sManagerIndex
-    }
+      path: '/callClient',
+      name: 'callClient',
+      component: callClient
+    },
+    {
+      path: '/comeClient',
+      name: 'comeClient',
+      component:comeClient
+    },
+    {
+      path: '/buyClient',
+      name: 'buyClient',
+      component: buyClient
+    },
+    {
+      path: '/announcement',
+      name: 'announcement',
+      component: announcement
+    },
   ]
 })
