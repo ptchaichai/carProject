@@ -1,6 +1,6 @@
 <template>
-    <div class="subordinate" v-show="show">
-      <el-tag>下级信息管理</el-tag>
+    <div class="subordinate">
+      <el-tag>信息管理</el-tag>
       <el-form ref="form" :model="form" class="search-form">
       <el-input v-model="search" placeholder="请输入名称"
             suffix-icon="el-icon-search"></el-input>
@@ -27,8 +27,7 @@
   </el-popover>
       <el-table
     :data="tableData"
-    border
-    style="width: 100%">
+    border>
     <el-table-column
       fixed
       prop="id"
@@ -53,7 +52,8 @@
     <el-table-column
       fixed="right"
       label="操作"
-      width="150">
+      width="150"
+      left="475">
       <template slot-scope="scope">
     <el-popover
     placement="bottom"
@@ -89,7 +89,6 @@ export default {
   name: "updatePwd",
   data() {
     return {
-      show: false,
       input1: "",
       input2: "",
       input3: "",
@@ -126,7 +125,8 @@ export default {
   height: 45% !important;
 }
 .el-table {
-  width: 90%;
+  width: 782px;
+  min-width: 780px;
   border: 1px solid #cecece;
   margin: 20px auto;
 }

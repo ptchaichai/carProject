@@ -1,5 +1,5 @@
 <template>
-    <div class="login" v-show="show">
+    <div class="login" >
     <el-form>
       <el-form-item label="用户名:">
         <el-input v-model="input" placeholder="请输入用户名"></el-input>
@@ -20,7 +20,6 @@ export default {
   name: "login",
   data(){
     return{
-      show:false
     }
   }
 };

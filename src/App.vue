@@ -9,7 +9,7 @@
           <v-sidebar></v-sidebar>
         </el-aside>
         <el-container>
-          <el-main><v-content></v-content></el-main>
+          <el-main><router-view/></router-view></el-main>
         </el-container>
       </el-container>
     </el-container>
@@ -20,14 +20,14 @@
   import header from './components/header'
   import sidebar from './components/sidebar'
   import footer from './components/footer'
-  import content from './components/content'
+  // import content from './components/content'
 export default {
   name: 'App' ,
   components: {
      'v-header':header,
      'v-sidebar':sidebar,
      'v-footer':footer,
-     'v-content':content,
+    //  'v-content':content,
 
   }
 }
@@ -62,7 +62,7 @@ body, html {
 }
 
 .el-aside {
-      height: 95%;
+      height: 100%;
     margin-top: 20px;
     margin-left: 20px;
         border-radius: 10px;

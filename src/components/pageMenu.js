@@ -1,7 +1,7 @@
 export const MENU = [
   {
     menuName: '首页',
-    menuUrl: '/',
+    menuUrl: '/login',
     menuIndex: '0'
   },
   {
@@ -10,7 +10,7 @@ export const MENU = [
     menuIndex: '1',
     menuSubLink: [
       {
-        menuName: '信息管理',
+        menuName: '个人信息',
         menuUrl: '/information',
         menuIndex: '1-1'
       },
@@ -20,7 +20,7 @@ export const MENU = [
         menuIndex: '1-2'
       },
       {
-        menuName: '其他信息管理',
+        menuName: '信息管理',
         menuUrl: '/subordinate',
         menuIndex: '1-3'
       },
@@ -62,23 +62,23 @@ export const MENU = [
   },
 
 
-  {
-    menuName: '系统设置',
-    menuUrl: '/system_set',
-    menuIndex: '5',
-    menuSubLink: [
-      // {
-      //   menuName: '角色权限设置',
-      //   menuUrl: '/role_set',
-      //   menuIndex: '5-1'
-      // },
-      {
-        menuName: '用户管理',
-        menuUrl: '/user_manage',
-        menuIndex: '5-2'
-      }
-    ]
-  },
+  // {
+  //   menuName: '系统设置',
+  //   menuUrl: '/system_set',
+  //   menuIndex: '5',
+  //   menuSubLink: [
+  //     // {
+  //     //   menuName: '角色权限设置',
+  //     //   menuUrl: '/role_set',
+  //     //   menuIndex: '5-1'
+  //     // },
+  //     {
+  //       menuName: '用户管理',
+  //       menuUrl: '/user_manage',
+  //       menuIndex: '5-2'
+  //     }
+  //   ]
+  // },
   // {
   //   menuName: '退出登录',
   //   menuUrl: '/login_out',

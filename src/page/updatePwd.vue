@@ -1,5 +1,5 @@
 <template>
-    <div class="pwd" v-show="show">
+    <div class="pwd">
     <el-tag>修改密码</el-tag>
     <el-form>
       <el-form-item label="旧密码:">
@@ -21,7 +21,6 @@ export default {
   name: "updatePwd",
   data(){
     return{
-      show:false,
       inputOld:'',
       inputNew:'',
     }
@@ -33,7 +32,7 @@ export default {
 .pwd{
   width: 100%;
   height: 100%;
-  margin-top: 100px;
+  margin-top: 50px;
 }
 .el-form{
   width: 60%;

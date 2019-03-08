@@ -1,7 +1,7 @@
 <template>
-    <div class="announcement" v-show="show">
+    <div class="announcement" >
       <el-popover
-       trigger="click" width="300px">
+       trigger="click" width="500">
       <div class="dialog-box">
         <el-form>
           <el-form-item label="公告标题:">
@@ -27,7 +27,19 @@
       label="操作"
       width="100px">
       <template slot-scope="scope">
-        <el-button type="primary"  @click="handleClick(scope.row)"  size="small" round>查看</el-button>
+      <el-popover
+       placement="bottom"
+       width="450"
+       trigger="click">
+       <div class="dialog-box">
+        <el-form>
+          <el-form-item label="公告内容">
+          <el-input v-model="input2"  type="textarea"></el-input>
+         </el-form-item>
+         <el-button  round type="primary" class="addInformation">确定</el-button>
+        </el-form>
+      </div>  <el-button  slot="reference" type="primary"  @click="handleClick(scope.row)"  size="small" round>查看</el-button>
+      </el-popover>
       </template>
     </el-table-column>
     </el-table>
@@ -37,10 +49,8 @@
 <script>
 export default {
   name: "updatePwd",
-    props: ["val"],
   data() {
     return {
-      show: val,
       input: "",
       inputText: "",
       tableData: [
@@ -58,15 +68,14 @@ export default {
         }
       ]
     };
-  },
-
+  }
 };
 </script>
 
 <style scoped>
 .announcement {
   width: 80%;
-  margin: 100px auto;
+  margin: 50px auto;
 }
 .dialog-box {
   width: 100%;
@@ -79,6 +88,7 @@ export default {
 }
 .el-table {
   width: 90%;
+  min-width: 425px;
   border: 1px solid #cecece;
   margin: 20px auto;
 }

@@ -5,7 +5,7 @@
         <img src="../assets/1.1.jpg" alt>
       </div>
       <div class="header-title">汽车销售管理系统</div>
-        <el-button round @click="goAnnouncement" val="true">公告</el-button>
+        <router-link to="/announcement"><el-button round @click="goAnnouncement" val="true">公告</el-button></router-link>
       <div class="hello">
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">蒲甜<i class="el-icon-arrow-down el-icon--right"></i></span>
@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import eventVue from '../page/event.js'
 export default {
   name: "header",
   data() {
@@ -33,8 +32,7 @@ export default {
       this.$message("已退出登录");
     },
     goAnnouncement(){
-      const val="true";
-      eventVue.$emit('go',val)
+      this.$router.push({path:'/announcement'})
     }
   }
 };
