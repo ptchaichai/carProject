@@ -1,48 +1,47 @@
 <template>
     <div class="announcement" >
-      <el-popover
-       trigger="click" width="500">
+      <el-popover v-model="visible"
+       width="500">
       <div class="dialog-box">
         <el-form>
           <el-form-item label="公告标题:">
-          <el-input v-model="input" placeholder="请输入公告标题"></el-input>
+          <el-input v-model="inputTitle" placeholder="请输入公告标题" class="input-title"></el-input>
          </el-form-item>
          <el-form-item label="公告内容:">
-          <el-input v-model="inputText" placeholder="请输入公告内容" type="textarea"></el-input>
+          <el-input v-model="inputContent" placeholder="请输入公告内容" type="textarea"></el-input>
          </el-form-item>
-         <el-button  round type="primary" class="add">添加</el-button>
+         <el-button  round type="primary" class="add" @click="add" >添加</el-button>
+         <el-button  round type="info" class="add"  @click="cancleOne">取消</el-button>
         </el-form>
       </div>
-     <el-button slot="reference" round type="primary">添加新公告</el-button>
+     <el-button slot="reference" round type="primary" @click="open">添加新公告</el-button>
     </el-popover>
-    <el-table
-      :data="tableData"
-      style="width: 100%">
-      <el-table-column
-        prop="title"
-        label="标题">
-      </el-table-column>
-      <el-table-column
-      fixed="right"
-      label="操作"
-      width="100px">
-      <template slot-scope="scope">
-      <el-popover
-       placement="bottom"
-       width="450"
-       trigger="click">
-       <div class="dialog-box">
-        <el-form>
-          <el-form-item label="公告内容">
-          <el-input v-model="input2"  type="textarea"></el-input>
-         </el-form-item>
-         <el-button  round type="primary" class="addInformation">确定</el-button>
-        </el-form>
-      </div>  <el-button  slot="reference" type="primary"  @click="handleClick(scope.row)"  size="small" round>查看</el-button>
-      </el-popover>
-      </template>
-    </el-table-column>
-    </el-table>
+      <div class="container-wrapper" v-for="(item,i) in items">
+        <div class="container">
+          <p>{{items[i].title}}</p>
+          <div class="view">
+            <el-popover v-model="visibleOne"
+               width="500">
+              <div class="dialog-box">
+                    <el-input v-model="items[i].title" readonly="readonly"></el-input>
+                    <el-input v-model="items[i].content" type="textarea" readonly="readonly" class="textarea"></el-input>
+                  <el-button  round type="primary" class="addOne" @click="addOne">确定</el-button>
+              </div>
+              <el-button slot="reference" round type="primary" class="view" @click="viewContent">查看</el-button>
+            </el-popover>
+            <el-popover v-model="visibleTwo"
+               width="500">
+              <div class="dialog-box">
+                <el-input v-model="items[i].title"></el-input>
+                <el-input v-model="items[i].content"  type="textarea" class="textarea"></el-input>
+                <el-button  round type="primary" class="addTwo" @click="addTwo">确定</el-button>
+                <el-button  round type="info" class="addTwo" @click="cancelTwo">取消</el-button>
+              </div>
+              <el-button slot="reference" round type="primary" class="edit" @click="edit">编辑</el-button>
+            </el-popover>
+          </div>
+        </div>
+      </div>
     </div>
 </template>
 
@@ -51,24 +50,59 @@ export default {
   name: "updatePwd",
   data() {
     return {
-      input: "",
-      inputText: "",
-      tableData: [
-        {
-          title: "业绩不好，努力工作"
-        },
-        {
-          title: "2016-05-04"
-        },
-        {
-          title: "2016-05-01"
-        },
-        {
-          title: "2016-05-03"
-        }
-      ]
-    };
-  }
+      show:false,
+      inputTitle: "",
+      inputContent: "",
+      visible:false,
+      visibleOne:false,
+      visibleTwo:false,
+      inputNewTile:'',
+      inputNewContent:'',
+      items:[
+
+      ],
+    }
+  },
+    methods :{
+      open:function(){
+        this.visible=true;
+      },
+      add:function(){
+        const inputTitle=this.inputTitle;
+        const inputContent=this.inputContent;
+        this.items.push({title:`${inputTitle}`,content:`${inputContent}`});
+        // inputNewTile=this.inputTitle;
+        // inputNewContent=this.inputContent;
+        this.inputTitle='';
+        this.inputContent='';
+        this.visible=false;
+
+      },
+      cancleOne:function(){
+        this.inputTitle='';
+        this.inputContent='';
+        this.visible=false;
+      },
+      viewContent:function(){
+        this.visibleOne=true;
+      },
+      addOne:function(){
+      this.visibleOne=false;
+      },
+      addTwo:function(){
+        this.visibleTwo=false;
+      },
+      cancelTwo:function(){
+        this.visibleTwo=false;
+        // this.inputTitle=inputNewTile;
+        // this.inputContent=inputNewContent;
+      },
+      edit:function(){
+        this.visibleTwo=true;
+      },
+
+    }
+
 };
 </script>
 
@@ -80,27 +114,32 @@ export default {
 .dialog-box {
   width: 100%;
 }
-#el-popover-1912 {
-  left: 328px !important;
-  z-index: 2001;
-  width: 60% !important;
-  height: 45% !important;
-}
-.el-table {
-  width: 90%;
-  min-width: 425px;
-  border: 1px solid #cecece;
-  margin: 20px auto;
-}
-.el-tag {
-  font-size: 35px;
-  background-color: #fff;
-  border: none;
-}
-.el-button--small {
-  margin-left: -10px;
-}
-.add {
+.addOne {
   margin: 0px 60px;
 }
+  .container-wrapper{
+    width: 100%;
+
+    border: 1px solid #ccc;
+
+    margin-top: 10px;
+  }
+  .container{
+    position: relative;
+  }
+  .view{
+    position: absolute;
+
+    top: -5px;
+
+    right: 50px;
+  }
+  .edit{
+    position: absolute;
+    right: -46px;
+    top:-5px;
+  }
+  .textarea{
+    margin:10px 0;
+  }
 </style>

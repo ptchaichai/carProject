@@ -6,24 +6,26 @@
             suffix-icon="el-icon-search"></el-input>
      </el-form>
      <el-popover
+       v-model="visible"
     placement="bottom"
     width="550"
     trigger="click">
     <div class="dialog-box">
-        <el-form>
-          <el-form-item label="姓名">
-          <el-input v-model="input1" placeholder="请输入姓名"></el-input>
+        <el-form  :rules="rules" ref="ruleForm" :model="ruleForm">
+          <el-form-item label="姓名" prop="name">
+          <el-input v-model="inputName" placeholder="请输入姓名" ></el-input>
          </el-form-item>
-          <el-form-item label="电话">
-          <el-input v-model="input2" placeholder="请输入电话"></el-input>
+          <el-form-item label="电话" prop="phone">
+          <el-input v-model.number="inputTel" placeholder="请输入电话" ></el-input>
          </el-form-item>
           <el-form-item label="地址">
-          <el-input v-model="input3" placeholder="请输入地址"></el-input>
+          <el-input v-model="inputAdd" placeholder="请输入地址"></el-input>
          </el-form-item>
-         <el-button  round type="primary" class="addInformation">确定</el-button>
+         <el-button  round type="primary" class="addInformation" @click="confirm">确定</el-button>
+          <el-button type="info"  round  @click="cancel">取消</el-button>
         </el-form>
-      </div>
-    <el-button slot="reference" type="primary" size="small" round class="add">添加</el-button>
+    </div>
+       <el-button slot="reference" type="primary" size="small" round class="add" @click="add">添加</el-button>
   </el-popover>
       <el-table
     :data="tableData"
@@ -53,24 +55,26 @@
     placement="bottom"
     width="550"
     trigger="click"
-    left="30">
+    left="30"
+    v-model="visibleOne">
     <div class="dialog-box">
         <el-form>
           <el-form-item label="姓名">
-          <el-input v-model="input1" placeholder="请输入姓名"></el-input>
+          <el-input v-model="popoverName" placeholder="请输入姓名"></el-input>
          </el-form-item>
           <el-form-item label="电话">
-          <el-input v-model="input2" placeholder="请输入电话"></el-input>
+          <el-input v-model="popoverTel" placeholder="请输入电话"></el-input>
          </el-form-item>
           <el-form-item label="地址">
-          <el-input v-model="input3" placeholder="请输入地址"></el-input>
+          <el-input v-model="popoverAdd" placeholder="请输入地址"></el-input>
          </el-form-item>
-         <el-button  round type="primary" class="addInformation">确定</el-button>
+         <el-button  round type="primary" class="addInformation" @click="confirmOne(scope.row)">确定</el-button>
+         <el-button  round type="info" @click="cancelOne">取消</el-button>
         </el-form>
       </div>
-    <el-button slot="reference" type="primary" size="small" round class="update">修改</el-button>
+    <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.row)">修改</el-button>
   </el-popover>
-        <el-button @click="handleClick(scope.row)" type="primary" size="small" round>删除</el-button>
+        <el-button @click="cancelRow(scope.row)" type="info" size="small" round>删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -79,25 +83,84 @@
 </template>
 
 <script>
+  import {isvalidPhone} from './validPhone'
+  const validPhone=(rule, value,callback)=>{
+    if (!value){
+      callback(new Error('请输入电话号码'))
+    }else  if (!isvalidPhone(value)){
+      callback(new Error('请输入正确的11位手机号码'))
+    }else {
+      callback()
+    }
+  };
 export default {
   name: "updatePwd",
   data() {
     return {
-      input1: "",
-      input2: "",
-      input3: "",
+      visible:false,
+      visibleOne:false,
+      inputName: "",
+      inputTel: "",
+      inputAdd: "",
+      popoverName:'',
+      popoverTel:'',
+      popoverAdd:'',
       tableData: [
-        {
-          name: '王小虎',
-          tel: '34345345345646456',
-          address: '上海市'
-        }, {
-          name: '王小虎',
-          tel: '34345345345646456',
-          address: '上海市'
-        },
-      ]
+      ],
+      ruleForm: {
+        name: '',
+        phone:''
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入姓名', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+
+        phone: [
+          { required: true, trigger: 'blur', validator: validPhone }
+        ]
+      },
     };
+  },
+  methods:{
+    add:function(){
+      this.visible=true;
+    },
+    confirm:function(){
+      const inputName=this.inputName;
+      const inputTel=this.inputTel;
+      const inputAdd=this.inputAdd;
+      this.tableData.push({name:`${inputName}`,tel:`${inputTel}`,address:`${inputAdd}`});
+      this.inputName='';
+      this.inputTel='';
+      this.inputAdd='';
+      this.visible=false;
+    },
+    cancel:function(){
+      this.inputName='';
+      this.inputTel='';
+      this.inputAdd='';
+      this.visible=false;
+    },
+    update:function(val){
+      this.popoverName=val.name;
+      this.popoverTel=val.tel;
+      this.popoverAdd=val.address;
+    },
+    confirmOne:function(val){
+      val.inputName=this.popoverName;
+      val.inputTel=this.popoverTel;
+      val.inputAdd=this.popoverAdd;
+      this.visibleOne=false;
+    },
+    cancelOne:function(){
+      this.visibleOne=false;
+    },
+    cancelRow:function(index){
+      this.tableData.splice(index,1);
+    }
+
   }
 };
 </script>
@@ -132,7 +195,7 @@ export default {
 }
 .add {
       position: absolute;
-    top: 188px;
+  top: 197px;
 }
 .update{
   margin-right: 20px;
@@ -140,5 +203,6 @@ export default {
 .search-form{
       width: 30%;
     margin-top: 30px;
+  margin-left: 106px;
 }
 </style>

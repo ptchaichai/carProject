@@ -8,26 +8,31 @@
      <el-popover
     placement="bottom"
     width="550"
-    trigger="click">
+     v-model="visible">
     <div class="dialog-box">
         <el-form>
+          <el-form-item label="工号">
+            <el-input v-model="inputId" placeholder="请输入工号"></el-input>
+          </el-form-item>
           <el-form-item label="姓名">
-          <el-input v-model="input1" placeholder="请输入姓名"></el-input>
+          <el-input v-model="inputName" placeholder="请输入姓名"></el-input>
          </el-form-item>
           <el-form-item label="电话">
-          <el-input v-model="input2" placeholder="请输入电话"></el-input>
+          <el-input v-model="inputTel" placeholder="请输入电话"></el-input>
          </el-form-item>
           <el-form-item label="地址">
-          <el-input v-model="input3" placeholder="请输入地址"></el-input>
+          <el-input v-model="inputAdd" placeholder="请输入地址"></el-input>
          </el-form-item>
-         <el-button  round type="primary" class="addInformation">确定</el-button>
+         <el-button  round type="primary" class="addInformation" @click="addInformation">确定</el-button>
+         <el-button  round type="info" class="cancelInformation" @click="cancelInformation">取消</el-button>
         </el-form>
       </div>
     <el-button slot="reference" type="primary" size="small" round class="add">添加</el-button>
   </el-popover>
       <el-table
     :data="tableData"
-    border>
+    border
+      >
     <el-table-column
       fixed
       prop="id"
@@ -63,20 +68,20 @@
     <div class="dialog-box">
         <el-form>
           <el-form-item label="姓名">
-          <el-input v-model="input1" placeholder="请输入姓名"></el-input>
+          <el-input v-model="popoverName" placeholder="请输入姓名"></el-input>
          </el-form-item>
           <el-form-item label="电话">
-          <el-input v-model="input2" placeholder="请输入电话"></el-input>
+          <el-input v-model="popoverTel" placeholder="请输入电话"></el-input>
          </el-form-item>
           <el-form-item label="地址">
-          <el-input v-model="input3" placeholder="请输入地址"></el-input>
+          <el-input v-model="popoverAdd" placeholder="请输入地址"></el-input>
          </el-form-item>
          <el-button  round type="primary" class="addInformation">确定</el-button>
         </el-form>
       </div>
-    <el-button slot="reference" type="primary" size="small" round class="update">修改</el-button>
+    <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.row)">修改</el-button>
   </el-popover>
-        <el-button @click="handleClick(scope.row)" type="primary" size="small" round>删除</el-button>
+        <el-button @click="cancle(scope.row)" type="info" size="small" round>删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -89,24 +94,49 @@ export default {
   name: "updatePwd",
   data() {
     return {
-      input1: "",
-      input2: "",
-      input3: "",
+      inputId: "",
+      inputName: "",
+      inputTel: "",
+      inputAdd: "",
+      popoverName:'',
+      popoverTel:'',
+      popoverAdd:'',
+      visible:false,
       tableData: [
-        {
-          id:'001',
-          name: '王小虎',
-          tel: '34345345345646456',
-          address: '上海市'
-        }, {
-           id:'02',
-          name: '王小虎',
-          tel: '34345345345646456',
-          address: '上海市'
-        },
+
       ]
     };
-  }
+  },
+  methods :{
+    addInformation:function(){
+      const inputId=this.inputId;
+      const inputName=this.inputName;
+      const inputTel=this.inputTel;
+      const inputAdd=this.inputAdd;
+      this.tableData.push({id:`${inputId}`,name:`${inputName}`,tel:`${inputTel}`,address:`${inputAdd}`})
+      this.inputId='';
+      this.inputName='';
+      this.inputTel='';
+      this.inputAdd='';
+      this.visible=false;
+    },
+    cancelInformation:function(){
+      this.inputId='';
+      this.inputName='';
+      this.inputTel='';
+      this.inputAdd='';
+      this.visible=false;
+    },
+    update:function(val){
+      this.popoverName=val.name;
+      this.popoverTel=val.tel;
+      this.popoverAdd=val.address;
+      this.visible=false;
+    },
+    cancle:function(index){
+      this.tableData.splice(index,1);
+    }
+  },
 };
 </script>
 
@@ -140,7 +170,7 @@ export default {
 }
 .add {
       position: absolute;
-    top: 188px;
+    top: 197px;
 }
 .update{
   margin-right: 20px;
@@ -148,5 +178,6 @@ export default {
 .search-form{
       width: 30%;
     margin-top: 30px;
+  margin-left: 108px;
 }
 </style>

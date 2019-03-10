@@ -132,7 +132,7 @@ export default {
 }
 .add {
       position: absolute;
-    top: 188px;
+  top: 197px;
 }
 .update{
   margin-right: 20px;
@@ -140,5 +140,6 @@ export default {
 .search-form{
       width: 30%;
     margin-top: 30px;
+  margin-left: 106px;
 }
 </style>

@@ -9,7 +9,7 @@
           <v-sidebar></v-sidebar>
         </el-aside>
         <el-container>
-          <el-main><router-view/></router-view></el-main>
+          <el-main><router-view></router-view></el-main>
         </el-container>
       </el-container>
     </el-container>
