@@ -117,4 +117,12 @@
   .first-menu{
     font-size: 18px !important;
   }
+  .el-submenu__title span{
+    font-size: 18px;
+  }
+  .el-menu{
+    margin-top: 35px;
+    background: rgba(240, 240,240, 0.7);
+    /* background: #409EFF; */
+  }
 </style>

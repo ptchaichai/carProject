@@ -8,7 +8,7 @@
         <router-link to="/announcement"><el-button round @click="goAnnouncement" val="true">公告</el-button></router-link>
       <div class="hello">
         <el-dropdown @command="handleCommand">
-          <span class="el-dropdown-link">蒲甜<i class="el-icon-arrow-down el-icon--right"></i></span>
+          <span class="el-dropdown-link">banana<i class="el-icon-arrow-down el-icon--right"></i></span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>退出登录</el-dropdown-item>
           </el-dropdown-menu>
