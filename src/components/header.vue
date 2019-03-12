@@ -5,7 +5,11 @@
         <img src="../assets/1.1.jpg" alt>
       </div>
       <div class="header-title">汽车销售管理系统</div>
-        <router-link to="/announcement"><el-button round @click="goAnnouncement" val="true">公告</el-button></router-link>
+        <router-link to="/announcement" class="router-link-exact-active">
+        <el-badge is-dot class="item" v-show="badgeShow">
+        </el-badge>
+        <el-button round @click="goAnnouncement" val="true" @change="change" @add="add">公告</el-button>
+        </router-link>
       <div class="hello">
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">banana<i class="el-icon-arrow-down el-icon--right"></i></span>
@@ -19,10 +23,14 @@
 </template>
 
 <script>
+import Bus from "./bus.js";
 export default {
   name: "header",
   data() {
-    val:true
+    return {
+      val: true,
+      badgeShow: false
+    };
   },
   methods: {
     handleCommand(command) {
@@ -31,9 +39,15 @@ export default {
       });
       this.$message("已退出登录");
     },
-    goAnnouncement(){
-      this.$router.push({path:'/announcement'})
-    }
+    goAnnouncement() {
+      this.badgeShow = false;
+      this.$router.push({ path: "/announcement" });
+    },
+  },
+  mounted() {
+    Bus.$on("add", message => {
+      this.badgeShow = message;
+    });
   }
 };
 </script>
@@ -109,9 +123,13 @@ a {
   color: #fff;
   font-size: 18px;
 }
-.el-button {
+.router-link-exact-active {
   position: absolute;
-  top: 15px;
-  right: 262px;
+  right: 330px;
+}
+.el-badge {
+  position: absolute;
+  right: -40px;
+  top: -8px;
 }
 </style>

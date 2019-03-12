@@ -4,10 +4,13 @@
        width="500">
       <div class="dialog-box">
         <el-form>
-          <el-form-item label="公告标题:">
+
+          <el-form-item >
+          <span class="star">*</span><span class="title-span">公告标题:</span>
           <el-input v-model="inputTitle" placeholder="请输入公告标题" class="input-title"></el-input>
          </el-form-item>
-         <el-form-item label="公告内容:">
+         <el-form-item >
+           <span class="star">*</span><span class="title-span">公告内容:</span>
           <el-input v-model="inputContent" placeholder="请输入公告内容" type="textarea"></el-input>
          </el-form-item>
          <div class="warning" v-show="show">标题和内容都不能为空！</div>
@@ -26,15 +29,19 @@
           </div>
            <el-dialog title="公告内容" :visible.sync="dialogView" width="50%">
               <div class="dialog-box">
+                    <span class="view-span">公告标题:</span>
                     <el-input v-model="items[i].title" readonly="readonly"></el-input>
+                    <span class="view-span">公告内容:</span>
                     <el-input v-model="items[i].content" type="textarea" readonly="readonly" class="textarea"></el-input>
                   <el-button  round type="primary" @click="dialogView= false">关闭</el-button>
               </div>
             </el-dialog>
              <el-dialog title="编辑公告" :visible.sync="dialogEdit" width="50%">
               <div class="dialog-box">
-                <el-form >
+                <el-form class="edit-form">
+                <span class="star">*</span><span class="edit-span">公告标题:</span>
                 <el-input v-model="items[i].title"></el-input>
+                <span class="star">*</span><span class="edit-span">公告内容:</span>
                 <el-input v-model="items[i].content"  type="textarea" class="textarea"></el-input>
                 <div class="warning" v-show="showAnother">标题和内容都不能为空！</div>
                 <el-button type="primary" @click="addContent(i)" round>确 定</el-button>
@@ -56,6 +63,7 @@
 </template>
 
 <script>
+import Bus from '../components/bus.js';
 export default {
   name: "updatePwd",
   data() {
@@ -84,22 +92,23 @@ export default {
       const inputTitle = this.inputTitle;
       const inputContent = this.inputContent;
       if (inputTitle === "" || inputContent === "") {
-        this.show=true;
+        this.show = true;
         return false;
       } else {
-        this.show=false;
+        this.show = false;
         this.items.push({ title: inputTitle, content: inputContent });
         this.oldTitle = inputTitle;
         this.oldContent = inputContent;
         this.inputTitle = "";
         this.inputContent = "";
         this.visible = false;
+        Bus.$emit("add",'true');
       }
     },
     cancleOne: function() {
       this.inputTitle = "";
       this.inputContent = "";
-      this.show=false;
+      this.show = false;
       this.visible = false;
     },
     viewContent: function() {
@@ -111,18 +120,19 @@ export default {
       this.oldContent = this.items[i].content;
     },
     addContent: function(i) {
-      if(this.items[i].title===''||this.items[i].content===''){
-        this.showAnother=true;
+      if (this.items[i].title === "" || this.items[i].content === "") {
+        this.showAnother = true;
         return false;
-      }else{
-        this.showAnother=false;
+      } else {
+        this.showAnother = false;
         this.dialogEdit = false;
+        Bus.$emit("add",'true');
       }
     },
     cancelContent: function(i) {
       this.items[i].title = this.oldTitle;
       this.items[i].content = this.oldContent;
-      this.showAnother=false;
+      this.showAnother = false;
       this.dialogEdit = false;
     },
     deleteRow: function(index) {
@@ -156,11 +166,25 @@ export default {
 
   margin-top: 10px;
 }
+.el-dialog__body {
+  padding: 20px 20px !important;
+}
+.view-span {
+  display: block;
+  text-align: left;
+  margin: 5px 0;
+}
+.edit-form{
+  text-align: left;
+}
+.el-input{
+  margin:10px 0;
+}
 .container {
   position: relative;
 }
 .container p {
-  color: #777;
+  color: #409eff;
   cursor: pointer;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -169,17 +193,15 @@ export default {
   text-align: left;
 }
 .container p:hover {
-  color: #409eff;
+  color: #555;
 }
 .view {
   position: absolute;
-
   top: -5px;
-
   right: 50px;
 }
-.warning{
-  color:red;
+.warning {
+  color: red;
   margin-bottom: 10px;
 }
 .edit {
@@ -195,5 +217,14 @@ export default {
 }
 .el-icon-warning {
   color: red;
+}
+.star {
+  color: red;
+}
+.title-span {
+  display: block;
+  position: absolute;
+  top: -2px;
+  left: 10px;
 }
 </style>
