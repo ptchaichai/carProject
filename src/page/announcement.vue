@@ -4,7 +4,6 @@
        width="500">
       <div class="dialog-box">
         <el-form>
-
           <el-form-item >
           <span class="star">*</span><span class="title-span">公告标题:</span>
           <el-input v-model="inputTitle" placeholder="请输入公告标题" class="input-title"></el-input>

@@ -64,7 +64,7 @@ export default {
 }
 .el-form {
   width: 60%;
-  margin: 60px auto;
+  margin: 40px auto;
 }
 .el-tag {
   font-size: 35px;

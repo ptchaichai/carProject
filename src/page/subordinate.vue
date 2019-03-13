@@ -1,6 +1,8 @@
 <template>
     <div class="subordinate">
       <el-tag>信息管理</el-tag>
+      <div class="search-add">
+        <div class="box">
       <el-form ref="form" :model="form" class="search-form">
       <el-input v-model="searchData" placeholder="请输入名称"></el-input>
           <el-button type="success"  class="search" @click="search">搜索</el-button>
@@ -29,6 +31,8 @@
       </div>
     <el-button slot="reference" type="primary" size="small" round class="add">添加</el-button>
   </el-popover>
+   </div>
+  </div>
       <el-table
     :data="tableData"
     ref="searchTable"
@@ -105,7 +109,7 @@ var validPhone = (rule, value, callback) => {
   }
 };
 export default {
-  name: "updatePwd",
+  name: "subordinate",
   data() {
     return {
       searchData: "",
@@ -221,7 +225,7 @@ export default {
         }
       });
     },
-    updateCancel:function(updateForm) {
+    updateCancel: function(updateForm) {
       this.$refs[updateForm].resetFields();
       this.dialogUpdate = false;
     },
@@ -245,6 +249,7 @@ export default {
 .dialog-box {
   width: 100%;
 }
+
 #el-popover-1912 {
   left: 328px !important;
   z-index: 2001;
@@ -265,19 +270,24 @@ export default {
 .el-button--small {
   margin-left: -10px;
 }
+.box {
+  width: 780px;
+  margin: 0 auto;
+}
 .add {
-  position: absolute;
-  top: 197px;
+  float: right;
+  margin-top: -36px;
+  height: 32px;
+}
+.search-form {
+  width: 265px;
+  margin-top: 30px;
+  position: relative;
 }
 .update {
   margin-right: 20px;
 }
-.search-form {
-  width: 30%;
-  margin-top: 30px;
-  margin-left: 108px;
-  position: relative;
-}
+
 .search {
   position: absolute;
   top: 0px;

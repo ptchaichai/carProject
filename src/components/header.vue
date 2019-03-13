@@ -8,15 +8,23 @@
         <router-link to="/announcement" class="router-link-exact-active">
         <el-badge is-dot class="item" v-show="badgeShow">
         </el-badge>
-        <el-button round @click="goAnnouncement" val="true" @change="change" @add="add">公告</el-button>
+        <el-button round @click="goAnnouncement" val="true">公告</el-button>
         </router-link>
-      <div class="hello">
-        <el-dropdown @command="handleCommand">
+      <div class="loginIn">
+        <el-dropdown  @command="back">
           <span class="el-dropdown-link">banana<i class="el-icon-arrow-down el-icon--right"></i></span>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu slot="dropdown" @click="back">
             <el-dropdown-item>退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <!-- <el-dialog title="警告！" :visible.sync="dialogback" width="25%">
+        <i class="el-icon-warning"></i>
+        <span>是否退出登录？</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="backConfirm" round>确 定</el-button>
+          <el-button @click="dialogback = false"  round>取 消</el-button>
+        </span>
+      </el-dialog> -->
       </div>
     </div>
   </div>
@@ -29,20 +37,33 @@ export default {
   data() {
     return {
       val: true,
-      badgeShow: false
+      badgeShow: false,
+      dialogback: false
     };
   },
   methods: {
-    handleCommand(command) {
-      this.$router.push({
-        path: "/login"
+    back: function(command) {
+      // this.dialogback = true;
+      this.$emit("backLogin");
+      this.$router.push({path:"/login"});
+      this.$message({
+        message: "成功退出",
+        type: "success"
       });
-      this.$message("已退出登录");
+    },
+    backConfirm: function() {
+      // this.$emit("backLogin");
+      // this.$router.push({path:"/login"});
+      // this.$message({
+      //   message: "成功退出",
+      //   type: "success"
+      // });
+      this.dialogback = false;
     },
     goAnnouncement() {
       this.badgeShow = false;
       this.$router.push({ path: "/announcement" });
-    },
+    }
   },
   mounted() {
     Bus.$on("add", message => {
@@ -51,7 +72,6 @@ export default {
   }
 };
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .header {
   margin-top: 10px;
@@ -91,7 +111,7 @@ export default {
   top: 2px;
   left: 70px;
 }
-.title .hello {
+.title .loginIn {
   width: 100px;
   height: 68px;
   position: absolute;
@@ -100,7 +120,7 @@ export default {
   display: inline-block;
   font-size: 18px;
 }
-.title .hello .el-dropdown {
+.title .loginIn .el-dropdown {
   width: 100%;
 }
 h1,
@@ -131,5 +151,17 @@ a {
   position: absolute;
   right: -40px;
   top: -8px;
+}
+.el-icon-warning {
+  color: red;
+}
+.el-dialog__header span{
+  padding: 0px 20px 0px !important;
+  text-align: center !important;
+}
+.el-dialog__body span{
+  padding: 0px 20px !important;
+  text-align: center !important;
+  font-size: 18px !important;
 }
 </style>

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import login from '@/page/login'
+// import login from '@/page/login'
+// import login from '@/components/login'
 import information from '@/page/information'
 import subordinate from '@/page/subordinate'
 import updatePwd from '@/page/updatePwd'
@@ -10,6 +11,7 @@ import callClient from '@/page/callClient'
 import comeClient from '@/page/comeClient'
 import buyClient from '@/page/buyClient'
 import announcement from '@/page/announcement'
+import home from '@/page/home'
 
 Vue.use(Router)
 
@@ -17,9 +19,9 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/login',
-      name: 'login',
-      component: login
+      path: '/home',
+      name: 'home',
+      component: home
     },
 
     {

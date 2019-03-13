@@ -1,41 +1,78 @@
 <template>
     <div class="subordinate">
-      <el-tag>销售信息统计量</el-tag>
-      <el-table
-    :data="tableData"
-    border>
-    <el-table-column
-      fixed
-      prop="type"
-      label="信息类型"
-      width="160">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="date"
-      label="当日"
-      width="100">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="mouth"
-      label="当月"
-      width="100">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="quarter"
-      label="当季度"
-      width="100">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="year"
-      label="当年"
-      width="100">
-    </el-table-column>
-  </el-table>
-
+      <el-tag>客户信息统计量</el-tag>
+       <div class="call">
+        <div class="container">
+          <div class="call-show">
+            <el-form>
+              <el-form-item label="来电客户信息量:" prop="name">
+              <el-input v-model="callNum" readonly="readonly" ></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
+          <div class="call-block">
+            <span class="demonstration">选择日期</span>
+            <el-date-picker
+              v-model="value1"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions1">
+            </el-date-picker>
+          </div>
+        </div>
+       </div>
+        <div class="come">
+        <div class="container">
+          <div class="come-show">
+            <el-form>
+              <el-form-item label="来店客户信息量:" prop="name">
+              <el-input v-model="comeNum" readonly="readonly" ></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
+          <div class="come-block">
+            <span class="demonstration">选择日期</span>
+            <el-date-picker
+              v-model="value2"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions2">
+            </el-date-picker>
+          </div>
+        </div>
+       </div>
+        <div class="buy">
+        <div class="container">
+          <div class="buy-show">
+            <el-form>
+              <el-form-item label="购车客户信息量:" prop="name">
+              <el-input v-model="buyNum" readonly="readonly" ></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
+          <div class="buy-block">
+            <span class="demonstration">选择日期</span>
+            <el-date-picker
+              v-model="value3"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions3">
+            </el-date-picker>
+          </div>
+        </div>
+       </div>
     </div>
 </template>
 
@@ -43,75 +80,135 @@
 export default {
   name: "updatePwd",
   data() {
-    return {
-      input1: "",
-      input2: "",
-      input3: "",
-      tableData: [
-        {
-          type: "来电客户数量",
-          date: "34",
-          mouth: "434",
-          quarter: "3423",
-          year: "5433"
+      return {
+        pickerOptions1: {
+          shortcuts: [ {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '最近一年',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 360);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
         },
-        {
-          type: "来店客户数量",
-          date: "34",
-          mouth: "434",
-          quarter: "3423",
-          year: "5433"
+        pickerOptions2: {
+         shortcuts: [ {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '最近一年',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 360);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
         },
-        {
-          type: "购车客户数量",
-          date: "34",
-          mouth: "434",
-          quarter: "3423",
-          year: "5433"
+        pickerOptions3: {
+          shortcuts: [ {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '最近一年',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 360);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
         },
-      ]
-    };
-  }
+        value1: " ",
+        value2: " ",
+        value3: " ",
+        callNum:" ",
+        comeNum:" ",
+        buyNum:" ",
+      };
+    }
 };
 </script>
 
 <style scoped>
 .subordinate {
-  width: 90%;
+  width: 870px;
   margin: 50px auto;
-}
-.dialog-box {
-  width: 100%;
-}
-#el-popover-1912 {
-  left: 328px !important;
-  z-index: 2001;
-  width: 60% !important;
-  height: 45% !important;
-}
-.el-table {
-  width: 562px;
-  min-width: 554px;
-  border: 1px solid #cecece;
-  margin: 20px auto;
 }
 .el-tag {
   font-size: 35px;
   background-color: #fff;
   border: none;
 }
-.el-button--small {
-  margin-left: -10px;
+.container{
+  margin-top:50px;
+  width: 800px;
 }
-.add {
-  position: absolute;
-  top: 188px;
+.el-form{
+  margin-left: 140px;
 }
-.update {
-  margin-right: 20px;
+.el-form-item{
+  width: 130px;
 }
-.search-form {
-  width: 30%;
-  margin-top: 30px;
+.call-block{
+   float: right;
+    height: 40px;
+    margin-top: -62px;
+}
+.come-block{
+   float: right;
+    height: 40px;
+    margin-top: -62px;
+}
+.buy-block{
+   float: right;
+    height: 40px;
+    margin-top: -62px;
 }
 </style>

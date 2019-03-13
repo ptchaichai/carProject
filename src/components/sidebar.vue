@@ -38,8 +38,8 @@
         activePath: " ",
         menulist:[
           {
-            menuName: '首页',
-            menuUrl: '/login',
+            menuName: '主页',
+            menuUrl: '/home',
             menuIndex: '0'
           },
           {
@@ -112,7 +112,8 @@
     background-color: #fff;
   }
   .el-menu-vertical-demo {
-    border-radius: 20px;
+    /* border-radius: 20px; */
+    border:1px solid #0093e6
   }
   .first-menu{
     font-size: 18px !important;
@@ -122,7 +123,8 @@
   }
   .el-menu{
     margin-top: 35px;
-    background: rgba(240, 240,240, 0.7);
-    /* background: #409EFF; */
+  }
+  .el-menu-item {
+  min-width: 174px !important;
   }
 </style>

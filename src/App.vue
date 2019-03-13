@@ -1,15 +1,19 @@
 <template>
   <div id="app">
-    <el-container>
+    <router-view v-show="loginShow"></router-view>
+    <v-login v-show="loginShow"
+    @loginSuccess="loginSuccess"
+    ></v-login>
+    <el-container v-show="show">
       <el-header>
-        <v-header></v-header>
+        <v-header @backLogin="backLogin"></v-header>
       </el-header>
       <el-container>
         <el-aside width="200px">
           <v-sidebar></v-sidebar>
         </el-aside>
         <el-container>
-          <el-main><router-view></router-view></el-main>
+          <el-main><router-view v-show="show"></router-view></el-main>
         </el-container>
       </el-container>
     </el-container>
@@ -20,6 +24,7 @@
   import header from './components/header'
   import sidebar from './components/sidebar'
   import footer from './components/footer'
+  import login from './components/login'
   // import content from './components/content'
 export default {
   name: 'App' ,
@@ -27,9 +32,24 @@ export default {
      'v-header':header,
      'v-sidebar':sidebar,
      'v-footer':footer,
-    //  'v-content':content,
-
-  }
+     'v-login':login,
+  },
+  data(){
+    return {
+      show:false,
+      loginShow:true,
+    }
+  },
+  methods:{
+    loginSuccess(){
+      this.show=true;
+      this.loginShow=false;
+    },
+    backLogin(){
+      this.show=false;
+      this.loginShow=true;
+    }
+  },
 }
 </script>
 

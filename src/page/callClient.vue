@@ -1,6 +1,8 @@
 <template>
-    <div class="subordinate">
+    <div class="call-client">
       <el-tag>来电客户信息管理</el-tag>
+      <div class="search-add">
+        <div class="box">
       <el-form ref="form" :model="form" class="search-form">
       <el-input v-model="search" placeholder="请输入名称"
             suffix-icon="el-icon-search"></el-input>
@@ -26,7 +28,9 @@
         </el-form>
     </div>
        <el-button slot="reference" type="primary" size="small" round class="add" @click="add">添加</el-button>
-  </el-popover>
+     </el-popover>
+      </div>
+       </div>
       <el-table
     :data="tableData"
     border>
@@ -94,7 +98,7 @@ const validPhone = (rule, value, callback) => {
   }
 };
 export default {
-  name: "updatePwd",
+  name: "callClient",
   data() {
     return {
       dialogDelete: false,
@@ -220,7 +224,7 @@ export default {
 </script>
 
 <style scoped>
-.subordinate {
+.call-client{
   width: 90%;
   margin: 50px auto;
 }
@@ -232,7 +236,7 @@ export default {
   width: 782px;
   min-width: 780px;
   border: 1px solid #cecece;
-  margin: 50px auto;
+  margin: 30px auto;
 }
 .el-tag {
   font-size: 35px;
@@ -242,17 +246,22 @@ export default {
 .el-button--small {
   margin-left: -10px;
 }
+.box {
+  width: 780px;
+  margin: 0 auto;
+}
 .add {
-  position: absolute;
-  top: 197px;
+  float: right;
+  margin-top: -36px;
+  height: 32px;
+}
+.search-form {
+  width: 265px;
+  margin-top: 30px;
+  position: relative;
 }
 .update {
   margin-right: 20px;
-}
-.search-form {
-  width: 30%;
-  margin-top: 30px;
-  margin-left: 106px;
 }
 .el-icon-warning {
   color: red;

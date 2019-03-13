@@ -10,7 +10,7 @@
       </el-form-item>
       <el-form-item label="请选择身份：" prop="identity">
          <el-radio-group v-model="rulesForm.identity">
-            <el-radio label="a" border></el-radio>
+            <el-radio label="总经理" border></el-radio>
             <el-radio label="销售经理" border></el-radio>
             <el-radio label="销售人员" border></el-radio>
           </el-radio-group>
@@ -26,31 +26,42 @@
 <script>
 export default {
   name: "login",
-  data(){
-    return{
-      rulesForm:{
-        name:'',
-      pwd:'',
-      identity:'总经理',
+  data() {
+    return {
+      rulesForm: {
+        name: "",
+        pwd: "",
+        identity: "总经理"
       },
-      rules:{
+      rules: {
         name: [
-          { type: "number", required: true, message: '请输入用户名', trigger: 'blur' }
+          { required: true, message: "请输入活动名称", trigger: "blur" },
+          { min: 2, max: 5, message: "长度在 2 到 5 个字符", trigger: "blur" }
         ],
-        pwd: [
-          { required: true, message: '请输入登录密码', trigger: 'blur' }
-        ],
+        pwd: [{ required: true, message: "请输入登录密码", trigger: "blur" }],
         identity: [
-          { type: "number", required: true, message: '请选择身份', trigger: 'change' }
-        ],
+          // { type: "number", required: true, message: '请选择身份', trigger: 'change' }
+        ]
       }
-    }
+    };
   },
-  methods:{
-    onSubmit:function(){
-      this.$emit('loginSuccess');
+  methods: {
+    onSubmit: function(rulesForm) {
+      this.$refs[rulesForm].validate(valid => {
+        if (valid) {
+          this.$emit("loginSuccess");
+          this.$message({
+            message: "登陆成功",
+            type: "success"
+          });
+          this.$refs[rulesForm].resetFields();
+          this.$router.push({ path: "/home" });
+        } else {
+          return false;
+        }
+      });
     },
-    resetForm:function(rulesForm){
+    resetForm: function(rulesForm) {
       this.$refs[rulesForm].resetFields();
     }
   }
@@ -58,12 +69,12 @@ export default {
 </script>
 
 <style scoped>
-.login{
-  width: 100%;
+.login {
+  width: 70%;
   height: 100%;
-  margin-top:50px;
+  margin: 50px auto;
 }
-.el-form{
+.el-form {
   width: 60%;
   margin: 20px auto;
 }
