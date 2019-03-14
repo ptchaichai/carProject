@@ -12,12 +12,18 @@ import comeClient from '@/page/comeClient'
 import buyClient from '@/page/buyClient'
 import announcement from '@/page/announcement'
 import home from '@/page/home'
+import test from '@/page/test'
 
 Vue.use(Router)
 
 export default new Router({
   mode: 'history',
   routes: [
+    {
+      path: '/test',
+      name: 'test',
+      component: test
+    },
     {
       path: '/home',
       name: 'home',

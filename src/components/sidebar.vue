@@ -96,6 +96,11 @@
             menuUrl: '/carInformation',
             menuIndex: '4'
           },
+          {
+            menuName: '测试',
+            menuUrl: '/test',
+            menuIndex: '5'
+          },
         ]
       };
     },

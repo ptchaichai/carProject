@@ -36,8 +36,8 @@ export default {
   },
   data(){
     return {
-      show:false,
-      loginShow:true,
+      show:true,
+      loginShow:false,
     }
   },
   methods:{
