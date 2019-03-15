@@ -1,6 +1,68 @@
 <template>
     <div class="subordinate">
       <el-tag>客户信息统计量</el-tag>
+      <div class="subordinate-box">
+      <div class="time-choose">
+      <el-row class="tac">
+       <el-col :span="12">
+       <el-menu
+      default-active="2"
+      class="el-menu-vertical-demo"
+      @open="handleOpen"
+      @close="handleClose">
+      <el-submenu index="1">
+        <template slot="title">
+          <i class="el-icon-menu"></i>
+          <span>日期</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item >当日</el-menu-item>
+        </el-menu-item-group>
+        <el-menu-item-group >
+          <el-menu-item >昨日</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+      <el-submenu index="2">
+        <template slot="title">
+          <i class="el-icon-menu"></i>
+          <span>月份</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item >当月</el-menu-item>
+        </el-menu-item-group>
+        <el-menu-item-group >
+          <el-menu-item >前一个月</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+      <el-submenu index="3">
+        <template slot="title">
+          <i class="el-icon-menu"></i>
+          <span>季度</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item >当季度</el-menu-item>
+        </el-menu-item-group>
+        <el-menu-item-group >
+          <el-menu-item >前一个季度</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+      <el-submenu index="3">
+        <template slot="title">
+          <i class="el-icon-menu"></i>
+          <span>年份</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item >当年</el-menu-item>
+        </el-menu-item-group>
+        <el-menu-item-group >
+          <el-menu-item >前一年</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+    </el-menu>
+    </el-col>
+   </el-row>
+</div>
+<div class="num-show">
        <div class="call">
         <div class="container">
           <div class="call-show">
@@ -9,19 +71,6 @@
               <el-input v-model="callNum" readonly="readonly" ></el-input>
               </el-form-item>
             </el-form>
-          </div>
-          <div class="call-block">
-            <span class="demonstration">选择日期</span>
-            <el-date-picker
-              v-model="value1"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions1">
-            </el-date-picker>
           </div>
         </div>
        </div>
@@ -34,19 +83,6 @@
               </el-form-item>
             </el-form>
           </div>
-          <div class="come-block">
-            <span class="demonstration">选择日期</span>
-            <el-date-picker
-              v-model="value2"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions2">
-            </el-date-picker>
-          </div>
         </div>
        </div>
         <div class="buy">
@@ -58,20 +94,9 @@
               </el-form-item>
             </el-form>
           </div>
-          <div class="buy-block">
-            <span class="demonstration">选择日期</span>
-            <el-date-picker
-              v-model="value3"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions3">
-            </el-date-picker>
-          </div>
         </div>
+       </div>
+       </div>
        </div>
     </div>
 </template>
@@ -81,93 +106,6 @@ export default {
   name: "updatePwd",
   data() {
       return {
-        pickerOptions1: {
-          shortcuts: [ {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '最近一年',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 360);
-              picker.$emit('pick', [start, end]);
-            }
-          }]
-        },
-        pickerOptions2: {
-         shortcuts: [ {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '最近一年',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 360);
-              picker.$emit('pick', [start, end]);
-            }
-          }]
-        },
-        pickerOptions3: {
-          shortcuts: [ {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit('pick', [start, end]);
-            }
-          },
-          {
-            text: '最近一年',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 360);
-              picker.$emit('pick', [start, end]);
-            }
-          }]
-        },
-        value1: " ",
-        value2: " ",
-        value3: " ",
         callNum:" ",
         comeNum:" ",
         buyNum:" ",
@@ -178,37 +116,44 @@ export default {
 
 <style scoped>
 .subordinate {
-  width: 870px;
+  width: 80%;
   margin: 50px auto;
+}
+.subordinate-box{
+  display:flex;
+  width: 50%;
+  margin: 0 auto;
 }
 .el-tag {
   font-size: 35px;
   background-color: #fff;
   border: none;
 }
+.tac{
+  width:288px;
+}
+.el-submenu__title{
+  font-size: 16px;
+  color: #0093e6;
+}
+.el-menu-item{
+  min-width: 143px;
+}
+.time-choose{
+  width: 40%;
+  margin-top: 50px;
+}
+.num-show{
+  width:50%;
+}
 .container{
   margin-top:50px;
-  width: 800px;
+  width: 100%;
 }
 .el-form{
   margin-left: 140px;
 }
 .el-form-item{
   width: 130px;
-}
-.call-block{
-   float: right;
-    height: 40px;
-    margin-top: -62px;
-}
-.come-block{
-   float: right;
-    height: 40px;
-    margin-top: -62px;
-}
-.buy-block{
-   float: right;
-    height: 40px;
-    margin-top: -62px;
 }
 </style>

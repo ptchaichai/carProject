@@ -7,29 +7,25 @@
       <el-input v-model="search" placeholder="请输入名称"
             suffix-icon="el-icon-search"></el-input>
      </el-form>
-     <el-popover
-       v-model="visible"
-    placement="bottom"
-    width="550"
-    trigger="click">
-    <div class="dialog-box">
-        <el-form  :rules="rules" ref="ruleForm" :model="ruleForm">
+     <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
+     <div class="dialog-box">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="请输入姓名" ></el-input>
+          <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
          </el-form-item>
           <el-form-item label="电话" prop="tel">
-          <el-input v-model.number="ruleForm.tel" placeholder="请输入电话" ></el-input>
+          <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
          </el-form-item>
           <el-form-item label="地址" prop="address">
           <el-input v-model="ruleForm.address" placeholder="请输入地址"></el-input>
          </el-form-item>
-         <el-button  round type="primary" class="addInformation" @click="confirm('ruleForm')">确定</el-button>
-          <el-button type="info"  round  @click="cancel('ruleForm')">取消</el-button>
+         <el-button  round type="primary" class="addInformation" @click="addConfirm('ruleForm')">确定</el-button>
+         <el-button  round type="info" class="cancelInformation" @click="addCancel('ruleForm')">取消</el-button>
         </el-form>
-    </div>
-       <el-button slot="reference" type="primary" size="small" round class="add" @click="add">添加</el-button>
-     </el-popover>
       </div>
+     </el-dialog>
+     <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
+   </div>
        </div>
       <el-table
     :data="tableData"
@@ -102,8 +98,8 @@ export default {
   data() {
     return {
       dialogDelete: false,
-      visible: false,
       dialogUpdate: false,
+      dialogAdd:false,
       inputName: "",
       inputTel: "",
       inputAdd: "",
@@ -122,14 +118,14 @@ export default {
       rules: {
         name: [
           { required: true, message: "请输入姓名", trigger: "blur" },
-          { min: 2, max: 4, message: "长度在 2 到 4 个字符", trigger: "blur" }
+          { min: 2, max: 4, message: "请输入 2 到 4 个字符", trigger: "blur" }
         ],
         address: [
           { required: true, message: "请输入地址", trigger: "blur" },
           {
             min: 2,
             max: 100,
-            message: "长度在 2 到 100 个字符",
+            message: "请输入 2 到 100 个字符",
             trigger: "blur"
           }
         ],
@@ -143,14 +139,14 @@ export default {
       rulesUpdate: {
         name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 2, max: 5, message: "长度在 2 到 5 个字符", trigger: "blur" }
+          { min: 2, max: 5, message: "请输入 2 到 5 个字符", trigger: "blur" }
         ],
         address: [
           { required: true, message: "请输入地址", trigger: "blur" },
           {
             min: 2,
             max: 100,
-            message: "长度在 2 到 100 个字符",
+            message: "请输入 2 到 100 个字符",
             trigger: "blur"
           }
         ],
@@ -159,10 +155,10 @@ export default {
     };
   },
   methods: {
-    add: function() {
-      this.visible = true;
+    add:function(){
+      this.dialogAdd=true;
     },
-    confirm: function(ruleForm) {
+    addConfirm: function(ruleForm) {
       const inputName = this.ruleForm.name;
       const inputTel = this.ruleForm.tel;
       const inputAdd = this.ruleForm.address;
@@ -174,15 +170,15 @@ export default {
             address: inputAdd
           });
           this.$refs[ruleForm].resetFields();
-          this.visible = false;
+          this.dialogAdd = false;
         } else {
           return false;
         }
       });
     },
-    cancel: function(ruleForm) {
+    addCancel: function(ruleForm) {
       this.$refs[ruleForm].resetFields();
-      this.visible = false;
+      this.dialogAdd = false;
     },
     update: function(rowIndex, rowVal) {
       this.updateForm.name = rowVal.name;
@@ -265,5 +261,11 @@ export default {
 }
 .el-icon-warning {
   color: red;
+}
+.el-dialog__header{
+  padding: 20px 20px 0px;
+}
+.el-dialog__title{
+  font-weight: 700;
 }
 </style>

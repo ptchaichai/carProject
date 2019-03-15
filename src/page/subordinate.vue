@@ -7,11 +7,8 @@
       <el-input v-model="searchData" placeholder="请输入名称"></el-input>
           <el-button type="success"  class="search" @click="search">搜索</el-button>
      </el-form>
-     <el-popover
-    placement="bottom"
-    width="550"
-     v-model="visible">
-    <div class="dialog-box">
+     <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
+     <div class="dialog-box">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="工号" prop="id">
             <el-input v-model="ruleForm.id" placeholder="请输入工号"></el-input>
@@ -26,11 +23,11 @@
           <el-input v-model="ruleForm.address" placeholder="请输入地址"></el-input>
          </el-form-item>
          <el-button  round type="primary" class="addInformation" @click="addInformation('ruleForm')">确定</el-button>
-         <el-button  round type="info" class="cancelInformation" @click="cancelInformation('ruleForm')">取消</el-button>
+         <el-button  round type="info" class="addCancel" @click="addCancel('ruleForm')">取消</el-button>
         </el-form>
       </div>
-    <el-button slot="reference" type="primary" size="small" round class="add">添加</el-button>
-  </el-popover>
+     </el-dialog>
+     <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
    </div>
   </div>
       <el-table
@@ -120,11 +117,11 @@ export default {
       popoverName: "",
       popoverTel: "",
       popoverAdd: "",
-      visible: false,
       tableData: [],
       newTableData: [],
       dialogDelete: false,
       dialogUpdate: false,
+      dialogAdd:false,
       rowVal: "",
       currentIndex: "",
       deleteVal: "",
@@ -142,18 +139,18 @@ export default {
       rules: {
         id: [
           { required: true, message: "请输入id", trigger: "blur" },
-          { min: 1, max: 10, message: "长度在 1 到 10 个字符", trigger: "blur" }
+          { min: 1, max: 10, message: "请输入 1 到 10 个字符", trigger: "blur" }
         ],
         name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 2, max: 5, message: "长度在 2 到 5 个汉字", trigger: "blur" }
+          { min: 2, max: 5, message: "请输入 2 到 5 个字符", trigger: "blur" }
         ],
         address: [
           { required: true, message: "请输入地址", trigger: "blur" },
           {
             min: 2,
             max: 100,
-            message: "长度在 2 到 100 个字符",
+            message: "请输入 2 到 100 个字符",
             trigger: "blur"
           }
         ],
@@ -162,14 +159,14 @@ export default {
       rulesUpdate: {
         name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 2, max: 5, message: "长度在 2 到 5 个字符", trigger: "blur" }
+          { min: 2, max: 5, message: "请输入 2 到 5 个字符", trigger: "blur" }
         ],
         address: [
           { required: true, message: "请输入地址", trigger: "blur" },
           {
             min: 2,
             max: 100,
-            message: "长度在 2 到 100 个字符",
+            message: "请输入 2 到 100 个字符",
             trigger: "blur"
           }
         ],
@@ -178,6 +175,9 @@ export default {
     };
   },
   methods: {
+    add:function(){
+      this.dialogAdd=true;
+    },
     addInformation: function(ruleForm) {
       const inputId = this.ruleForm.id;
       const inputName = this.ruleForm.name;
@@ -192,13 +192,13 @@ export default {
             address: inputAdd
           });
           this.$refs[ruleForm].resetFields();
-          this.visible = false;
+          this.dialogAdd = false;
         } else {
           return false;
         }
       });
     },
-    cancelInformation: function(ruleForm) {
+    addCancel: function(ruleForm) {
       this.$refs[ruleForm].resetFields();
       this.visible = false;
     },
@@ -298,5 +298,11 @@ export default {
 }
 .el-icon-warning {
   color: red;
+}
+.el-dialog__header{
+  padding: 20px 20px 0px;
+}
+.el-dialog__title{
+  font-weight: 700;
 }
 </style>
