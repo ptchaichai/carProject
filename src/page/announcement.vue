@@ -43,8 +43,8 @@
                 <span class="star">*</span><span class="edit-span">公告内容:</span>
                 <el-input v-model="items[i].content"  type="textarea" class="textarea"></el-input>
                 <div class="warning" v-show="showAnother">标题和内容都不能为空！</div>
-                <el-button type="primary" @click="addContent(i)" round>确 定</el-button>
-                <el-button @click="cancelContent(i)" round>取 消</el-button>
+                <el-button type="primary" @click="editConfirm(i)" round>确 定</el-button>
+                <el-button @click="cancelConfirm(i)" round>取 消</el-button>
                 </el-form>
               </div>
             </el-dialog>
@@ -94,14 +94,21 @@ export default {
         this.show = true;
         return false;
       } else {
+        this.$store.dispatch('addAnnouncement',{
+          id:this.announcement.id,
+          title:inputTitle,
+          content:inputContent
+        }).then(()=> {
         this.show = false;
-        this.items.push({ title: inputTitle, content: inputContent });
+        this.$store.commit('addAnnouncement',{title,content});
+        // this.items.push({ title: inputTitle, content: inputContent });
         this.oldTitle = inputTitle;
         this.oldContent = inputContent;
         this.inputTitle = "";
         this.inputContent = "";
         this.visible = false;
         Bus.$emit("add",'true');
+      });
       }
     },
     cancleOne: function() {
@@ -118,7 +125,7 @@ export default {
       this.oldTitle = this.items[i].title;
       this.oldContent = this.items[i].content;
     },
-    addContent: function(i) {
+    editConfirm: function(i) {
       if (this.items[i].title === "" || this.items[i].content === "") {
         this.showAnother = true;
         return false;
@@ -128,7 +135,7 @@ export default {
         Bus.$emit("add",'true');
       }
     },
-    cancelContent: function(i) {
+    cancelConfirm: function(i) {
       this.items[i].title = this.oldTitle;
       this.items[i].content = this.oldContent;
       this.showAnother = false;

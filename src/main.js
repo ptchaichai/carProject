@@ -30,6 +30,7 @@ Vue.prototype.$http = http
 Vue.prototype.$http.all = axios.all
 Vue.prototype.$http.spread = axios.spread
 Vue.prototype.qs = qs
+Vue.prototype.$ajax = axios
 Vue.use(ElementUI)
 Vue.use(Vuex)
 /* eslint-disable no-new */
