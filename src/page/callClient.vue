@@ -2,7 +2,7 @@
     <div class="call-client">
       <el-tag>来电客户信息管理</el-tag>
       <div class="search-add">
-        <div class="box">
+      <div class="box">
       <el-form ref="form" :model="form" class="search-form">
       <el-input v-model="search" placeholder="请输入名称"
             suffix-icon="el-icon-search"></el-input>
@@ -120,15 +120,6 @@ export default {
           { required: true, message: "请输入姓名", trigger: "blur" },
           { min: 2, max: 4, message: "请输入 2 到 4 个字符", trigger: "blur" }
         ],
-        address: [
-          { required: true, message: "请输入地址", trigger: "blur" },
-          {
-            min: 2,
-            max: 100,
-            message: "请输入 2 到 100 个字符",
-            trigger: "blur"
-          }
-        ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }]
       },
       updateForm: {
@@ -140,15 +131,6 @@ export default {
         name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
           { min: 2, max: 5, message: "请输入 2 到 5 个字符", trigger: "blur" }
-        ],
-        address: [
-          { required: true, message: "请输入地址", trigger: "blur" },
-          {
-            min: 2,
-            max: 100,
-            message: "请输入 2 到 100 个字符",
-            trigger: "blur"
-          }
         ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }]
       }

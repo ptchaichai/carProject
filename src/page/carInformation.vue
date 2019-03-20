@@ -1,187 +1,264 @@
+
 <template>
-    <div class="subordinate">
-      <el-tag>汽车信息统计量</el-tag>
-      <el-table class="car-infor"
-    :data="tableData"
-    border>
-    <el-table-column
-      fixed
-      prop="type"
-      label="信息"
-      width="160">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="date"
-      label="当日"
-      width="100">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="mouth"
-      label="当月"
-      width="100">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="quarter"
-      label="当季度"
-      width="100">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="year"
-      label="当年"
-      width="100">
-    </el-table-column>
-  </el-table>
-  <el-button  round type="primary" @click="lookCar">点击查看汽车销售排名</el-button>
-  <el-table class="quarter-infor"
-    :data="carData"
-    border v-show="show">
-    <el-table-column
-      fixed
-      prop="type"
-      label="汽车类型"
-      width="160">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="date"
-      label="当日"
-      width="100">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="mouth"
-      label="当月"
-      width="100">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="quarter"
-      label="当季度"
-      width="100">
-    </el-table-column>
-    <el-table-column
-      fixed
-      prop="year"
-      label="当年"
-      width="100">
-    </el-table-column>
-     <el-table-column
-      fixed
-      prop="ranking"
-      label="当前排名"
-      width="100">
-    </el-table-column>
-  </el-table>
-  <el-button  round type="primary" @click="close" v-show="show">关闭</el-button>
+  <div class="saleInformation">
+    <el-tag>汽车销售统计量</el-tag>
+    <div class="div-flex" style="text-align:center">
+        <div class="chart-tab activecss" id="chart-tab1" @click="Month($event)" ref="Month">当月</div>
+        <div class="chart-tab" id="chart-tab2" @click="Year($event)" ref="Year">当年</div>
     </div>
+    <div id="myChartMonth" ref="myChartMonth" :style="{width: '350px', height: '350px'}" v-show="monthShow"></div>
+    <div id="myChartYear" ref="myChartYear" :style="{width: '350px', height: '350px'}" v-show="yearShow"></div>
+    <div class="ranking-month" v-show="monthRank">
+      <p>当前销售排名前三：</p>
+      <div class="ranking-box">
+        <ul class="num">
+          <li v-for="(num,index) in nums" :key="index">{{num.n}}</li>
+        </ul>
+        <ul class="car-ul">
+          <li v-for="(car,i) in cars" :key="i">{{car.type}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ranking-year" v-show="yearRank">
+      <p>当前销售排名前三：</p>
+      <div class="ranking-box">
+        <ul class="num">
+          <li v-for="(num,index) in nums" :key="index">{{num.n}}</li>
+        </ul>
+        <ul class="car-ul">
+          <li v-for="(car,i) in carsYear" :key="i">{{car.type}}</li>
+        </ul>
+      </div>
+    </div>
+</div>
 </template>
 
 <script>
+// 引入基本模板
+let echarts = require("echarts/lib/echarts");
+// 引入柱状图组件
+require("echarts/lib/chart/bar");
+// 引入提示框和title组件
+require("echarts/lib/component/tooltip");
+require("echarts/lib/component/title");
 export default {
-  name: "updatePwd",
   data() {
     return {
-      show: false,
-      input1: "",
-      input2: "",
-      input3: "",
-      tableData: [
-        {
-          type: "本田",
-          date: "34",
-          mouth: "434",
-          quarter: "3423",
-          year: "5433",
-          ranking: "1"
-        },
-        {
-          type: "本田",
-          date: "34",
-          mouth: "434",
-          quarter: "3423",
-          year: "5433",
-          ranking: "2"
-        }
+      monthShow: true,
+      yearShow: false,
+      monthRank: true,
+      yearRank:false,
+      cars: [
+        { type: "奥德赛" },
+        { type: "宾智" },
+        { type: "飞度" }
+        ],
+        carsYear: [
+        { type: "锋范" },
+        { type: "雅阁" },
+        { type: "飞度" }
+        ],
+      nums: [
+        {n: 1},
+        {n: 2},
+        {n: 3}
       ],
-      carData: [
-        {
-          type: "本田",
-          date: "34",
-          mouth: "434",
-          quarter: "3423",
-          year: "5433",
-          ranking: "1"
-        },
-        {
-          type: "本田",
-          date: "34",
-          mouth: "434",
-          quarter: "3423",
-          year: "5433",
-          ranking: "2"
-        }
-      ]
+      monthData:[15,30,33,24,32,26],
+      yearData:[42,65,76,85,69,79],
     };
   },
+  mounted() {
+    this.$refs.Month.style.background = "#f56c6c";
+    this.$refs.Month.style.color = "#fff";
+    this.drawMonth();
+  },
   methods: {
-    lookCar() {
-      this.show = true;
+    drawMonth() {
+      const myChartMonth = echarts.init(this.$refs.myChartMonth);
+      myChartMonth.setOption({
+        grid: {
+          left: "3%",
+          right: "20%", //距离右侧边距
+          bottom: "9%",
+          show: true,
+          containLabel: true
+        },
+        tooltip: {},
+        xAxis: {
+          name: "车型",
+          data: [
+            "奥德赛",
+            "宾智",
+            "飞度",
+            "锋范",
+            "凌派",
+            "雅阁",
+          ],
+          axisLabel: {
+            interval: 0,
+            rotate: -30
+          }
+        },
+        yAxis: {
+          name: "汽车销量"
+        },
+        series: [
+          {
+            name: "销量",
+            type: "bar",
+            data: this.monthData,
+            itemStyle: {
+              normal: {
+                color: "#f56c6c"
+              }
+            }
+          }
+        ],
+      });
     },
-    close() {
-      this.show = false;
+    Month: function(e) {
+      this.$refs.Year.style.background = "#fff";
+      this.$refs.Year.style.color = "#000";
+      e.currentTarget.style.background = "#f56c6c";
+      e.currentTarget.style.color = "#fff";
+      this.yearShow = false;
+      this.monthShow = true;
+      this.monthRank=true;
+      this.yearRank=false;
+      this.drawMonth();
     },
+    Year: function(e) {
+      this.$refs.Month.style.background = "#fff";
+      this.$refs.Month.style.color = "#000";
+      e.currentTarget.style.background = "#409eef";
+      e.currentTarget.style.color = "#fff";
+      this.yearShow = true;
+      this.monthShow = false;
+      this.yearRank=true;
+      this.monthRank=false;
+      const myChartYear = echarts.init(this.$refs.myChartYear);
+      myChartYear.setOption({
+        grid: {
+          left: "3%",
+          right: "20%", //距离右侧边距
+          bottom: "9%",
+          show: true,
+          containLabel: true
+        },
+        tooltip: {},
+        xAxis: {
+          name: "车型",
+          data: [
+            "奥德赛",
+            "宾智",
+            "飞度",
+            "锋范",
+            "凌派",
+            "雅阁",
+          ],
+          axisLabel: {
+            interval: 0,
+            rotate: -30
+          }
+        },
+        yAxis: {
+          name: "汽车销量"
+        },
+        series: [
+          {
+            name: "销量",
+            type: "bar",
+            data: this.yearData,
+            itemStyle: {
+              normal: {
+                color: "#409eef"
+              }
+            }
+          }
+        ]
+      });
+    }
   }
 };
 </script>
 
 <style scoped>
-.subordinate {
-  width: 90%;
-  margin: 50px auto;
+.saleInformation {
+  padding: 10px 15px;
+  font-size: 15px;
+  color: #737373;
+  width: 64%;
+  margin: 30px auto;
+  position: relative;
 }
-.dialog-box {
-  width: 100%;
-}
-#el-popover-1912 {
-  left: 328px !important;
-  z-index: 2001;
-  width: 60% !important;
-  height: 45% !important;
-}
-.car-infor {
-  width: 562px;
-  min-width: 554px;
-  border: 1px solid #cecece;
-  margin: 20px auto;
-}
-.quarter-infor {
-  width: 662px;
-  min-width: 662px;
-  border: 1px solid #cecece;
-  margin: 20px auto;
-}
-
 .el-tag {
   font-size: 35px;
   background-color: #fff;
   border: none;
+  margin-bottom: 30px;
 }
-.el-button--small {
-  margin-left: -10px;
+.chart-tab {
+  flex: 1;
+  border-top: 1px #dcdcdc solid;
+  border-left: 1px #dcdcdc solid;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  width: 100%;
+  cursor: pointer;
 }
-.add {
+
+.div-flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  width: 60%;
+}
+.ranking-month p{
+  color: #f56c6c;
+  font-size: 18px;
+}
+.ranking-year p {
+  color: #409eff;
+  font-size: 18px;
+}
+.selected {
+  background-color: #eaeaea;
+}
+.ranking-month,.ranking-year {
   position: absolute;
-  top: 188px;
+  right: 50px;
+  top: 180px;
 }
-.update {
-  margin-right: 20px;
+ul {
+  list-style: none;
 }
-.search-form {
-  width: 30%;
-  margin-top: 30px;
+.num li {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 10px;
+}
+.num li:nth-child(1) {
+  background: #f54545;
+  color: #fff;
+}
+.num li:nth-child(2) {
+  background: #ff8547;
+  color: #fff;
+}
+.num li:nth-child(3) {
+  background: #ffac38;
+  color: #fff;
+}
+.ranking-box {
+  position: relative;
+}
+.car-ul {
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  top: -15px;
+}
+.car-ul li {
+  margin-bottom: 10px;
 }
 </style>

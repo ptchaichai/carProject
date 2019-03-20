@@ -1,35 +1,35 @@
 <template>
     <div class="buy-client">
       <el-tag>购车客户信息管理</el-tag>
+      <div class="search-add">
+      <div class="box">
       <el-form ref="form" :model="form" class="search-form">
       <el-input v-model="search" placeholder="请输入名称"
             suffix-icon="el-icon-search"></el-input>
      </el-form>
-     <el-popover
-       v-model="visible"
-    placement="bottom"
-    width="550"
-    trigger="click">
-    <div class="dialog-box">
-        <el-form  :rules="rules" ref="ruleForm" :model="ruleForm">
+     <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
+     <div class="dialog-box">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
           <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="请输入姓名" ></el-input>
+          <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
          </el-form-item>
           <el-form-item label="电话" prop="tel">
-          <el-input v-model.number="ruleForm.tel" placeholder="请输入电话" ></el-input>
+          <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
          </el-form-item>
           <el-form-item label="地址" prop="address">
           <el-input v-model="ruleForm.address" placeholder="请输入地址"></el-input>
          </el-form-item>
-         <el-form-item label="购买车型" prop="car">
-          <el-input v-model="ruleForm.car" placeholder="请输入车型"></el-input>
+         <el-form-item label="购买车型" prop="carType">
+          <el-input v-model="ruleForm.carType" placeholder="请输入地址"></el-input>
          </el-form-item>
-         <el-button  round type="primary" class="addInformation" @click="confirm('ruleForm')">确定</el-button>
-          <el-button type="info"  round  @click="cancel('ruleForm')">取消</el-button>
+         <el-button  round type="primary" class="addInformation" @click="addConfirm('ruleForm')">确定</el-button>
+         <el-button  round type="info" class="cancelInformation" @click="addCancel('ruleForm')">取消</el-button>
         </el-form>
-    </div>
-       <el-button slot="reference" type="primary" size="small" round class="add" @click="add">添加</el-button>
-  </el-popover>
+      </div>
+     </el-dialog>
+       <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
+   </div>
+  </div>
       <el-table
     :data="tableData"
     border>
@@ -49,7 +49,7 @@
       width="180">
     </el-table-column>
     <el-table-column
-      prop="car"
+      prop="carType"
       label="购买车型"
       width="180">
     </el-table-column>
@@ -83,8 +83,8 @@
           <el-form-item label="地址" prop="address">
           <el-input v-model="updateForm.address" placeholder="请输入地址"></el-input>
          </el-form-item>
-         <el-form-item label="购买车型" prop="car">
-          <el-input v-model="updateForm.car" placeholder="请输入车型"></el-input>
+         <el-form-item label="购买车型" prop="carType">
+          <el-input v-model="updateForm.carType" placeholder="请输入车型"></el-input>
          </el-form-item>
         </el-form>
         <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
@@ -111,6 +111,7 @@ export default {
       dialogDelete: false,
       visible: false,
       dialogUpdate: false,
+      dialogAdd:false,
       inputName: "",
       inputTel: "",
       inputAdd: "",
@@ -123,23 +124,14 @@ export default {
         name: "",
         tel: "",
         address: "",
-        car:"",
+        carType:"",
       },
       rules: {
         name: [
           { required: true, message: "请输入姓名", trigger: "blur" },
           { min: 2, max: 4, message: "长度在 2 到 4 个字符", trigger: "blur" }
         ],
-        address: [
-          { required: true, message: "请输入地址", trigger: "blur" },
-          {
-            min: 2,
-            max: 100,
-            message: "长度在 2 到 100 个字符",
-            trigger: "blur"
-          }
-        ],
-        car: [
+        carType: [
           { required: true, message: "请输入车型", trigger: "blur" },
           { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" }
         ],
@@ -149,23 +141,14 @@ export default {
         name: "",
         tel: "",
         address: "",
-        car:"",
+        carType:"",
       },
       rulesUpdate: {
         name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
           { min: 2, max: 5, message: "长度在 2 到 5 个字符", trigger: "blur" }
         ],
-        address: [
-          { required: true, message: "请输入地址", trigger: "blur" },
-          {
-            min: 2,
-            max: 100,
-            message: "长度在 2 到 100 个字符",
-            trigger: "blur"
-          }
-        ],
-        car: [
+        carType: [
           { required: true, message: "请输入车型", trigger: "blur" },
           { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" }
         ],
@@ -175,37 +158,37 @@ export default {
   },
   methods: {
     add: function() {
-      this.visible = true;
+      this.dialogAdd = true;
     },
-    confirm: function(ruleForm) {
+    addConfirm: function(ruleForm) {
       const inputName = this.ruleForm.name;
       const inputTel = this.ruleForm.tel;
       const inputAdd = this.ruleForm.address;
-      const inputCar = this.ruleForm.car;
+      const inputCar = this.ruleForm.carType;
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
           this.tableData.push({
             name: inputName,
             tel: inputTel,
             address: inputAdd,
-            car: inputCar
+            carType: inputCar
           });
           this.$refs[ruleForm].resetFields();
-          this.visible = false;
+          this.dialogAdd = false;
         } else {
           return false;
         }
       });
     },
-    cancel: function(ruleForm) {
+    addCancel: function(ruleForm) {
       this.$refs[ruleForm].resetFields();
-      this.visible = false;
+      this.dialogAdd = false;
     },
     update: function(rowIndex, rowVal) {
       this.updateForm.name = rowVal.name;
       this.updateForm.tel = rowVal.tel;
       this.updateForm.address = rowVal.address;
-      this.updateForm.car = rowVal.car;
+      this.updateForm.carType = rowVal.carType;
       this.dialogUpdate = true;
       this.currentIndex = rowIndex;
       this.rowVal = rowVal;
@@ -214,13 +197,13 @@ export default {
       const name = this.updateForm.name;
       const tel = this.updateForm.tel;
       const address = this.updateForm.address;
-      const car = this.updateForm.car;
+      const carType = this.updateForm.carType;
       this.$refs[updateForm].validate(valid => {
         if (valid) {
           this.tableData[this.currentIndex].name = name;
           this.tableData[this.currentIndex].tel = tel;
           this.tableData[this.currentIndex].address = address;
-          this.tableData[this.currentIndex].car = car;
+          this.tableData[this.currentIndex].carType = carType;
           this.dialogUpdate = false;
         } else {
           return false;
@@ -256,7 +239,7 @@ export default {
   width: 782px;
   min-width: 780px;
   border: 1px solid #cecece;
-  margin: 50px auto;
+  margin: 30px auto;
 }
 .el-tag {
   font-size: 35px;
@@ -266,19 +249,30 @@ export default {
 .el-button--small {
   margin-left: -10px;
 }
+.box {
+  width: 780px;
+  margin: 0 auto;
+}
 .add {
-  position: absolute;
-  top: 197px;
+  float: right;
+  margin-top: -36px;
+  height: 32px;
+}
+.search-form {
+  width: 265px;
+  margin-top: 30px;
+  position: relative;
 }
 .update {
   margin-right: 20px;
 }
-.search-form {
-  width: 30%;
-  margin-top: 30px;
-  margin-left: 106px;
-}
 .el-icon-warning {
   color: red;
+}
+.el-dialog__header{
+  padding: 20px 20px 0px;
+}
+.el-dialog__title{
+  font-weight: 700;
 }
 </style>

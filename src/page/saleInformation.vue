@@ -1,159 +1,258 @@
+
 <template>
-    <div class="subordinate">
-      <el-tag>客户信息统计量</el-tag>
-      <div class="subordinate-box">
-      <div class="time-choose">
-      <el-row class="tac">
-       <el-col :span="12">
-       <el-menu
-      default-active="2"
-      class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose">
-      <el-submenu index="1">
-        <template slot="title">
-          <i class="el-icon-menu"></i>
-          <span>日期</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item >当日</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group >
-          <el-menu-item >昨日</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="2">
-        <template slot="title">
-          <i class="el-icon-menu"></i>
-          <span>月份</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item >当月</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group >
-          <el-menu-item >前一个月</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="3">
-        <template slot="title">
-          <i class="el-icon-menu"></i>
-          <span>季度</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item >当季度</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group >
-          <el-menu-item >前一个季度</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="3">
-        <template slot="title">
-          <i class="el-icon-menu"></i>
-          <span>年份</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item >当年</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group >
-          <el-menu-item >前一年</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-    </el-menu>
-    </el-col>
-   </el-row>
-</div>
-<div class="num-show">
-       <div class="call">
-        <div class="container">
-          <div class="call-show">
-            <el-form>
-              <el-form-item label="来电客户信息量:" prop="name">
-              <el-input v-model="callNum" readonly="readonly" ></el-input>
-              </el-form-item>
-            </el-form>
-          </div>
-        </div>
-       </div>
-        <div class="come">
-        <div class="container">
-          <div class="come-show">
-            <el-form>
-              <el-form-item label="来店客户信息量:" prop="name">
-              <el-input v-model="comeNum" readonly="readonly" ></el-input>
-              </el-form-item>
-            </el-form>
-          </div>
-        </div>
-       </div>
-        <div class="buy">
-        <div class="container">
-          <div class="buy-show">
-            <el-form>
-              <el-form-item label="购车客户信息量:" prop="name">
-              <el-input v-model="buyNum" readonly="readonly" ></el-input>
-              </el-form-item>
-            </el-form>
-          </div>
-        </div>
-       </div>
-       </div>
-       </div>
+  <div class="saleInformation">
+    <el-tag>销售信息统计量</el-tag>
+    <div class="div-flex" style="text-align:center">
+        <div class="chart-tab" id="chart-tab0" @click="Day($event)" ref="Day">当日</div>
+        <div class="chart-tab activecss" id="chart-tab1" @click="Month($event)" ref="Month">当月</div>
+        <div class="chart-tab" id="chart-tab2" @click="Quarter($event)" ref="Quarter">当季度</div>
+        <div class="chart-tab" id="chart-tab3" @click="Year($event)" ref="Year">当年</div>
     </div>
+    <div id="myChartDay" ref="myChartDay" :style="{width: '350px', height: '350px'}" v-show="dayShow"></div>
+    <div id="myChartMonth" ref="myChartMonth" :style="{width: '350px', height: '350px'}" v-show="monthShow"></div>
+    <div id="myChartQuarter" ref="myChartQuarter" :style="{width: '350px', height: '350px'}" v-show="quarterShow"></div>
+    <div id="myChartYear" ref="myChartYear" :style="{width: '350px', height: '350px'}" v-show="yearShow"></div>
+</div>
 </template>
 
 <script>
+// 引入基本模板
+let echarts = require('echarts/lib/echarts')
+// 引入柱状图组件
+require('echarts/lib/chart/bar')
+// 引入提示框和title组件
+require('echarts/lib/component/tooltip')
+require('echarts/lib/component/title')
 export default {
-  name: "updatePwd",
-  data() {
-      return {
-        callNum:" ",
-        comeNum:" ",
-        buyNum:" ",
-      };
+  name: 'hello',
+  data () {
+    return {
+      dayShow:true,
+      monthShow:false,
+      quarterShow:false,
+      yearShow:false,
+      dayData:[21,10,5],
+      monthData:[42,30,25],
+      quarterData:[75,65,40],
+      yearData:[104,88,66],
     }
-};
+  },
+  mounted(){
+    this.$refs.Day.style.background = "#f56c6c";
+    this.$refs.Day.style.color = "#fff";
+    this.drawDay();
+  },
+  methods: {
+    drawDay(){
+        const myChartDay = echarts.init(this.$refs.myChartDay);
+        myChartDay.setOption({
+              grid: {
+	        		        left: '3%',
+	        		        right: '20%',  //距离右侧边距
+	        		        bottom: '9%',
+	        		        show:true,
+	        		        containLabel: true
+	        		    },
+            tooltip: {},
+            xAxis: {
+                name:'统计类型',
+                data: ["来电客户量","来店客户量","购车客户量"]
+            },
+            yAxis: {
+              name:'统计数量',
+            },
+            series: [{
+                name: '销量',
+                type: 'bar',
+                data: this.dayData,
+                itemStyle:{
+                  normal:{
+                    color:'#f56c6c',
+                  }
+                }
+            }]
+        });
+    },
+   Day:function(e){
+    this.$refs.Month.style.background = "#fff";
+    this.$refs.Month.style.color = "#000";
+    this.$refs.Quarter.style.background = "#fff";
+    this.$refs.Quarter.style.color = "#000";
+    this.$refs.Year.style.background = "#fff";
+    this.$refs.Year.style.color = "#000";
+    e.currentTarget.style.background = "#f56c6c";
+    e.currentTarget.style.color = "#fff";
+    this.dayShow=true;
+    this.quarterShow=false;
+    this.yearShow=false;
+    this.monthShow=false;
+    this.drawDay();
+    },
+    Month:function(e){
+    this.$refs.Day.style.background = "#fff";
+    this.$refs.Day.style.color = "#000";
+    this.$refs.Quarter.style.background = "#fff";
+    this.$refs.Quarter.style.color = "#000";
+    this.$refs.Year.style.background = "#fff";
+    this.$refs.Year.style.color = "#000";
+    e.currentTarget.style.background = "#e6a23c";
+    e.currentTarget.style.color = "#fff";
+    this.dayShow=false;
+    this.quarterShow=false;
+    this.yearShow=false;
+    this.monthShow=true;
+    const myChartMonth = echarts.init(this.$refs.myChartMonth);
+        myChartMonth.setOption({
+              grid: {
+	        		        left: '3%',
+	        		        right: '20%',  //距离右侧边距
+	        		        bottom: '9%',
+	        		        show:true,
+	        		        containLabel: true
+	        		    },
+            tooltip: {},
+            xAxis: {
+                name:'统计类型',
+                data: ["来电客户量","来店客户量","购车客户量"]
+            },
+            yAxis: {
+              name:'统计数量',
+            },
+            series: [{
+                name: '销量',
+                type: 'bar',
+                data: this.monthData,
+                itemStyle:{
+                  normal:{
+                    color:'#e6a23c',
+                  }
+                }
+            }]
+        });
+    },
+    Quarter:function(e){
+    this.$refs.Day.style.background = "#fff";
+    this.$refs.Day.style.color = "#000";
+    this.$refs.Month.style.background = "#fff";
+    this.$refs.Month.style.color = "#000";
+    this.$refs.Year.style.background = "#fff";
+    this.$refs.Year.style.color = "#000";
+    e.currentTarget.style.background = "#67c23a";
+    e.currentTarget.style.color = "#fff";
+    this.dayShow=false;
+    this.quarterShow=true;
+    this.yeardayShow=false;
+    this.monthShow=false;
+    const myChartQuarter = echarts.init(this.$refs.myChartQuarter);
+        myChartQuarter.setOption({
+              grid: {
+	        		        left: '3%',
+	        		        right: '20%',  //距离右侧边距
+	        		        bottom: '9%',
+	        		        show:true,
+	        		        containLabel: true
+	        		    },
+            tooltip: {},
+            xAxis: {
+                name:'统计类型',
+                data: ["来电客户量","来店客户量","购车客户量"]
+            },
+            yAxis: {
+              name:'统计数量',
+            },
+            series: [{
+                name: '销量',
+                type: 'bar',
+                data: this.quarterData,
+                itemStyle:{
+                  normal:{
+                    color:'#67c23a',
+                  }
+                }
+            }]
+        });
+    },
+    Year:function(e){
+    this.$refs.Day.style.background = "#fff";
+    this.$refs.Day.style.color = "#000";
+    this.$refs.Month.style.background = "#fff";
+    this.$refs.Month.style.color = "#000";
+    this.$refs.Quarter.style.background = "#fff";
+    this.$refs.Quarter.style.color = "#000";
+    e.currentTarget.style.background = "#409eef";
+    e.currentTarget.style.color = "#fff";
+    this.dayShow=false;
+    this.quarterShow=false;
+    this.yearShow=true;
+    this.monthShow=false;
+    const myChartYear = echarts.init(this.$refs.myChartYear);
+        myChartYear.setOption({
+              grid: {
+	        		        left: '3%',
+	        		        right: '20%',  //距离右侧边距
+	        		        bottom: '9%',
+	        		        show:true,
+	        		        containLabel: true
+	        		    },
+            tooltip: {},
+            xAxis: {
+                name:'统计类型',
+                data: ["来电客户量","来店客户量","购车客户量"]
+            },
+            yAxis: {
+              name:'统计数量',
+            },
+            series: [{
+                name: '销量',
+                type: 'bar',
+                data: this.yearData,
+                itemStyle:{
+                  normal:{
+                    color:'#409eef',
+                  }
+                }
+            }]
+        });
+    },
+  },
+
+}
 </script>
 
 <style scoped>
-.subordinate {
-  width: 80%;
-  margin: 50px auto;
-}
-.subordinate-box{
-  display:flex;
-  width: 50%;
-  margin: 0 auto;
-}
+.saleInformation{
+  padding: 10px 15px;
+  font-size: 15px;
+  color: #737373;
+  width: 40%;
+  margin: 30px auto;
+  }
 .el-tag {
   font-size: 35px;
   background-color: #fff;
   border: none;
+  margin-bottom: 30px;
 }
-.tac{
-  width:288px;
+.activecss{
+  background: #fff;
+  color:#000;
 }
-.el-submenu__title{
-  font-size: 16px;
-  color: #0093e6;
+.chart-tab {
+    flex: 1;
+    border-top: 1px #dcdcdc solid;
+    border-left: 1px #dcdcdc solid;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    width: 100%;
+    cursor: pointer;
 }
-.el-menu-item{
-  min-width: 143px;
+
+.div-flex {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
 }
-.time-choose{
-  width: 40%;
-  margin-top: 50px;
-}
-.num-show{
-  width:50%;
-}
-.container{
-  margin-top:50px;
-  width: 100%;
-}
-.el-form{
-  margin-left: 140px;
-}
-.el-form-item{
-  width: 130px;
+.selected {
+    background-color: #EAEAEA;
 }
 </style>

@@ -145,30 +145,12 @@ export default {
           { required: true, message: "请输入活动名称", trigger: "blur" },
           { min: 2, max: 5, message: "请输入 2 到 5 个字符", trigger: "blur" }
         ],
-        address: [
-          { required: true, message: "请输入地址", trigger: "blur" },
-          {
-            min: 2,
-            max: 100,
-            message: "请输入 2 到 100 个字符",
-            trigger: "blur"
-          }
-        ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }]
       },
       rulesUpdate: {
         name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
           { min: 2, max: 5, message: "请输入 2 到 5 个字符", trigger: "blur" }
-        ],
-        address: [
-          { required: true, message: "请输入地址", trigger: "blur" },
-          {
-            min: 2,
-            max: 100,
-            message: "请输入 2 到 100 个字符",
-            trigger: "blur"
-          }
         ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }]
       }
