@@ -9,7 +9,7 @@
     <div id="myChartMonth" ref="myChartMonth" :style="{width: '350px', height: '350px'}" v-show="monthShow"></div>
     <div id="myChartYear" ref="myChartYear" :style="{width: '350px', height: '350px'}" v-show="yearShow"></div>
     <div class="ranking-month" v-show="monthRank">
-      <p>当前销售排名前三：</p>
+      <p>截止目前销售排名前三的为：</p>
       <div class="ranking-box">
         <ul class="num">
           <li v-for="(num,index) in nums" :key="index">{{num.n}}</li>
@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="ranking-year" v-show="yearRank">
-      <p>当前销售排名前三：</p>
+      <p>截止目前销售排名前三的为：</p>
       <div class="ranking-box">
         <ul class="num">
           <li v-for="(num,index) in nums" :key="index">{{num.n}}</li>
@@ -47,30 +47,33 @@ export default {
       monthShow: true,
       yearShow: false,
       monthRank: true,
-      yearRank:false,
-      cars: [
-        { type: "奥德赛" },
-        { type: "宾智" },
-        { type: "飞度" }
-        ],
-        carsYear: [
-        { type: "锋范" },
-        { type: "雅阁" },
-        { type: "飞度" }
-        ],
-      nums: [
-        {n: 1},
-        {n: 2},
-        {n: 3}
-      ],
-      monthData:[15,30,33,24,32,26],
-      yearData:[42,65,76,85,69,79],
+      yearRank: false,
+      monthCarData: [],
+      yearCarData: [],
+      cars: [{ type: "奥德赛" }, { type: "宾智" }, { type: "飞度" }],
+      carsYear: [{ type: "锋范" }, { type: "雅阁" }, { type: "飞度" }],
+      nums: [{ n: 1 }, { n: 2 }, { n: 3 }],
+      monthState: []
     };
   },
+  computed: {},
   mounted() {
+    this.monthCarData.splice(0, 6);
+    for (let i = 0; i < this.$store.state.monthCarData.length; i += 1) {
+      this.monthCarData.push(this.$store.state.monthCarData[i]);
+    }
+    this.yearCarData.splice(0, 6);
+    for (let i = 0; i < this.$store.state.yearCarData.length; i += 1) {
+      this.yearCarData.push(this.$store.state.yearCarData[i]);
+    }
     this.$refs.Month.style.background = "#f56c6c";
     this.$refs.Month.style.color = "#fff";
     this.drawMonth();
+  },
+  watch: {
+    monthCarData() {
+      this.drawMonth();
+    }
   },
   methods: {
     drawMonth() {
@@ -86,14 +89,7 @@ export default {
         tooltip: {},
         xAxis: {
           name: "车型",
-          data: [
-            "奥德赛",
-            "宾智",
-            "飞度",
-            "锋范",
-            "凌派",
-            "雅阁",
-          ],
+          data: ["奥德赛", "宾智", "飞度", "锋范", "凌派", "雅阁"],
           axisLabel: {
             interval: 0,
             rotate: -30
@@ -106,36 +102,36 @@ export default {
           {
             name: "销量",
             type: "bar",
-            data: this.monthData,
+            data: this.monthCarData,
             itemStyle: {
               normal: {
                 color: "#f56c6c"
               }
             }
           }
-        ],
+        ]
       });
     },
     Month: function(e) {
       this.$refs.Year.style.background = "#fff";
       this.$refs.Year.style.color = "#000";
-      e.currentTarget.style.background = "#f56c6c";
-      e.currentTarget.style.color = "#fff";
+      this.$refs.Month.style.background = "#f56c6c";
+      this.$refs.Month.style.color = "#fff";
       this.yearShow = false;
       this.monthShow = true;
-      this.monthRank=true;
-      this.yearRank=false;
+      this.monthRank = true;
+      this.yearRank = false;
       this.drawMonth();
     },
     Year: function(e) {
       this.$refs.Month.style.background = "#fff";
       this.$refs.Month.style.color = "#000";
-      e.currentTarget.style.background = "#409eef";
-      e.currentTarget.style.color = "#fff";
+      this.$refs.Year.style.background = "#409eef";
+      this.$refs.Year.style.color = "#fff";
       this.yearShow = true;
       this.monthShow = false;
-      this.yearRank=true;
-      this.monthRank=false;
+      this.yearRank = true;
+      this.monthRank = false;
       const myChartYear = echarts.init(this.$refs.myChartYear);
       myChartYear.setOption({
         grid: {
@@ -148,14 +144,7 @@ export default {
         tooltip: {},
         xAxis: {
           name: "车型",
-          data: [
-            "奥德赛",
-            "宾智",
-            "飞度",
-            "锋范",
-            "凌派",
-            "雅阁",
-          ],
+          data: ["奥德赛", "宾智", "飞度", "锋范", "凌派", "雅阁"],
           axisLabel: {
             interval: 0,
             rotate: -30
@@ -168,7 +157,7 @@ export default {
           {
             name: "销量",
             type: "bar",
-            data: this.yearData,
+            data: this.yearCarData,
             itemStyle: {
               normal: {
                 color: "#409eef"
@@ -213,7 +202,7 @@ export default {
   display: flex;
   width: 60%;
 }
-.ranking-month p{
+.ranking-month p {
   color: #f56c6c;
   font-size: 18px;
 }
@@ -224,7 +213,8 @@ export default {
 .selected {
   background-color: #eaeaea;
 }
-.ranking-month,.ranking-year {
+.ranking-month,
+.ranking-year {
   position: absolute;
   right: 50px;
   top: 180px;

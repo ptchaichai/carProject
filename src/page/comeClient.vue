@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { isvalidPhone } from "./validPhone";
+import { isvalidPhone } from "./valid";
 const validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));

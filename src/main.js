@@ -6,6 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import Vuex from 'vuex'
 import axios from 'axios'
 import qs from 'qs'
+import store from './store/index'
 // import echarts from 'echarts'
 Vue.config.productionTip = false
 // const http = axios.create({
@@ -37,6 +38,7 @@ Vue.use(Vuex)
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

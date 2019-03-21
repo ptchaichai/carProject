@@ -46,12 +46,12 @@
     <el-table-column
       prop="address"
       label="地址"
-      width="180">
+      width="200">
     </el-table-column>
     <el-table-column
       prop="carType"
       label="购买车型"
-      width="180">
+      width="160">
     </el-table-column>
     <el-table-column
       fixed="right"
@@ -94,7 +94,8 @@
 </template>
 
 <script>
-import { isvalidPhone } from "./validPhone";
+import { isvalidPhone } from "./valid";
+import { isvalidType} from "./valid";
 const validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));
@@ -104,6 +105,15 @@ const validPhone = (rule, value, callback) => {
     callback();
   }
 };
+const validType=(rule, value, callback) => {
+  if (!value) {
+    callback(new Error("请输入车型"));
+  } else if (!isvalidType(value)) {
+    callback(new Error("请输入正确的车型:奥德赛,宾智,飞度, 锋范,凌派,雅阁"));
+  } else {
+    callback();
+  }
+}
 export default {
   name: "buyClient",
   data() {
@@ -131,10 +141,7 @@ export default {
           { required: true, message: "请输入姓名", trigger: "blur" },
           { min: 2, max: 4, message: "长度在 2 到 4 个字符", trigger: "blur" }
         ],
-        carType: [
-          { required: true, message: "请输入车型", trigger: "blur" },
-          { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" }
-        ],
+        carType: [{ required: true,trigger: "blur", validator: validType }],
         tel: [{ required: true, trigger: "blur", validator: validPhone }]
       },
       updateForm: {
@@ -148,10 +155,7 @@ export default {
           { required: true, message: "请输入活动名称", trigger: "blur" },
           { min: 2, max: 5, message: "长度在 2 到 5 个字符", trigger: "blur" }
         ],
-        carType: [
-          { required: true, message: "请输入车型", trigger: "blur" },
-          { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" }
-        ],
+        carType: [{ required: true,trigger: "blur", validator: validType }],
         tel: [{ required: true, trigger: "blur", validator: validPhone }]
       }
     };
@@ -175,6 +179,7 @@ export default {
           });
           this.$refs[ruleForm].resetFields();
           this.dialogAdd = false;
+          this.$store.dispatch('addcar',inputCar);
         } else {
           return false;
         }

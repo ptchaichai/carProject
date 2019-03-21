@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { isvalidPhone } from "./validPhone";
+import { isvalidPhone } from "./valid";
 const validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));
@@ -99,7 +99,7 @@ export default {
     return {
       dialogDelete: false,
       dialogUpdate: false,
-      dialogAdd:false,
+      dialogAdd: false,
       inputName: "",
       inputTel: "",
       inputAdd: "",
@@ -133,30 +133,60 @@ export default {
           { min: 2, max: 5, message: "请输入 2 到 5 个字符", trigger: "blur" }
         ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }]
-      }
+      },
+      tableTel:[],
     };
   },
   methods: {
-    add:function(){
-      this.dialogAdd=true;
+    add: function() {
+      this.dialogAdd = true;
     },
     addConfirm: function(ruleForm) {
       const inputName = this.ruleForm.name;
       const inputTel = this.ruleForm.tel;
       const inputAdd = this.ruleForm.address;
-      this.$refs[ruleForm].validate(valid => {
-        if (valid) {
-          this.tableData.push({
-            name: inputName,
-            tel: inputTel,
-            address: inputAdd
-          });
-          this.$refs[ruleForm].resetFields();
-          this.dialogAdd = false;
-        } else {
-          return false;
+      const tableL = this.tableData.length;
+      if (tableL === 0) {
+        this.$refs[ruleForm].validate(valid => {
+          if (valid) {
+            this.tableData.push({
+              name: inputName,
+              tel: inputTel,
+              address: inputAdd
+            });
+            this.$refs[ruleForm].resetFields();
+            this.dialogAdd = false;
+            this.$store.dispatch("addCall", 0);
+          } else {
+            return false;
+          }
+        });
+      } else if (tableL > 0) {
+        for (let i = 0; i < tableL; i += 1) {
+           this.tableTel.push(this.tableData[i].tel);
+          if (this.tableTel.indexOf(inputTel) < 0) {
+            this.$refs[ruleForm].validate(valid => {
+              if (valid) {
+                this.tableData.push({
+                  name: inputName,
+                  tel: inputTel,
+                  address: inputAdd
+                });
+                this.$refs[ruleForm].resetFields();
+                this.dialogAdd = false;
+                this.$store.dispatch("addCall", 0);
+              } else {
+                return false;
+              }
+            });
+          } else {
+            this.$message({
+              message: "该号码已存在",
+              type: "warning"
+            });
+          }
         }
-      });
+      }
     },
     addCancel: function(ruleForm) {
       this.$refs[ruleForm].resetFields();
@@ -185,7 +215,7 @@ export default {
         }
       });
     },
-    updateCancel:function(updateForm) {
+    updateCancel: function(updateForm) {
       this.$refs[updateForm].resetFields();
       this.dialogUpdate = false;
     },
@@ -202,7 +232,7 @@ export default {
 </script>
 
 <style scoped>
-.call-client{
+.call-client {
   width: 90%;
   margin: 50px auto;
 }
@@ -244,10 +274,10 @@ export default {
 .el-icon-warning {
   color: red;
 }
-.el-dialog__header{
+.el-dialog__header {
   padding: 20px 20px 0px;
 }
-.el-dialog__title{
+.el-dialog__title {
   font-weight: 700;
 }
 </style>
