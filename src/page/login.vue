@@ -2,15 +2,15 @@
     <div class="login" >
     <el-tag>用户登录</el-tag>
     <el-form  :model="rulesForm" :rules="rules" ref="rulesForm">
-      <el-form-item label="用户名:" prop="name">
-        <el-input v-model="rulesForm.name" placeholder="请输入用户名"></el-input>
+      <el-form-item label="账号:" prop="name">
+        <el-input v-model="rulesForm.name" placeholder="请输入账号"></el-input>
       </el-form-item>
        <el-form-item label="密码:" prop="pwd">
         <el-input v-model="rulesForm.pwd" type="password" placeholder="请输入密码"></el-input>
       </el-form-item>
       <el-form-item label="请选择身份：" prop="identity">
          <el-radio-group v-model="rulesForm.identity">
-            <el-radio label="a" border></el-radio>
+            <el-radio label="总经理" border></el-radio>
             <el-radio label="销售经理" border></el-radio>
             <el-radio label="销售人员" border></el-radio>
           </el-radio-group>
@@ -36,7 +36,7 @@ export default {
       },
       rules:{
         name: [
-          { type: "number", required: true, message: '请输入用户名', trigger: 'blur' }
+          {required: true, message: '请输入账号', trigger: 'blur' }
         ],
         pwd: [
           { required: true, message: '请输入登录密码', trigger: 'blur' }

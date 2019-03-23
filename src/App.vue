@@ -1,22 +1,6 @@
 <template>
   <div id="app">
-    <router-view v-show="loginShow"></router-view>
-    <v-login v-show="loginShow"
-    @loginSuccess="loginSuccess"
-    ></v-login>
-    <el-container v-show="show">
-      <el-header>
-        <v-header @backLogin="backLogin"></v-header>
-      </el-header>
-      <el-container>
-        <el-aside width="200px">
-          <v-sidebar></v-sidebar>
-        </el-aside>
-        <el-container>
-          <el-main><router-view v-show="show"></router-view></el-main>
-        </el-container>
-      </el-container>
-    </el-container>
+    <router-view></router-view>
   </div>
 </template>
 

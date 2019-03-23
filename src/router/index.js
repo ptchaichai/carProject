@@ -13,67 +13,81 @@ import buyClient from '@/page/buyClient'
 import announcement from '@/page/announcement'
 import home from '@/page/home'
 import perfect from '@/page/perfect'
-
+import Login from '../page/login'
+import Index from '../page/index'
 Vue.use(Router)
 
 export default new Router({
   mode: 'history',
   routes: [
+    {path: '/', redirect: '/login'},
     {
-      path: '/perfect',
-      name: 'perfect',
-      component: perfect
+      path: '/login',
+      component: Login
     },
     {
-      path: '/home',
-      name: 'home',
-      component: home
+      path: '/manage',
+      component: Index,
+      children: [
+        {
+          path: 'perfect',
+          name: 'perfect',
+          component: perfect
+        },
+        {
+          path: 'home',
+          name: 'home',
+          component: home
+        },
+
+        {
+          path: 'information',
+          name: 'information',
+          component:information
+        },
+        {
+          path: 'subordinate',
+          name: 'subordinate',
+          component: subordinate
+        },
+        {
+          path: 'updatePwd',
+          name: 'updatePwd',
+          component: updatePwd
+        },
+        {
+          path: 'saleInformation',
+          name: 'saleInformation',
+          component: saleInformation
+        },
+        {
+          path: 'carInformation',
+          name: 'carInformation',
+          component: carInformation
+        },
+        {
+          path: 'callClient',
+          name: 'callClient',
+          component: callClient
+        },
+        {
+          path: 'comeClient',
+          name: 'comeClient',
+          component:comeClient
+        },
+        {
+          path: 'buyClient',
+          name: 'buyClient',
+          component: buyClient
+        },
+        {
+          path: 'announcement',
+          name: 'announcement',
+          component: announcement
+        },
+
+      ]
     },
 
-    {
-      path: '/information',
-      name: 'information',
-      component:information
-    },
-    {
-      path: '/subordinate',
-      name: 'subordinate',
-      component: subordinate
-    },
-    {
-      path: '/updatePwd',
-      name: 'updatePwd',
-      component: updatePwd
-    },
-    {
-      path: '/saleInformation',
-      name: 'saleInformation',
-      component: saleInformation
-    },
-    {
-      path: '/carInformation',
-      name: 'carInformation',
-      component: carInformation
-    },
-    {
-      path: '/callClient',
-      name: 'callClient',
-      component: callClient
-    },
-    {
-      path: '/comeClient',
-      name: 'comeClient',
-      component:comeClient
-    },
-    {
-      path: '/buyClient',
-      name: 'buyClient',
-      component: buyClient
-    },
-    {
-      path: '/announcement',
-      name: 'announcement',
-      component: announcement
-    },
   ]
 })
