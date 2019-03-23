@@ -8,8 +8,17 @@
         <el-form-item label="住址" prop="address">
           <el-input v-model="ruleForm.address" placeholder="请输入住址"></el-input>
         </el-form-item>
-        <el-form-item label="年龄" prop="age">
-          <el-input v-model="ruleForm.age" placeholder="请输入年龄"></el-input>
+        <!--<el-form-item label="年龄" prop="age">-->
+          <!--<el-input v-model="ruleForm.age" placeholder="请输入年龄"></el-input>-->
+        <!--</el-form-item>-->
+        <el-form-item label="出生日期" prop="age">
+        <div class="block">
+          <el-date-picker
+            v-model="ruleForm.age"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
+        </div>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-select v-model="ruleForm.sex" placeholder="请选择性别色" @change="change">
@@ -38,6 +47,7 @@
         name: "perfect",
       data(){
           return{
+            value:"",
             roles:[
               {label:'男',id:1,value:'男'},
               {label:'女',id:2,value:'女'},
@@ -54,7 +64,7 @@
                 { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
               ],
               email: [{ required: true, trigger: "blur", validator: validEmail }],
-              age: [{ required: true, trigger: "blur", message: "请输入年龄"},{ type:'number', message: '必须是数字' }],
+              age: [{ required: true, trigger: "blur", message: "请选择出生日期"}],
               sex: [{ required: true,message: "请选择性别", trigger: "blur" },],
             },
         }

@@ -44,17 +44,17 @@
           },
           {
             menuName: '个人信息管理',
-            menuUrl: '/personal',
+            menuUrl: '/manage/personal',
             menuIndex: '1',
             menuSubLink: [
               {
                 menuName: '个人信息',
-                menuUrl: '/information',
+                menuUrl: '/manage/information',
                 menuIndex: '1-1'
               },
               {
                 menuName: '信息管理',
-                menuUrl: '/subordinate',
+                menuUrl: '/manage/subordinate',
                 menuIndex: '1-3'
               },
             ]
@@ -66,29 +66,29 @@
             menuSubLink: [
               {
                 menuName: '来电客户',
-                menuUrl: '/callClient',
+                menuUrl: '/manage/callClient',
                 menuIndex: '2-1'
               },
               {
                 menuName: '来店客户',
-                menuUrl: '/comeClient',
+                menuUrl: '/manage/comeClient',
                 menuIndex: '2-2'
               },
               {
                 menuName: '购车客户',
-                menuUrl: '/buyClient',
+                menuUrl: '/manage/buyClient',
                 menuIndex: '2-3'
               },
             ]
           },
           {
             menuName: '销售信息管理',
-            menuUrl: '/saleInformation',
+            menuUrl: '/manage/saleInformation',
             menuIndex: '3'
           },
           {
             menuName: '汽车信息管理',
-            menuUrl: '/carInformation',
+            menuUrl: '/manage/carInformation',
             menuIndex: '4'
           },
           {
@@ -98,12 +98,12 @@
             menuSubLink: [
               {
                 menuName: '完善资料',
-                menuUrl: '/perfect',
+                menuUrl: '/manage/perfect',
                 menuIndex: '5-1'
               },
               {
                 menuName: '修改密码',
-                menuUrl: '/updatePwd',
+                menuUrl: '/manage/updatePwd',
                 menuIndex: '5-2'
               },
             ]
