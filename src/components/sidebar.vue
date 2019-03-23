@@ -53,11 +53,6 @@
                 menuIndex: '1-1'
               },
               {
-                menuName: '修改密码',
-                menuUrl: '/updatePwd',
-                menuIndex: '1-2'
-              },
-              {
                 menuName: '信息管理',
                 menuUrl: '/subordinate',
                 menuIndex: '1-3'
@@ -97,9 +92,21 @@
             menuIndex: '4'
           },
           {
-            menuName: '测试',
-            menuUrl: '/test',
-            menuIndex: '5'
+            menuName: '高级设置',
+            menuUrl: '/advance',
+            menuIndex: '5',
+            menuSubLink: [
+              {
+                menuName: '完善资料',
+                menuUrl: '/perfect',
+                menuIndex: '5-1'
+              },
+              {
+                menuName: '修改密码',
+                menuUrl: '/updatePwd',
+                menuIndex: '5-2'
+              },
+            ]
           },
         ]
       };
@@ -117,8 +124,11 @@
     background-color: #fff;
   }
   .el-menu-vertical-demo {
-    /* border-radius: 20px; */
-    border:1px solid #0093e6
+    background: #fafafa;
+  }
+  .el-col-24{
+    border-right: 1px solid #0093e6;
+    background: #fafafa;
   }
   .first-menu{
     font-size: 18px !important;

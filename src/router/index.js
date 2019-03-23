@@ -12,7 +12,7 @@ import comeClient from '@/page/comeClient'
 import buyClient from '@/page/buyClient'
 import announcement from '@/page/announcement'
 import home from '@/page/home'
-import test from '@/page/test'
+import perfect from '@/page/perfect'
 
 Vue.use(Router)
 
@@ -20,9 +20,9 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/test',
-      name: 'test',
-      component: test
+      path: '/perfect',
+      name: 'perfect',
+      component: perfect
     },
     {
       path: '/home',
