@@ -6,3 +6,7 @@ export function isvalidType(str) {
   const arr=["奥德赛","宾智","飞度", "锋范","凌派","雅阁",]
   return arr.indexOf(str.trim())>=0
 }
+export function isvalidEmail(str) {
+  const reg = /^([a-zA-Z0-9._-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])/
+  return reg.test(str);
+}
