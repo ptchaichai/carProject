@@ -9,26 +9,26 @@ import qs from 'qs'
 import store from './store/index'
 // import echarts from 'echarts'
 Vue.config.productionTip = false
-// const http = axios.create({
-//   baseURL: window.location.origin,
-//   headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-// })
-// http.interceptors.request.use((config) => {
-//   return config
-// }, (error) => {
-//   return Promise.reject(error)
-// })
-// http.interceptors.response.use((res) => {
-//   if (res.data.status === 2) {
-//     window.location.href = '/index.php?r=login/Ulogin'
-//   }
-//   return res
-// }, (error) => {
-//   return Promise.reject(error)
-// })
-// Vue.prototype.$http = http
-// Vue.prototype.$http.all = axios.all
-// Vue.prototype.$http.spread = axios.spread
+const http = axios.create({
+  baseURL: window.location.origin,
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+})
+http.interceptors.request.use((config) => {
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
+http.interceptors.response.use((res) => {
+  if (res.data.status === 2) {
+    window.location.href = 'http://localhost:8080/login'
+  }
+  return res
+}, (error) => {
+  return Promise.reject(error)
+})
+Vue.prototype.$http = http
+Vue.prototype.$http.all = axios.all
+Vue.prototype.$http.spread = axios.spread
 Vue.prototype.qs = qs
 Vue.prototype.$ajax = axios
 // Vue.prototype.$echarts = echarts

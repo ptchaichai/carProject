@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>这里是主页</title>
+  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+  这里是主页，进行测试用的
+  <button id="check">查询</button>
+  <script>
+    var indexLogin = {
+      init: function(){
+        this.bindEvent();
+      },
+      bindEvent: function(){
+        $('#check').click(() => {
+          let name = 'root';
+          $.ajax({
+            url: 'http://127.0.0.1:3000/api/check',
+            data: {
+              name: name
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: (data) => {
+              console.log('登陆')
+            },
+            error: (e) => {
+              console.log(e)
+            }
+          })
+        })
+      },
+    }
+    indexLogin.init()
+  </script>
+</body>
+</html>

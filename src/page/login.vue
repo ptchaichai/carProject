@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import API from  './api.js'
 export default {
   name: "login",
   data(){
@@ -48,7 +49,18 @@ export default {
   },
   methods:{
     onSubmit:function(){
-      this.$emit('loginSuccess');
+      //this.$emit('loginSuccess');
+      let param = {
+        name: this.rulesForm.name,
+        pwd: this.rulesForm.pwd,
+      }
+      this.$http.post(API.LOGIN, this.qs.stringify(param)).then((result) => {
+        if(result.data.status === 0) {
+          console.log('登录成功')
+        } else {
+          console.log('登录失败')
+        }
+      })
     },
     resetForm:function(rulesForm){
       this.$refs[rulesForm].resetFields();

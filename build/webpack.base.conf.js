@@ -78,5 +78,22 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
+  },
+  devServer: {
+    port: config.dev.port,
+    host: config.dev.host,    
+    historyApiFallback: true,
+    watchOptions: {
+      ignored: /node_modules/
+    },
+    hot: true,
+    proxy: {
+      '/api':{
+        target: 'http://127.0.0.1:3000/',
+        changeOrigin: true,
+        secure: false
+      }
+    },
   }
 }
+ 
