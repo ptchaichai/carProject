@@ -11,7 +11,7 @@ import db from './db'
 // 登录
 router.post('/api/login', function(req, res, next) {
   let params = req.body
-  let sql = `select * from user where username = '${params.name}' and password = '${params.pwd}'` 
+  let sql = `select * from user where username = '${params.name}' and password = '${params.pwd}' and role = '${params.role}'` 
     db.query(sql, function(err, data){
     if(err) {
       res.json({

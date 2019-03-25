@@ -53,6 +53,7 @@ export default {
       let param = {
         name: this.rulesForm.name,
         pwd: this.rulesForm.pwd,
+        role: '0'
       }
       this.$http.post(API.LOGIN, this.qs.stringify(param)).then((result) => {
         if(result.data.status === 0) {
