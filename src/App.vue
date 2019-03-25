@@ -5,18 +5,15 @@
 </template>
 
 <script>
-  import header from './components/header'
-  import sidebar from './components/sidebar'
-  import footer from './components/footer'
-  import login from './components/login'
-  // import content from './components/content'
+  // import header from './components/header'
+  // import sidebar from './components/sidebar'
+  // import footer from './components/footer'
 export default {
   name: 'App' ,
   components: {
-     'v-header':header,
-     'v-sidebar':sidebar,
-     'v-footer':footer,
-     'v-login':login,
+     // 'v-header':header,
+     // 'v-sidebar':sidebar,
+     // 'v-footer':footer,
   },
   data(){
     return {

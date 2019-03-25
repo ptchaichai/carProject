@@ -57,9 +57,16 @@ export default {
       }
       this.$http.post(API.LOGIN, this.qs.stringify(param)).then((result) => {
         if(result.data.status === 0) {
-          console.log('登录成功')
+          this.$router.push({ path: "/manage" });
+          this.$message({
+            message: "登录成功",
+          });
+          console.log('登录成功');
         } else {
-          console.log('登录失败')
+          this.$message({
+            message: "登录失败",
+          });
+          console.log('登录失败');
         }
       })
     },

@@ -62,7 +62,7 @@ export default {
     },
     goAnnouncement() {
       this.badgeShow = false;
-      this.$router.push({ path: "/announcement" });
+      this.$router.push({ path: "/manage/announcement" });
     }
   },
   mounted() {

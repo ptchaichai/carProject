@@ -1,18 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import login from '@/page/login'
-// import login from '@/components/login'
-import information from '@/page/information'
-import subordinate from '@/page/subordinate'
-import updatePwd from '@/page/updatePwd'
-import saleInformation from '@/page/saleInformation'
-import carInformation from '@/page/carInformation'
-import callClient from '@/page/callClient'
-import comeClient from '@/page/comeClient'
-import buyClient from '@/page/buyClient'
-import announcement from '@/page/announcement'
-import home from '@/page/home'
-import perfect from '@/page/perfect'
+import information from '../page/information'
+import subordinate from '../page/subordinate'
+import updatePwd from '../page/updatePwd'
+import saleInformation from '../page/saleInformation'
+import carInformation from '../page/carInformation'
+import callClient from '../page/callClient'
+import comeClient from '../page/comeClient'
+import buyClient from '../page/buyClient'
+import announcement from '../page/announcement'
+import home from '../page/home'
+import perfect from '../page/perfect'
 import Login from '../page/login'
 import Index from '../page/index'
 Vue.use(Router)
@@ -29,6 +27,7 @@ export default new Router({
       path: '/manage',
       component: Index,
       children: [
+        {path: '', redirect: '/manage/home'},
         {
           path: 'perfect',
           name: 'perfect',
