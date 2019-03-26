@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import verifyPassWordTip from "./verifyPassWordTip";
+import verifyPassWordTip from "./../verifyPassWordTip";
 export default {
   name: "updatePwd",
   data() {

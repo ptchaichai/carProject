@@ -4,8 +4,9 @@
       <div class="search-add">
       <div class="box">
       <el-form ref="form" :model="form" class="search-form">
-      <el-input v-model="search" placeholder="请输入名称"
+      <el-input v-model="searchData" placeholder="请输入客户姓名"
             suffix-icon="el-icon-search"></el-input>
+            <el-button type="success"  class="search" @click="search">搜索</el-button>
      </el-form>
      <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
      <div class="dialog-box">
@@ -25,6 +26,12 @@
          <el-form-item label="购买车型" prop="carType">
           <el-select v-model="ruleForm.carType" placeholder="请选择车型" @change="change">
             <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value">
+            </el-option>
+          </el-select>
+         </el-form-item>
+         <el-form-item label="购买价格" prop="price" class="price-form">
+          <el-select v-model="ruleForm.price" placeholder="请选择价格范围" @change="change">
+            <el-option v-for="item in roles1" :label="item.label" :key="item.id" :value="item.value">
             </el-option>
           </el-select>
          </el-form-item>
@@ -68,17 +75,23 @@
     <el-table-column
       prop="carType"
       label="购买车型"
-      mix-width="15%"
+      mix-width="10%"
+      align="center">
+    </el-table-column>
+    <el-table-column
+      prop="carType"
+      label="购买价格"
+      mix-width="10%"
       align="center">
     </el-table-column>
     <el-table-column
       fixed="right"
       label="操作"
       width="150"
-      mix-width="25%"
+      mix-width="20%"
       align="center">
       <template slot-scope="scope">
-      <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index,scope.row)">修改</el-button>
+      <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改</el-button>
         <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
       </template>
     </el-table-column>
@@ -111,6 +124,12 @@
             </el-option>
           </el-select>
          </el-form-item>
+         <el-form-item label="购买价格" prop="price">
+          <el-select v-model="updateForm.price" placeholder="请选择价格范围" @change="change" class="price-form">
+            <el-option v-for="item in roles1" :label="item.label" :key="item.id" :value="item.value">
+            </el-option>
+          </el-select>
+         </el-form-item>
         </el-form>
         <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
           <el-button @click="updateCancel('updateForm')"  round>取 消</el-button>
@@ -119,8 +138,8 @@
 </template>
 
 <script>
-import { isvalidPhone } from "./valid";
-import { isvalidEmail } from "./valid";
+import { isvalidPhone } from "./../valid";
+import { isvalidEmail } from "./../valid";
 const validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));
@@ -143,13 +162,14 @@ export default {
   name: "buyClient",
   data() {
     return {
+      searchData:"",
       dialogDelete: false,
       visible: false,
       dialogUpdate: false,
       dialogAdd: false,
       rowVal: "",
       currentIndex: "",
-      deleteVal: "",
+      currentIndex: "",
       tableData: [],
       roles: [
         { label: "奥德赛", value: "奥德赛" },
@@ -159,12 +179,20 @@ export default {
         { label: "凌派", value: "凌派" },
         { label: "雅阁", value: "雅阁" }
       ],
+      roles1:[
+        {label:'10万以下',value:'10万以下'},
+        {label:'10~20(万)',value:'10~20(万)'},
+        {label:'20~30(万)',value:'20~30(万)'},
+        {label:'30~40(万)',value:'30~40(万)'},
+        {label:'40万以上',value:'40万以上'},
+      ],
       ruleForm: {
         name: "",
         tel: "",
         email: "",
         address: "",
-        carType: ""
+        carType: "",
+        price:""
       },
       rules: {
         name: [
@@ -176,6 +204,7 @@ export default {
           { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
         ],
         carType: [{ required: true, trigger: "blur", message: "请选择车型" }],
+        price: [{ required: true, trigger: "blur", message: "请选择价格" }],
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
         email: [{ required: true, trigger: "blur", validator: validEmail }]
       },
@@ -184,7 +213,8 @@ export default {
         tel: "",
         email: "",
         address: "",
-        carType: ""
+        carType: "",
+        price:"",
       },
       rulesUpdate: {
         name: [
@@ -196,6 +226,7 @@ export default {
           { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
         ],
         carType: [{ required: true, trigger: "blur", message: "请选择车型" }],
+        price: [{ required: true, trigger: "blur", message: "请选择价格" }],
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
         email: [{ required: true, trigger: "blur", validator: validEmail }]
       }
@@ -216,33 +247,51 @@ export default {
         return "background-color: #409eff; color: #fff; font-weight: 500;";
       }
     },
+    search: function() {
+      const val = this.searchData;
+      if (val !== "") {
+        const form = {
+          searchVal: val
+        };
+        this.$axios
+          .post("api/searchCall", this.$qs.stringify(form))
+          .then(res => {
+            if (res.data.status === 0) {
+              this.tableData = res.data;
+            } else {
+              this.$message.error("搜索失败");
+            }
+          });
+      }
+    },
     add: function() {
       this.dialogAdd = true;
     },
     addConfirm: function(ruleForm) {
-      const inputName = this.ruleForm.name;
-      const inputTel = this.ruleForm.tel;
-      const inputEmail = this.ruleForm.email;
-      const inputAdd = this.ruleForm.address;
-      const inputCar = this.ruleForm.carType;
+      const form = {
+        name: this.ruleForm.name,
+        tel: this.ruleForm.tel,
+        email: this.ruleForm.email,
+        address: this.ruleForm.address,
+        carType:this.ruleForm.carType,
+        price:this.ruleForm.price,
+      };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this.tableData.push({
-            name: inputName,
-            tel: inputTel,
-            email: inputEmail,
-            address: inputAdd,
-            carType: inputCar
-          });
-          this.$refs[ruleForm].resetFields();
-          this.dialogAdd = false;
-          this.$message({
-            message: "添加成功",
-            type: "success"
-          });
+          this.$axios
+            .post("api/addBuy", this.$qs.stringify(form))
+            .then(res => {
+              if (res.data.status === 0) {
+                this.tableData = res.data;
+                this.$refs[ruleForm].resetFields();
+                this.dialogAdd = false;
+                this.$message.success("添加成功");
+              } else {
+                this.$message.error("添加失败");
+              }
+            });
         } else {
           return false;
-          this.$message.error("添加失败");
         }
       });
     },
@@ -250,37 +299,41 @@ export default {
       this.$refs[ruleForm].resetFields();
       this.dialogAdd = false;
     },
-    update: function(rowIndex, rowVal) {
-      this.updateForm.name = rowVal.name;
-      this.updateForm.tel = rowVal.tel;
-      this.updateForm.email = rowVal.email;
-      this.updateForm.address = rowVal.address;
-      this.updateForm.carType = rowVal.carType;
+    update: function(index) {
+      const thisData = this.tableData[index].data;
+      this.updateForm.name = thisData.name;
+      this.updateForm.tel = thisData.tel;
+      this.updateForm.email = thisData.email;
+      this.updateForm.address = thisData.address;
+      this.updateForm.carType = thisData.carType;
+      this.updateForm.price = thisData.price;
       this.dialogUpdate = true;
-      this.currentIndex = rowIndex;
-      this.rowVal = rowVal;
+      this.currentIndex = index;
     },
     updateConfirm: function(updateForm) {
-      const name = this.updateForm.name;
-      const tel = this.updateForm.tel;
-      const email = this.updateForm.email;
-      const address = this.updateForm.address;
-      const carType = this.updateForm.carType;
+      const form = {
+        name: this.updateForm.name,
+        tel: this.ruleForm.tel,
+        email: this.updateForm.email,
+        address: this.updateForm.address,
+        carType: this.updateForm.carType,
+        price: this.updateForm.price
+      };
       this.$refs[updateForm].validate(valid => {
         if (valid) {
-          this.tableData[this.currentIndex].name = name;
-          this.tableData[this.currentIndex].tel = tel;
-          this.tableData[this.currentIndex].email = email;
-          this.tableData[this.currentIndex].address = address;
-          this.tableData[this.currentIndex].carType = carType;
-          this.dialogUpdate = false;
-          this.$message({
-            message: "修改成功",
-            type: "success"
-          });
+          this.$axios
+            .post("api/updatBuy", this.$qs.stringify(form))
+            .then(res => {
+              if (res.data.status === 0) {
+                this.tableData[currentIndex] = res.data;
+                this.dialogUpdate = false;
+                this.$message.success("添加成功");
+              } else {
+                this.$message.error("修改失败");
+              }
+            });
         } else {
           return false;
-          this.$message.error("修改失败");
         }
       });
     },
@@ -290,15 +343,23 @@ export default {
     },
     deleteRow: function(index) {
       this.dialogDelete = true;
-      this.deleteVal = index;
+      this.currentIndex = index;
     },
     removeConfirm: function() {
-      this.tableData.splice(this.deleteVal, 1);
-      this.dialogDelete = false;
-      this.$message({
-        message: "删除成功",
-        type: "success"
-      });
+       const form = {
+        id: this.id
+      };
+      this.$axios
+        .post("api/deleteBuy", this.$qs.stringify(form))
+        .then(res => {
+          if (res.data.status === 0) {
+            this.tableData.splice(this.currentIndex, 1);
+            this.dialogDelete = false;
+            this.$message.success("删除成功");
+          } else {
+            this.$message.error("删除失败");
+          }
+        });
     }
   }
 };
@@ -344,6 +405,11 @@ export default {
   margin-top: 30px;
   position: relative;
 }
+.search {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
 .update {
   margin-right: 20px;
 }
@@ -353,5 +419,8 @@ export default {
 .el-select {
   width: 100%;
   margin-bottom: 20px;
+}
+.price-form{
+  margin-top:-20px;
 }
 </style>

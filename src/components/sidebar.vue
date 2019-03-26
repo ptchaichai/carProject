@@ -44,39 +44,39 @@
           },
           {
             menuName: '个人信息管理',
-            menuUrl: '/manage/personal',
+            menuUrl: '/manage/personalMange',
             menuIndex: '1',
             menuSubLink: [
               {
                 menuName: '个人信息',
-                menuUrl: '/manage/personal',
+                menuUrl: '/manage/personalMange/personal',
                 menuIndex: '1-1'
               },
               {
                 menuName: '信息管理',
-                menuUrl: '/manage/subordinate',
+                menuUrl: '/manage/personalMange/subordinate',
                 menuIndex: '1-3'
               },
             ]
           },
           {
             menuName: '客户信息管理',
-            menuUrl: '/ client',
+            menuUrl: '/manage/clientManage',
             menuIndex: '2',
             menuSubLink: [
               {
                 menuName: '来电客户',
-                menuUrl: '/manage/callClient',
+                menuUrl: '/manage/clientManage/callClient',
                 menuIndex: '2-1'
               },
               {
                 menuName: '来店客户',
-                menuUrl: '/manage/comeClient',
+                menuUrl: '/manage/clientManage/comeClient',
                 menuIndex: '2-2'
               },
               {
                 menuName: '购车客户',
-                menuUrl: '/manage/buyClient',
+                menuUrl: '/manage/clientManage/buyClient',
                 menuIndex: '2-3'
               },
             ]
@@ -93,17 +93,17 @@
           },
           {
             menuName: '高级设置',
-            menuUrl: '/advance',
+            menuUrl: '/manage/advance',
             menuIndex: '5',
             menuSubLink: [
               {
                 menuName: '完善资料',
-                menuUrl: '/manage/perfect',
+                menuUrl: '/manage/advance/perfect',
                 menuIndex: '5-1'
               },
               {
                 menuName: '修改密码',
-                menuUrl: '/manage/updatePwd',
+                menuUrl: '/manage/advance/updatePwd',
                 menuIndex: '5-2'
               },
             ]

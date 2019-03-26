@@ -4,8 +4,9 @@
       <div class="search-add">
       <div class="box">
       <el-form ref="form" :model="form" class="search-form">
-      <el-input v-model="search" placeholder="请输入名称"
+      <el-input v-model="searchData" placeholder="请输入客户姓名"
             suffix-icon="el-icon-search"></el-input>
+            <el-button type="success"  class="search" @click="search">搜索</el-button>
      </el-form>
      <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
      <div class="dialog-box">
@@ -22,8 +23,8 @@
           <el-form-item label="地址" prop="address">
           <el-input v-model="ruleForm.address" placeholder="请输入地址"></el-input>
          </el-form-item>
-         <el-form-item label="价格意愿（万元）" prop="price">
-          <el-select v-model="ruleForm.price" placeholder="请选择价格范围" @change="change">
+         <el-form-item label="关注车型" prop="carType">
+          <el-select v-model="ruleForm.carType" placeholder="请选择车型" @change="change">
             <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value">
             </el-option>
           </el-select>
@@ -66,8 +67,8 @@
      align="center">
     </el-table-column>
     <el-table-column
-      prop="price"
-      label="价格意愿"
+      prop="carType"
+      label="关注车型"
       mix-width="15%"
       align="center">
     </el-table-column>
@@ -78,7 +79,7 @@
       mix-width="25%"
       align="center">
       <template slot-scope="scope">
-    <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index,scope.row)">修改</el-button>
+    <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改</el-button>
         <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
       </template>
     </el-table-column>
@@ -105,8 +106,8 @@
           <el-form-item label="地址" prop="address">
           <el-input v-model="updateForm.address" placeholder="请输入地址"></el-input>
          </el-form-item>
-         <el-form-item label="价格意愿（万元）" prop="price">
-          <el-select v-model="updateForm.price" placeholder="请选择价格范围" @change="change">
+         <el-form-item label="关注车型" prop="carType">
+          <el-select v-model="updateForm.carType" placeholder="请选择车型" @change="change">
             <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value">
             </el-option>
           </el-select>
@@ -119,8 +120,8 @@
 </template>
 
 <script>
-import { isvalidPhone } from "./valid";
-import { isvalidEmail } from "./valid"
+import { isvalidPhone } from "./../valid";
+import { isvalidEmail } from "./../valid"
 const validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));
@@ -143,27 +144,29 @@ export default {
   name: "callClient",
   data() {
     return {
+      searchData:"",
       dialogDelete: false,
       dialogUpdate: false,
       dialogAdd: false,
       inputName: "",
       rowVal: "",
       currentIndex: "",
-      deleteVal: "",
+      currentIndex: "",
       tableData: [],
-      roles:[
-        {label:'10万以下',value:'10万以下'},
-        {label:'10~20(万)',value:'10~20(万)'},
-        {label:'20~30(万)',value:'20~30(万)'},
-        {label:'30~40(万)',value:'30~40(万)'},
-        {label:'40万以上',value:'40万以上'},
+      roles: [
+        { label: "奥德赛", value: "奥德赛" },
+        { label: "宾智", value: "宾智" },
+        { label: "飞度", value: "飞度" },
+        { label: "锋范", value: "锋范" },
+        { label: "凌派", value: "凌派" },
+        { label: "雅阁", value: "雅阁" }
       ],
       ruleForm: {
         name: "",
         tel: "",
         email: "",
         address: "",
-        price: ""
+        carType: ""
       },
       rules: {
         name: [
@@ -176,14 +179,14 @@ export default {
         ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
         email: [{ required: true, trigger: "blur", validator: validEmail }],
-        price: [{ required: true,message: "请选择价格意愿", trigger: "blur" }],
+        carType: [{ required: true,message: "请选择价格意愿", trigger: "blur" }],
       },
       updateForm: {
         name: "",
         tel: "",
         email: "",
         address: "",
-        price: ""
+        carType: ""
       },
       rulesUpdate: {
         name: [
@@ -196,7 +199,7 @@ export default {
         ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
         email: [{ required: true, trigger: "blur", validator: validEmail }],
-        price: [{ required: true,message: "请选择价格意愿", trigger: "blur" }],
+        carType: [{ required: true,message: "请选择价格意愿", trigger: "blur" }],
       },
       tableTel: []
     };
@@ -216,33 +219,50 @@ export default {
         return "background-color: #409eff; color: #fff; font-weight: 500;";
       }
     },
+    search: function() {
+      const val = this.searchData;
+      if (val !== "") {
+        const form = {
+          searchVal: val
+        };
+        this.$axios
+          .post("api/searchCome", this.$qs.stringify(form))
+          .then(res => {
+            if (res.data.status === 0) {
+              this.tableData = res.data;
+            } else {
+              this.$message.error("搜索失败");
+            }
+          });
+      }
+    },
     add: function() {
       this.dialogAdd = true;
     },
     addConfirm: function(ruleForm) {
-      const inputName = this.ruleForm.name;
-      const inputTel = this.ruleForm.tel;
-      const inputEmail = this.ruleForm.email;
-      const inputAdd = this.ruleForm.address;
-      const inputPrice = this.ruleForm.price;
+      const form = {
+        name: this.ruleForm.name,
+        tel: this.ruleForm.tel,
+        email: this.ruleForm.email,
+        address: this.ruleForm.address,
+        carType:this.ruleForm.carType
+      };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this.tableData.push({
-            name: inputName,
-            email: inputEmail,
-            tel: inputTel,
-            address: inputAdd,
-            price: inputPrice
-          });
-          this.$refs[ruleForm].resetFields();
-          this.dialogAdd = false;
-          this.$message({
-          message: '添加成功',
-          type: 'success'
-        });
+          this.$axios
+            .post("api/addCome", this.$qs.stringify(form))
+            .then(res => {
+              if (res.data.status === 0) {
+                this.tableData = res.data;
+                this.$refs[ruleForm].resetFields();
+                this.dialogAdd = false;
+                this.$message.success("添加成功");
+              } else {
+                this.$message.error("添加失败");
+              }
+            });
         } else {
           return false;
-          this.$message.error('添加失败');
         }
       });
     },
@@ -250,37 +270,39 @@ export default {
       this.$refs[ruleForm].resetFields();
       this.dialogAdd = false;
     },
-    update: function(rowIndex, rowVal) {
-      this.updateForm.name = rowVal.name;
-      this.updateForm.tel = rowVal.tel;
-      this.updateForm.email = rowVal.email;
-      this.updateForm.address = rowVal.address;
-      this.updateForm.price = rowVal.price;
+    update: function(index) {
+      const thisData = this.tableData[index].data;
+      this.updateForm.name = thisData.name;
+      this.updateForm.tel = thisData.tel;
+      this.updateForm.email = thisData.email;
+      this.updateForm.address = thisData.address;
+      this.updateForm.carType = thisData.carType;
       this.dialogUpdate = true;
-      this.currentIndex = rowIndex;
-      this.rowVal = rowVal;
+      this.currentIndex = index;
     },
     updateConfirm: function(updateForm) {
-      const name = this.updateForm.name;
-      const tel = this.updateForm.tel;
-      const email = this.updateForm.email;
-      const address = this.updateForm.address;
-      const price = this.updateForm.price;
+      const form = {
+        name: this.updateForm.name,
+        tel: this.ruleForm.tel,
+        email: this.updateForm.email,
+        address: this.updateForm.address,
+        carType: this.updateForm.carType
+      };
       this.$refs[updateForm].validate(valid => {
         if (valid) {
-          this.tableData[this.currentIndex].name = name;
-          this.tableData[this.currentIndex].tel = tel;
-          this.tableData[this.currentIndex].email = email;
-          this.tableData[this.currentIndex].address = address;
-          this.tableData[this.currentIndex].price = price;
-          this.dialogUpdate = false;
-          this.$message({
-          message: '修改成功',
-          type: 'success'
-        });
+          this.$axios
+            .post("api/updateCome", this.$qs.stringify(form))
+            .then(res => {
+              if (res.data.status === 0) {
+                this.tableData[currentIndex] = res.data;
+                this.dialogUpdate = false;
+                this.$message.success("添加成功");
+              } else {
+                this.$message.error("修改失败");
+              }
+            });
         } else {
           return false;
-          this.$message.error('修改失败');
         }
       });
     },
@@ -290,14 +312,22 @@ export default {
     },
     deleteRow: function(index) {
       this.dialogDelete = true;
-      this.deleteVal = index;
+      this.currentIndex = index;
     },
     removeConfirm: function() {
-      this.tableData.splice(this.deleteVal, 1);
-      this.dialogDelete = false;
-      this.$message({
-          message: '删除成功',
-          type: 'success'
+      const form = {
+        id: this.id
+      };
+      this.$axios
+        .post("api/deleteCome", this.$qs.stringify(form))
+        .then(res => {
+          if (res.data.status === 0) {
+            this.tableData.splice(this.currentIndex, 1);
+            this.dialogDelete = false;
+            this.$message.success("删除成功");
+          } else {
+            this.$message.error("删除失败");
+          }
         });
     }
   }
@@ -330,7 +360,7 @@ export default {
   margin-left: -10px;
 }
 .box {
-  width: 90%px;
+  width: 90%;
   margin: 0 auto;
 }
 .add {
@@ -342,6 +372,11 @@ export default {
   width: 265px;
   margin-top: 30px;
   position: relative;
+}
+.search {
+  position: absolute;
+  top: 0px;
+  right: 0px;
 }
 .update {
   margin-right: 20px;

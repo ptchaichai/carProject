@@ -6,8 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import Vuex from 'vuex'
 import axios from 'axios'
 import qs from 'qs'
-import store from './store/index'
-// import echarts from 'echarts'
+// import store from './store/index'
 Vue.config.productionTip = false
 const http = axios.create({
   baseURL: window.location.origin,
@@ -29,8 +28,9 @@ http.interceptors.response.use((res) => {
 Vue.prototype.$http = http
 Vue.prototype.$http.all = axios.all
 Vue.prototype.$http.spread = axios.spread
-Vue.prototype.qs = qs
+Vue.prototype.$qs = qs
 Vue.prototype.$ajax = axios
+Vue.prototype.$axios = axios
 // Vue.prototype.$echarts = echarts
 Vue.use(ElementUI)
 Vue.use(Vuex)
@@ -38,7 +38,6 @@ Vue.use(Vuex)
 new Vue({
   el: '#app',
   router,
-  store,
   components: { App },
   template: '<App/>'
 })

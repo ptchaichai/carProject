@@ -4,8 +4,9 @@
       <div class="search-add">
       <div class="box">
       <el-form ref="form" :model="form" class="search-form">
-      <el-input v-model="search" placeholder="请输入名称"
-            suffix-icon="el-icon-search"></el-input>
+      <el-input v-model="searchInput" placeholder="请输入名称" suffix-icon="el-icon-search">
+      </el-input>
+      <el-button type="success"  class="search" @click="search">搜索</el-button>
      </el-form>
       <el-dialog title="添加公告" :visible.sync="dialogAdd"
        width="50%">
@@ -55,12 +56,12 @@
       mix-width="30%"
       align="center">
       <template slot-scope="scope">
-      <el-button slot="reference" type="primary" size="small" round class="update" @click="view(scope.$index,scope.row)">查看</el-button>
+      <el-button slot="reference" type="primary" size="small" round class="update" @click="view(scope.$index)">查看</el-button>
         <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
       </template>
     </el-table-column>
   </el-table>
-     <el-dialog title="公告内容" :visible.sync="dialogView" width="50%">
+          <el-dialog title="公告内容" :visible.sync="dialogView" width="50%">
               <div class="dialog-box">
                     <span class="view-span">公告标题:</span>
                     <el-input v-model="viewTitle" readonly="readonly"></el-input>
@@ -81,7 +82,7 @@
 </template>
 
 <script>
-import Bus from '../components/bus.js';
+import Bus from "../components/bus.js";
 export default {
   name: "updatePwd",
   data() {
@@ -92,13 +93,14 @@ export default {
       dialogView: false,
       dialogEdit: false,
       dialogDelete: false,
-      addContentVal:"",
+      addContentVal: "",
       tableData: [],
-      viewTitle:"",
-      viewContent:"",
+      viewTitle: "",
+      viewContent: "",
+      searchInput: "",
       ruleForm: {
-        title:"",
-        content:"",
+        title: "",
+        content: ""
       },
       rules: {
         title: [
@@ -107,9 +109,14 @@ export default {
         ],
         content: [
           { required: true, message: "请输入公告内容", trigger: "blur" },
-          { min: 10, max: 100, message: "长度在 10 到 100 个字符", trigger: "blur" }
-        ],
-      },
+          {
+            min: 10,
+            max: 100,
+            message: "长度在 10 到 100 个字符",
+            trigger: "blur"
+          }
+        ]
+      }
     };
   },
   methods: {
@@ -127,27 +134,49 @@ export default {
         return "background-color: #409eff; color: #fff; font-weight: 500;";
       }
     },
+    search: function() {
+      const val = this.searchInput;
+      if (val !== "") {
+        const form = {
+          searchVal: val
+        };
+        this.$axios
+          .post("api/searchAnnouncement", this.$qs.stringify(form))
+          .then(res => {
+            if (res.data.status === 0) {
+              this.tableData = res.data;
+            } else {
+              this.$message.error("搜索失败");
+            }
+          });
+      }
+    },
     open: function() {
       this.dialogAdd = true;
     },
+    // 添加公告
     addConfirm: function(ruleForm) {
-      const inputTitle = this.ruleForm.title;
-      const inputContent = this.ruleForm.content;
+      let form = {
+        title: this.ruleForm.title,
+        content: this.ruleForm.content,
+        author: "putian"
+      };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this.tableData.push({
-            title: inputTitle,
-            content: inputContent,
-          });
-          this.$refs[ruleForm].resetFields();
-          this.dialogAdd = false;
-          this.$message({
-            message: "添加成功",
-            type: "success"
-          });
+          this.$axios
+            .post("api/addAnnouncement", this.$qs.stringify(form))
+            .then(res => {
+              if (res.data.status === 0) {
+                this.tableData = res.data;
+                this.$refs[ruleForm].resetFields();
+                this.dialogAdd = false;
+                this.$message.success("添加成功");
+              } else {
+                this.$message.error("添加失败");
+              }
+            });
         } else {
           return false;
-          this.$message.error("添加失败");
         }
       });
     },
@@ -155,29 +184,34 @@ export default {
       this.$refs[ruleForm].resetFields();
       this.dialogAdd = false;
     },
-    viewContent: function(rowIndex, rowVal) {
+    view: function(index) {
       this.viewTitle = rowVal.title;
       this.viewContent = rowVal.title;
       this.dialogView = true;
-    },
-    cancelConfirm: function(i) {
-      // this.items[i].title = this.oldTitle;
-      // this.items[i].content = this.oldContent;
-      // this.showAnother = false;
-      // this.dialogEdit = false;
+      const thisData = this.tableData[index].data;
+      this.viewTitle = thisData.title;
+      this.viewContent = thisData.content;
     },
     deleteRow: function(index) {
       this.dialogDelete = true;
       this.currentIndex = index;
     },
     removeConfirm: function() {
-      const i = this.currentIndex;
-      this.items.splice(i, 1);
-      this.dialogDelete = false;
-      this.$message({
-            message: "删除成功",
-            type: "success"
-          });
+      let form = {
+        id: this.id
+      };
+      this.$axios
+        .post("api/deleteAnnouncement", this.$qs.stringify(form))
+        .then(res => {
+          if (res.data.status === 0) {
+            const i = this.currentIndex;
+            this.tableData.splice(i, 1);
+            this.dialogDelete = false;
+            this.$message.success("删除成功");
+          } else {
+            this.$message.error("删除失败");
+          }
+        });
     }
   }
 };
@@ -227,11 +261,11 @@ export default {
   text-align: left;
   margin: 5px 0;
 }
-.edit-form{
+.edit-form {
   text-align: left;
 }
-.el-input{
-  margin:10px 0;
+.el-input {
+  margin: 10px 0;
 }
 .container {
   position: relative;
@@ -262,8 +296,14 @@ export default {
   right: -46px;
   top: -5px;
 }
-.el-form{
+.el-form {
   width: 25%;
+  position: relative;
+}
+.el-button--success {
+  position: absolute;
+  top: 10px;
+  right: 0px;
 }
 .textarea {
   margin: 10px 0;

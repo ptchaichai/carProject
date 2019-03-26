@@ -83,7 +83,7 @@
       min-width="25%"
       align="center">
       <template slot-scope="scope">
-     <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index,scope.row)">修改</el-button>
+     <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改</el-button>
         <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
       </template>
     </el-table-column>
@@ -128,9 +128,8 @@
 </template>
 
 <script>
-import { isvalidPhone } from "./valid";
-import verifyPassWordTip from "./verifyPassWordTip";
-// import { isvalidpwd } from "./valid";
+import { isvalidPhone } from "./../valid";
+import verifyPassWordTip from "./../verifyPassWordTip";
 var validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));
@@ -230,9 +229,7 @@ export default {
         return "background-color: #409eff; color: #fff; font-weight: 500;";
       }
     },
-    add: function() {
-      this.dialogAdd = true;
-    },
+    // 输入密码判断
     changePasswordTip(isShow) {
       if (isShow) {
         this.isShowTip = true;
@@ -240,32 +237,52 @@ export default {
         this.isShowTip = false;
       }
     },
+    // 搜索table
+    search: function() {
+      const val = this.searchData;
+      if (val !== "") {
+        const form = {
+          searchVal: val
+        };
+        this.$axios
+          .post("api/searchSubordinate", this.$qs.stringify(form))
+          .then(res => {
+            if (res.data.status === 0) {
+              this.tableData = res.data;
+            } else {
+              this.$message.error("搜索失败");
+            }
+          });
+      }
+    },
+    add: function() {
+      this.dialogAdd = true;
+    },
     addInformation: function(ruleForm) {
-      const inputAccount = this.ruleForm.account;
-      const inputName = this.ruleForm.name;
-      const inputTel = this.ruleForm.tel;
-      const inputPwd = this.ruleForm.pwd;
-      const inputAdd = this.ruleForm.address;
-      const inputRole = this.ruleForm.role;
+      const form = {
+        account: this.ruleForm.account,
+        name: this.ruleForm.name,
+        tel: this.ruleForm.tel,
+        pwd: this.ruleForm.pwd,
+        address: this.ruleForm.address,
+        role: this.ruleForm.role
+      };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this.tableData.push({
-            account: inputAccount,
-            name: inputName,
-            tel: inputTel,
-            pwd: inputPwd,
-            address: inputAdd,
-            role: inputRole
-          });
-           this.$message({
-          message: '添加成功',
-          type: 'success'
-        });
-          this.$refs[ruleForm].resetFields();
-          this.dialogAdd = false;
+          this.$axios
+            .post("api/addSubordinate", this.$qs.stringify(form))
+            .then(res => {
+              if (res.data.status === 0) {
+                this.tableData = res.data;
+                this.$refs[ruleForm].resetFields();
+                this.dialogAdd = false;
+                this.$message.success("添加成功");
+              } else {
+                this.$message.error("添加失败");
+              }
+            });
         } else {
           return false;
-          this.$message.error('添加失败');
         }
       });
     },
@@ -273,40 +290,41 @@ export default {
       this.$refs[ruleForm].resetFields();
       this.dialogAdd = false;
     },
-    update: function(rowIndex, rowVal) {
-      this.updateForm.account = rowVal.account;
-      this.updateForm.name = rowVal.name;
-      this.updateForm.tel = rowVal.tel;
-      this.updateForm.pwd = rowVal.pwd;
-      this.updateForm.address = rowVal.address;
-      this.updateForm.role = rowVal.role;
-      this.currentIndex = rowIndex;
-      this.rowVal = rowVal;
+    update: function(index) {
+      const thisData = this.tableData[index].data;
+      this.updateForm.account = thisData.account;
+      this.updateForm.name = thisData.name;
+      this.updateForm.tel = thisData.tel;
+      this.updateForm.pwd = thisData.pwd;
+      this.updateForm.address = thisData.address;
+      this.updateForm.role = thisData.role;
+      this.currentIndex = index;
       this.dialogUpdate = true;
     },
     updateConfirm: function(updateForm) {
-      const account = this.updateForm.account;
-      const name = this.updateForm.name;
-      const tel = this.updateForm.tel;
-      const pwd = this.updateForm.pwd;
-      const address = this.updateForm.address;
-      const role = this.updateForm.role;
+      const form = {
+        account: this.updateForm.account,
+        name: this.updateForm.name,
+        tel: this.ruleForm.tel,
+        pwd: this.updateForm.pwd,
+        address: this.updateForm.address,
+        role: this.updateForm.role
+      };
       this.$refs[updateForm].validate(valid => {
         if (valid) {
-          this.tableData[this.currentIndex].account = account;
-          this.tableData[this.currentIndex].name = name;
-          this.tableData[this.currentIndex].tel = tel;
-          this.tableData[this.currentIndex].pwd = pwd;
-          this.tableData[this.currentIndex].address = address;
-          this.tableData[this.currentIndex].role = role;
-          this.dialogUpdate = false;
-          this.$message({
-          message: '修改成功',
-          type: 'success'
-        });
+          this.$axios
+            .post("api/updateSubordinate", this.$qs.stringify(form))
+            .then(res => {
+              if (res.data.status === 0) {
+                this.tableData[currentIndex] = res.data;
+                this.dialogUpdate = false;
+                this.$message.success("添加成功");
+              } else {
+                this.$message.error("修改失败");
+              }
+            });
         } else {
           return false;
-          this.$message.error('修改失败');
         }
       });
     },
@@ -314,16 +332,24 @@ export default {
       this.$refs[updateForm].resetFields();
       this.dialogUpdate = false;
     },
-    deleteRow: function(val) {
+    deleteRow: function(index) {
       this.dialogDelete = true;
-      this.deleteVal = val;
+      this.currentIndex = index;
     },
     removeConfirm: function() {
-      this.tableData.splice(this.deleteVal, 1);
-      this.dialogDelete = false;
-       this.$message({
-          message: '删除成功',
-          type: 'success'
+      const form = {
+        id: this.id
+      };
+      this.$axios
+        .post("api/deleteAnnouncement", this.$qs.stringify(form))
+        .then(res => {
+          if (res.data.status === 0) {
+            this.tableData.splice(this.currentIndex, 1);
+            this.dialogDelete = false;
+            this.$message.success("删除成功");
+          } else {
+            this.$message.error("删除失败");
+          }
         });
     }
   }

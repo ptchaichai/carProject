@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import { isvalidEmail } from "./valid"
+  import { isvalidEmail } from "./../valid"
   const validEmail = (rule, value, callback) => {
     if (!value) {
       callback(new Error("请输入邮箱"));

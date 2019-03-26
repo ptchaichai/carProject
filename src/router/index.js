@@ -1,16 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import personal from '../page/personal'
-import subordinate from '../page/subordinate'
-import updatePwd from '../page/updatePwd'
+import personal from '../page/personalMange/personal'
+import subordinate from '../page/personalMange/subordinate'
+import updatePwd from '../page/advance/updatePwd'
 import saleInformation from '../page/saleInformation'
 import carInformation from '../page/carInformation'
-import callClient from '../page/callClient'
-import comeClient from '../page/comeClient'
-import buyClient from '../page/buyClient'
+import callClient from '../page/clientManage/callClient'
+import comeClient from '../page/clientManage/comeClient'
+import buyClient from '../page/clientManage/buyClient'
 import announcement from '../page/announcement'
 import home from '../page/home'
-import perfect from '../page/perfect'
+import perfect from '../page/advance/perfect'
 import Login from '../page/login'
 import Index from '../page/index'
 Vue.use(Router)
@@ -29,7 +29,7 @@ export default new Router({
       children: [
         {path: '', redirect: '/manage/home'},
         {
-          path: 'perfect',
+          path: 'advance/perfect',
           name: 'perfect',
           component: perfect
         },
@@ -40,17 +40,17 @@ export default new Router({
         },
 
         {
-          path: 'personal',
+          path: 'personalMange/personal',
           name: 'personal',
           component:personal
         },
         {
-          path: 'subordinate',
+          path: 'personalMange/subordinate',
           name: 'subordinate',
           component: subordinate
         },
         {
-          path: 'updatePwd',
+          path: 'advance/updatePwd',
           name: 'updatePwd',
           component: updatePwd
         },
@@ -65,17 +65,17 @@ export default new Router({
           component: carInformation
         },
         {
-          path: 'callClient',
+          path: 'clietManage/callClient',
           name: 'callClient',
           component: callClient
         },
         {
-          path: 'comeClient',
+          path: 'clietManage/comeClient',
           name: 'comeClient',
           component:comeClient
         },
         {
-          path: 'buyClient',
+          path: 'clietManage/buyClient',
           name: 'buyClient',
           component: buyClient
         },

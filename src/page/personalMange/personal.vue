@@ -4,7 +4,7 @@
       <div class="card">
         <div class="base-info">
         <div class="avatar-wrap">
-          <img src="../assets/default.jpg" alt="">
+          <img src="../../assets/default.jpg" alt="">
         </div>
         <div class="base-wrap">
         <span class="username">张三</span>
