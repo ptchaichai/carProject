@@ -1,6 +1,6 @@
 <template>
     <div class="subordinate">
-      <el-tag class="title">信息管理</el-tag>
+      <p>信息管理</p>
       <div class="search-add">
         <div class="box">
       <el-form ref="form" :model="form" class="search-form">
@@ -44,37 +44,44 @@
     ref="searchTable"
     border
     @row-click="getDetails"
-      >
-        <el-table-column
-          prop="account"
-          label="账号"
-          width="100">
-        </el-table-column>
+      :row-style="tableRowStyle"
+    :header-cell-style="tableHeaderColor"
+    >
+    <el-table-column
+      prop="account"
+      label="账号"
+      min-width="10%"
+      align="center">
+    </el-table-column>
     <el-table-column
       prop="name"
       label="姓名"
-      width="120">
+      min-width="15%"
+      align="center">
     </el-table-column>
     <el-table-column
       prop="tel"
       label="电话"
-      width="180">
+      min-width="15%"
+      align="center">
     </el-table-column>
         <el-table-column
           prop="pwd"
           label="密码"
-          width="200">
+         min-width="20%"
+         align="center">
         </el-table-column>
         <el-table-column
           prop="role"
           label="角色"
-          width="100">
+         min-width="15%"
+         align="center">
         </el-table-column>
     <el-table-column
       fixed="right"
       label="操作"
-      width="150"
-      left="475">
+      min-width="25%"
+      align="center">
       <template slot-scope="scope">
      <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index,scope.row)">修改</el-button>
         <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
@@ -91,6 +98,9 @@
       </el-dialog>
       <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
         <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
+          <el-form-item label="账号" prop="account">
+            <el-input v-model="updateForm.account" placeholder="请输入账号"></el-input>
+          </el-form-item>
           <el-form-item label="姓名" prop="name">
           <el-input v-model="updateForm.name" placeholder="请输入姓名"></el-input>
          </el-form-item>
@@ -143,22 +153,23 @@ export default {
       newTableData: [],
       dialogDelete: false,
       dialogUpdate: false,
-      dialogAdd:false,
+      dialogAdd: false,
       rowVal: "",
       currentIndex: "",
-      isShowTip:false,
+      isShowTip: false,
       deleteVal: "",
-      roles:[
-        {label:'总经理',id:1,value:'总经理'},
-        {label:'销售经理',id:2,value:'销售经理'},
-        {label:'销售人员',id:3,value:'销售人员'},
+      roles: [
+        { label: "总经理", id: 1, value: "总经理" },
+        { label: "销售经理", id: 2, value: "销售经理" },
+        { label: "销售人员", id: 3, value: "销售人员" }
       ],
       updateForm: {
+        account: "",
         name: "",
         tel: "",
         pwd: "",
         address: "",
-        role: "",
+        role: ""
       },
       ruleForm: {
         account: "",
@@ -166,7 +177,7 @@ export default {
         tel: "",
         pwd: "",
         address: "",
-        role: "",
+        role: ""
       },
       rules: {
         account: [
@@ -177,24 +188,50 @@ export default {
           { required: true, message: "请输入姓名", trigger: "blur" },
           { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
         ],
+        address: [
+          { required: true, message: "请输入地址", trigger: "blur" },
+          { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
+        ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
-        pwd: [{ required: true, trigger: "blur", message: "请填写密码"}],
-        role: [{ required: true,message: "请选择角色", trigger: "blur" }],
+        pwd: [{ required: true, trigger: "blur", message: "请填写密码" }],
+        role: [{ required: true, message: "请选择角色", trigger: "blur" }]
       },
       rulesUpdate: {
+        account: [
+          { required: true, message: "请输入账号", trigger: "blur" },
+          { min: 1, max: 20, message: "请输入 1 到 20 个字符", trigger: "blur" }
+        ],
         name: [
           { required: true, message: "请输入姓名", trigger: "blur" },
           { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
         ],
+        address: [
+          { required: true, message: "请输入地址", trigger: "blur" },
+          { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
+        ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
-        pwd: [{ required: true, trigger: "blur", message: "请填写密码"}],
-        role: [{ required: true,message: "请选择角色", trigger: "blur" }],
+        pwd: [{ required: true, trigger: "blur", message: "请填写密码" }],
+        role: [{ required: true, message: "请选择角色", trigger: "blur" }]
       }
     };
   },
   methods: {
-    add:function(){
-      this.dialogAdd=true;
+    // 修改table tr行的背景色
+    tableRowStyle({ row, rowIndex }) {
+      if (rowIndex / 2 === 0) {
+        return "background-color: #fff";
+      } else {
+        return "background-color: #f9f9f9";
+      }
+    },
+    // 修改table header的背景色
+    tableHeaderColor({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        return "background-color: #409eff; color: #fff; font-weight: 500;";
+      }
+    },
+    add: function() {
+      this.dialogAdd = true;
     },
     changePasswordTip(isShow) {
       if (isShow) {
@@ -220,13 +257,15 @@ export default {
             address: inputAdd,
             role: inputRole
           });
-          this.$message({
-            message: "添加成功",
-          });
+           this.$message({
+          message: '添加成功',
+          type: 'success'
+        });
           this.$refs[ruleForm].resetFields();
           this.dialogAdd = false;
         } else {
           return false;
+          this.$message.error('添加失败');
         }
       });
     },
@@ -235,6 +274,7 @@ export default {
       this.dialogAdd = false;
     },
     update: function(rowIndex, rowVal) {
+      this.updateForm.account = rowVal.account;
       this.updateForm.name = rowVal.name;
       this.updateForm.tel = rowVal.tel;
       this.updateForm.pwd = rowVal.pwd;
@@ -245,6 +285,7 @@ export default {
       this.dialogUpdate = true;
     },
     updateConfirm: function(updateForm) {
+      const account = this.updateForm.account;
       const name = this.updateForm.name;
       const tel = this.updateForm.tel;
       const pwd = this.updateForm.pwd;
@@ -252,6 +293,7 @@ export default {
       const role = this.updateForm.role;
       this.$refs[updateForm].validate(valid => {
         if (valid) {
+          this.tableData[this.currentIndex].account = account;
           this.tableData[this.currentIndex].name = name;
           this.tableData[this.currentIndex].tel = tel;
           this.tableData[this.currentIndex].pwd = pwd;
@@ -259,10 +301,12 @@ export default {
           this.tableData[this.currentIndex].role = role;
           this.dialogUpdate = false;
           this.$message({
-            message: "修改成功",
-          });
+          message: '修改成功',
+          type: 'success'
+        });
         } else {
           return false;
+          this.$message.error('修改失败');
         }
       });
     },
@@ -277,6 +321,10 @@ export default {
     removeConfirm: function() {
       this.tableData.splice(this.deleteVal, 1);
       this.dialogDelete = false;
+       this.$message({
+          message: '删除成功',
+          type: 'success'
+        });
     }
   }
 };
@@ -284,8 +332,16 @@ export default {
 
 <style scoped>
 .subordinate {
-  width: 95%;
-  margin: 50px auto;
+  margin: 0px auto;
+  height: 770px;
+  background: #fcfcfc;
+}
+.subordinate p {
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+  color: #3a8ee6;
+  font-size: 20px;
+  font-weight: 700;
 }
 .dialog-box {
   width: 100%;
@@ -297,25 +353,17 @@ export default {
   width: 60% !important;
   height: 45% !important;
 }
-.el-table{
-  width: 865px;
+.el-table {
+  width: 90%;
   margin: 25px auto;
 }
-.title {
-  width: 1033px;
-  min-width: 1033px;
-  border: 1px solid #cecece;
-  margin: 20px auto;
+.el-table__row td {
+  text-align: center;
 }
-.role p{
+.role p {
   width: 32px;
 }
-.el-tag {
-  font-size: 35px;
-  background-color: #fff;
-  border: none;
-}
-.has-gutter tr th{
+.has-gutter tr th {
   background: #0093e6 !important;
   color: #fff !important;
   text-align: center !important;
@@ -324,7 +372,7 @@ export default {
   margin-left: -10px;
 }
 .box {
-  width: 865px;
+  width: 90%;
   margin: 10px auto;
 }
 .add {
@@ -352,14 +400,8 @@ export default {
 .el-icon-warning {
   color: red;
 }
-.el-dialog__header{
-  padding: 20px 20px 0px;
+.el-select {
+  width: 100%;
+  margin-bottom: 20px;
 }
-.el-dialog__title{
-  font-weight: 700;
-}
-  .el-select{
-    width: 100%;
-    margin-bottom: 20px;
-  }
 </style>

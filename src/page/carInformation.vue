@@ -1,7 +1,7 @@
 
 <template>
-  <div class="saleInformation">
-    <el-tag>汽车销售统计量</el-tag>
+  <div class="carInformation">
+    <p>汽车销售统计量</p>
     <div class="div-flex" style="text-align:center">
         <div class="chart-tab activecss" id="chart-tab1" @click="Month($event)" ref="Month">当月</div>
         <div class="chart-tab" id="chart-tab2" @click="Year($event)" ref="Year">当年</div>
@@ -9,7 +9,7 @@
     <div id="myChartMonth" ref="myChartMonth" :style="{width: '350px', height: '350px'}" v-show="monthShow"></div>
     <div id="myChartYear" ref="myChartYear" :style="{width: '350px', height: '350px'}" v-show="yearShow"></div>
     <div class="ranking-month" v-show="monthRank">
-      <p>截止目前销售排名前三的为：</p>
+      <p>当前销售排名为：</p>
       <div class="ranking-box">
         <ul class="num">
           <li v-for="(num,index) in nums" :key="index">{{num.n}}</li>
@@ -52,7 +52,7 @@ export default {
       yearCarData: [],
       cars: [{ type: "奥德赛" }, { type: "宾智" }, { type: "飞度" }],
       carsYear: [{ type: "锋范" }, { type: "雅阁" }, { type: "飞度" }],
-      nums: [{ n: 1 }, { n: 2 }, { n: 3 }],
+      nums: [{ n: 1 }, { n: 2 }, { n: 3 },{ n: 4 },{ n: 5 },{ n: 6 }],
       monthState: []
     };
   },
@@ -172,19 +172,17 @@ export default {
 </script>
 
 <style scoped>
-.saleInformation {
-  padding: 10px 15px;
-  font-size: 15px;
-  color: #737373;
-  width: 64%;
-  margin: 30px auto;
-  position: relative;
+.carInformation {
+  margin: 0px auto;
+  height: 770px;
+  background: #fcfcfc;
 }
-.el-tag {
-  font-size: 35px;
-  background-color: #fff;
-  border: none;
-  margin-bottom: 30px;
+.carInformation p {
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+  color: #3a8ee6;
+  font-size: 20px;
+  font-weight: 700;
 }
 .chart-tab {
   flex: 1;
@@ -201,6 +199,7 @@ export default {
   display: -webkit-flex;
   display: flex;
   width: 60%;
+  margin-top: 80px;
 }
 .ranking-month p {
   color: #f56c6c;
@@ -216,7 +215,7 @@ export default {
 .ranking-month,
 .ranking-year {
   position: absolute;
-  right: 50px;
+  left: 75%;
   top: 180px;
 }
 ul {
@@ -226,6 +225,7 @@ ul {
   width: 20px;
   height: 20px;
   margin-bottom: 10px;
+  line-height: 20px;
 }
 .num li:nth-child(1) {
   background: #f54545;
@@ -237,6 +237,12 @@ ul {
 }
 .num li:nth-child(3) {
   background: #ffac38;
+  color: #fff;
+}
+.num li:nth-child(4),
+.num li:nth-child(5),
+.num li:nth-child(6){
+  background: #8eb9f5;
   color: #fff;
 }
 .ranking-box {

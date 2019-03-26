@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import information from '../page/information'
+import personal from '../page/personal'
 import subordinate from '../page/subordinate'
 import updatePwd from '../page/updatePwd'
 import saleInformation from '../page/saleInformation'
@@ -40,9 +40,9 @@ export default new Router({
         },
 
         {
-          path: 'information',
-          name: 'information',
-          component:information
+          path: 'personal',
+          name: 'personal',
+          component:personal
         },
         {
           path: 'subordinate',

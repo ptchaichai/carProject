@@ -10,12 +10,12 @@
         <el-menu-item class="first-menu" v-for="(item ,i) in menulist"  v-if="!item.menuSubLink"
                       :index="item.menuUrl"
                       :key="i">
-          <span slot="title">{{item.menuName}}</span>
+          <span slot="title" class="first-menu">{{item.menuName}}</span>
         </el-menu-item>
         <el-submenu  v-else class="first-menu"
                      :index="item.menuUrl">
           <template slot="title">
-            <span>{{item.menuName}}</span>
+            <span class="first-menu">{{item.menuName}}</span>
           </template>
           <el-menu-item-group>
             <el-menu-item  v-for="(subitem ,sub) in item.menuSubLink"
@@ -39,7 +39,7 @@
         menulist:[
           {
             menuName: '主页',
-            menuUrl: '/home',
+            menuUrl: '/manage/home',
             menuIndex: '0'
           },
           {
@@ -49,7 +49,7 @@
             menuSubLink: [
               {
                 menuName: '个人信息',
-                menuUrl: '/manage/information',
+                menuUrl: '/manage/personal',
                 menuIndex: '1-1'
               },
               {
@@ -122,16 +122,17 @@
   .sidebar {
     height: 100%;
     background-color: #fff;
+    height: 792px;
+    border-right: 2px solid #0093e6;
+    background: #fafafa;
+    border-radius: 10px;
   }
   .el-menu-vertical-demo {
     background: #fafafa;
   }
-  .el-col-24{
-    border-right: 1px solid #0093e6;
-    background: #fafafa;
-  }
   .first-menu{
     font-size: 18px !important;
+    color:#3a8ee6;
   }
   .el-submenu__title span{
     font-size: 18px;
@@ -141,5 +142,14 @@
   }
   .el-menu-item {
   min-width: 174px !important;
+  }
+  .el-menu-item span{
+    /* color:#3a8ee6; */
+  }
+  .el-submenu__title span{
+    /* color:#3a8ee6; */
+  }
+  .el-menu-item-group span{
+    /* color:#777; */
   }
 </style>

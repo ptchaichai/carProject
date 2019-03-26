@@ -5,11 +5,11 @@
         <img src="../assets/1.1.jpg" alt>
       </div>
       <div class="header-title">汽车销售管理系统</div>
-        <router-link to="/announcement" class="router-link-exact-active">
+        <div  class="accouncement-box">
         <el-badge is-dot class="item" v-show="badgeShow">
         </el-badge>
-        <el-button round @click="goAnnouncement" val="true">公告</el-button>
-        </router-link>
+        <el-button round @click="go" val="true">公告</el-button>
+        </div>
       <div class="loginIn">
         <el-dropdown  @command="back">
           <span class="el-dropdown-link">banana<i class="el-icon-arrow-down el-icon--right"></i></span>
@@ -60,7 +60,7 @@ export default {
       // });
       this.dialogback = false;
     },
-    goAnnouncement() {
+    go() {
       this.badgeShow = false;
       this.$router.push({ path: "/manage/announcement" });
     }
@@ -74,14 +74,13 @@ export default {
 </script>
 <style scoped>
 .header {
-  margin-top: 10px;
   height: 68px;
   background: #0093e6;
   padding: 0 25px 0 30px;
   line-height: 68px;
   text-align: left;
   position: fixed;
-  width: 100%;
+  width: 95%;
   z-index: 2000;
   color: #fff;
 }
@@ -143,9 +142,10 @@ a {
   color: #fff;
   font-size: 18px;
 }
-.router-link-exact-active {
+.accouncement-box {
   position: absolute;
   right: 330px;
+  top:0;
 }
 .el-badge {
   position: absolute;

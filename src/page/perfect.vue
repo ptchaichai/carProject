@@ -1,6 +1,6 @@
 <template>
     <div class="perfect-box">
-      <el-tag class="title">信息管理</el-tag>
+      <p>完善资料</p>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
@@ -8,9 +8,6 @@
         <el-form-item label="住址" prop="address">
           <el-input v-model="ruleForm.address" placeholder="请输入住址"></el-input>
         </el-form-item>
-        <!--<el-form-item label="年龄" prop="age">-->
-          <!--<el-input v-model="ruleForm.age" placeholder="请输入年龄"></el-input>-->
-        <!--</el-form-item>-->
         <el-form-item label="出生日期" prop="age">
         <div class="block">
           <el-date-picker
@@ -92,17 +89,24 @@
 
 <style scoped>
 .perfect-box{
-  width: 60%;
-  margin:10px auto;
+  margin: 0px auto;
+  height: 770px;
+  background: #fcfcfc;
 }
-.title {
-  width: 85px;
-  border: 1px solid #cecece;
-  margin: 20px auto;
-  border: none;
-  background: #fff;
-  color: #0093e6;
-  font-size: 26px;
+.el-form {
+  margin-top: 50px;
+  width: 60%;
+  margin: 80px auto;
+}
+.el-date-editor{
+  width: 100%;
+}
+.perfect-box p{
+ text-align: left;
+  border-bottom: 1px solid #ccc;
+  color: #3a8ee6;
+  font-size: 20px;
+  font-weight: 700;
 }
   .el-select{
     width: 100%;

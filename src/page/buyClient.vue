@@ -1,6 +1,6 @@
 <template>
     <div class="buy-client">
-      <el-tag>购车客户信息管理</el-tag>
+      <p>购车客户信息管理</p>
       <div class="search-add">
       <div class="box">
       <el-form ref="form" :model="form" class="search-form">
@@ -16,11 +16,17 @@
           <el-form-item label="电话" prop="tel">
           <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
          </el-form-item>
+         <el-form-item label="邮箱" prop="email">
+          <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
+         </el-form-item>
           <el-form-item label="地址" prop="address">
           <el-input v-model="ruleForm.address" placeholder="请输入地址"></el-input>
          </el-form-item>
          <el-form-item label="购买车型" prop="carType">
-          <el-input v-model="ruleForm.carType" placeholder="请输入地址"></el-input>
+          <el-select v-model="ruleForm.carType" placeholder="请选择车型" @change="change">
+            <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value">
+            </el-option>
+          </el-select>
          </el-form-item>
          <el-button  round type="primary" class="addInformation" @click="addConfirm('ruleForm')">确定</el-button>
          <el-button  round type="info" class="cancelInformation" @click="addCancel('ruleForm')">取消</el-button>
@@ -32,32 +38,45 @@
   </div>
       <el-table
     :data="tableData"
-    border>
+    border
+    :row-style="tableRowStyle"
+    :header-cell-style="tableHeaderColor">
     <el-table-column
       prop="name"
       label="姓名"
-      width="80">
+      mix-width="15%"
+      align="center">
     </el-table-column>
     <el-table-column
       prop="tel"
       label="电话"
-      width="120">
+      mix-width="15%"
+      align="center">
+    </el-table-column>
+    <el-table-column
+      prop="email"
+      label="邮箱"
+      mix-width="15%"
+      align="center">
     </el-table-column>
     <el-table-column
       prop="address"
       label="地址"
-      width="200">
+      mix-width="15%"
+      align="center">
     </el-table-column>
     <el-table-column
       prop="carType"
       label="购买车型"
-      width="160">
+      mix-width="15%"
+      align="center">
     </el-table-column>
     <el-table-column
       fixed="right"
       label="操作"
       width="150"
-      left="475">
+      mix-width="25%"
+      align="center">
       <template slot-scope="scope">
       <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index,scope.row)">修改</el-button>
         <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
@@ -80,11 +99,17 @@
           <el-form-item label="电话" prop="tel">
           <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
          </el-form-item>
+         <el-form-item label="邮箱" prop="email">
+          <el-input v-model="updateForm.email" placeholder="请输入邮箱"></el-input>
+         </el-form-item>
           <el-form-item label="地址" prop="address">
           <el-input v-model="updateForm.address" placeholder="请输入地址"></el-input>
          </el-form-item>
          <el-form-item label="购买车型" prop="carType">
-          <el-input v-model="updateForm.carType" placeholder="请输入车型"></el-input>
+          <el-select v-model="updateForm.carType" placeholder="请选择车型" @change="change">
+            <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value">
+            </el-option>
+          </el-select>
          </el-form-item>
         </el-form>
         <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
@@ -95,7 +120,7 @@
 
 <script>
 import { isvalidPhone } from "./valid";
-import { isvalidType} from "./valid";
+import { isvalidEmail } from "./valid";
 const validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));
@@ -105,15 +130,15 @@ const validPhone = (rule, value, callback) => {
     callback();
   }
 };
-const validType=(rule, value, callback) => {
+const validEmail = (rule, value, callback) => {
   if (!value) {
-    callback(new Error("请输入车型"));
-  } else if (!isvalidType(value)) {
-    callback(new Error("请输入正确的车型:奥德赛,宾智,飞度, 锋范,凌派,雅阁"));
+    callback(new Error("请输入邮箱"));
+  } else if (!isvalidEmail(value)) {
+    callback(new Error("请输入正确邮箱格式"));
   } else {
     callback();
   }
-}
+};
 export default {
   name: "buyClient",
   data() {
@@ -121,52 +146,83 @@ export default {
       dialogDelete: false,
       visible: false,
       dialogUpdate: false,
-      dialogAdd:false,
-      inputName: "",
-      inputTel: "",
-      inputAdd: "",
-      inputCar: "",
+      dialogAdd: false,
       rowVal: "",
       currentIndex: "",
       deleteVal: "",
       tableData: [],
+      roles: [
+        { label: "奥德赛", value: "奥德赛" },
+        { label: "宾智", value: "宾智" },
+        { label: "飞度", value: "飞度" },
+        { label: "锋范", value: "锋范" },
+        { label: "凌派", value: "凌派" },
+        { label: "雅阁", value: "雅阁" }
+      ],
       ruleForm: {
         name: "",
         tel: "",
+        email: "",
         address: "",
-        carType:"",
+        carType: ""
       },
       rules: {
         name: [
           { required: true, message: "请输入姓名", trigger: "blur" },
-          { min: 2, max: 4, message: "长度在 2 到 4 个字符", trigger: "blur" }
+          { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" }
         ],
-        carType: [{ required: true,trigger: "blur", validator: validType }],
-        tel: [{ required: true, trigger: "blur", validator: validPhone }]
+        address: [
+          { required: true, message: "请输入地址", trigger: "blur" },
+          { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
+        ],
+        carType: [{ required: true, trigger: "blur", message: "请选择车型" }],
+        tel: [{ required: true, trigger: "blur", validator: validPhone }],
+        email: [{ required: true, trigger: "blur", validator: validEmail }]
       },
       updateForm: {
         name: "",
         tel: "",
+        email: "",
         address: "",
-        carType:"",
+        carType: ""
       },
       rulesUpdate: {
         name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 2, max: 5, message: "长度在 2 到 5 个字符", trigger: "blur" }
+          { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" }
         ],
-        carType: [{ required: true,trigger: "blur", validator: validType }],
-        tel: [{ required: true, trigger: "blur", validator: validPhone }]
+        address: [
+          { required: true, message: "请输入地址", trigger: "blur" },
+          { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
+        ],
+        carType: [{ required: true, trigger: "blur", message: "请选择车型" }],
+        tel: [{ required: true, trigger: "blur", validator: validPhone }],
+        email: [{ required: true, trigger: "blur", validator: validEmail }]
       }
     };
   },
   methods: {
+    // 修改table tr行的背景色
+    tableRowStyle({ row, rowIndex }) {
+      if (rowIndex / 2 === 0) {
+        return "background-color: #fff";
+      } else {
+        return "background-color: #f9f9f9";
+      }
+    },
+    // 修改table header的背景色
+    tableHeaderColor({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        return "background-color: #409eff; color: #fff; font-weight: 500;";
+      }
+    },
     add: function() {
       this.dialogAdd = true;
     },
     addConfirm: function(ruleForm) {
       const inputName = this.ruleForm.name;
       const inputTel = this.ruleForm.tel;
+      const inputEmail = this.ruleForm.email;
       const inputAdd = this.ruleForm.address;
       const inputCar = this.ruleForm.carType;
       this.$refs[ruleForm].validate(valid => {
@@ -174,14 +230,19 @@ export default {
           this.tableData.push({
             name: inputName,
             tel: inputTel,
+            email: inputEmail,
             address: inputAdd,
             carType: inputCar
           });
           this.$refs[ruleForm].resetFields();
           this.dialogAdd = false;
-          this.$store.dispatch('addcar',inputCar);
+          this.$message({
+            message: "添加成功",
+            type: "success"
+          });
         } else {
           return false;
+          this.$message.error("添加失败");
         }
       });
     },
@@ -192,6 +253,7 @@ export default {
     update: function(rowIndex, rowVal) {
       this.updateForm.name = rowVal.name;
       this.updateForm.tel = rowVal.tel;
+      this.updateForm.email = rowVal.email;
       this.updateForm.address = rowVal.address;
       this.updateForm.carType = rowVal.carType;
       this.dialogUpdate = true;
@@ -201,21 +263,28 @@ export default {
     updateConfirm: function(updateForm) {
       const name = this.updateForm.name;
       const tel = this.updateForm.tel;
+      const email = this.updateForm.email;
       const address = this.updateForm.address;
       const carType = this.updateForm.carType;
       this.$refs[updateForm].validate(valid => {
         if (valid) {
           this.tableData[this.currentIndex].name = name;
           this.tableData[this.currentIndex].tel = tel;
+          this.tableData[this.currentIndex].email = email;
           this.tableData[this.currentIndex].address = address;
           this.tableData[this.currentIndex].carType = carType;
           this.dialogUpdate = false;
+          this.$message({
+            message: "修改成功",
+            type: "success"
+          });
         } else {
           return false;
+          this.$message.error("修改失败");
         }
       });
     },
-    updateCancel:function(updateForm) {
+    updateCancel: function(updateForm) {
       this.$refs[updateForm].resetFields();
       this.dialogUpdate = false;
     },
@@ -226,6 +295,10 @@ export default {
     removeConfirm: function() {
       this.tableData.splice(this.deleteVal, 1);
       this.dialogDelete = false;
+      this.$message({
+        message: "删除成功",
+        type: "success"
+      });
     }
   }
 };
@@ -233,29 +306,32 @@ export default {
 
 <style scoped>
 .buy-client {
-  width: 90%;
-  margin: 50px auto;
+  margin: 0px auto;
+  height: 770px;
+  background: #fcfcfc;
 }
 .dialog-box {
   width: 100%;
 }
 
 .el-table {
-  width: 782px;
+  width: 90%;
   min-width: 780px;
   border: 1px solid #cecece;
   margin: 30px auto;
 }
-.el-tag {
-  font-size: 35px;
-  background-color: #fff;
-  border: none;
+.buy-client p {
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+  color: #3a8ee6;
+  font-size: 20px;
+  font-weight: 700;
 }
 .el-button--small {
   margin-left: -10px;
 }
 .box {
-  width: 780px;
+  width: 90%;
   margin: 0 auto;
 }
 .add {
@@ -274,10 +350,8 @@ export default {
 .el-icon-warning {
   color: red;
 }
-.el-dialog__header{
-  padding: 20px 20px 0px;
-}
-.el-dialog__title{
-  font-weight: 700;
+.el-select {
+  width: 100%;
+  margin-bottom: 20px;
 }
 </style>

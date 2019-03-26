@@ -1,51 +1,72 @@
 <template>
     <div class="announcement" >
-      <el-popover v-model="visible"
-       width="500">
+      <p>公告</p>
+      <div class="search-add">
+      <div class="box">
+      <el-form ref="form" :model="form" class="search-form">
+      <el-input v-model="search" placeholder="请输入名称"
+            suffix-icon="el-icon-search"></el-input>
+     </el-form>
+      <el-dialog title="添加公告" :visible.sync="dialogAdd"
+       width="50%">
       <div class="dialog-box">
-        <el-form>
-          <el-form-item >
-          <span class="star">*</span><span class="title-span">公告标题:</span>
-          <el-input v-model="inputTitle" placeholder="请输入公告标题" class="input-title"></el-input>
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+          <el-form-item label="标题" prop="title">
+          <el-input v-model="ruleForm.title" placeholder="请输入标题"></el-input>
          </el-form-item>
-         <el-form-item >
-           <span class="star">*</span><span class="title-span">公告内容:</span>
-          <el-input v-model="inputContent" placeholder="请输入公告内容" type="textarea"></el-input>
+          <el-form-item label="公告内容" prop="content">
+          <el-input v-model="ruleForm.content" placeholder="请输入公告内容" type="textarea"></el-input>
          </el-form-item>
-         <div class="warning" v-show="show">标题和内容都不能为空！</div>
-         <el-button  round type="primary" class="add" @click="add" >添加</el-button>
-         <el-button  round type="info" class="add"  @click="cancleOne">取消</el-button>
+         <el-button  round type="primary" class="addInformation" @click="addConfirm('ruleForm')">确定</el-button>
+         <el-button  round type="info" class="cancelInformation" @click="addCancel('ruleForm')">取消</el-button>
         </el-form>
       </div>
-     <el-button slot="reference" round type="primary" @click="open">添加新公告</el-button>
-    </el-popover>
-      <div class="container-wrapper" v-for="(item,i) in items" :key="i" :ref="announcementDiv">
-        <div class="container">
-          <p @click="viewContent">{{items[i].title}}</p>
-          <div class="view">
-              <el-button slot="reference" round type="info" class="view" @click="deleteRow(i)">删除</el-button>
-              <el-button slot="reference" round type="primary" class="edit" @click="edit(i)">编辑</el-button>
-          </div>
-           <el-dialog title="公告内容" :visible.sync="dialogView" width="50%">
+    </el-dialog>
+     <el-button round type="primary" @click="open">添加新公告</el-button>
+      </div>
+      </div>
+     <el-table
+    :data="tableData"
+    border
+    :row-style="tableRowStyle"
+    :header-cell-style="tableHeaderColor">
+    <el-table-column
+      prop="title"
+      label="标题"
+      mix-width="30%"
+      align="center">
+    </el-table-column>
+    <el-table-column
+      prop="author"
+      label="发布人"
+      mix-width="20%"
+      align="center">
+    </el-table-column>
+    <el-table-column
+      prop="time"
+      label="发布时间"
+      mix-width="20%"
+      align="center">
+    </el-table-column>
+    <el-table-column
+      fixed="right"
+      label="操作"
+      width="150"
+      mix-width="30%"
+      align="center">
+      <template slot-scope="scope">
+      <el-button slot="reference" type="primary" size="small" round class="update" @click="view(scope.$index,scope.row)">查看</el-button>
+        <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+     <el-dialog title="公告内容" :visible.sync="dialogView" width="50%">
               <div class="dialog-box">
                     <span class="view-span">公告标题:</span>
-                    <el-input v-model="items[i].title" readonly="readonly"></el-input>
+                    <el-input v-model="viewTitle" readonly="readonly"></el-input>
                     <span class="view-span">公告内容:</span>
-                    <el-input v-model="items[i].content" type="textarea" readonly="readonly" class="textarea"></el-input>
+                    <el-input v-model="viewContent" type="textarea" readonly="readonly" class="textarea"></el-input>
                   <el-button  round type="primary" @click="dialogView= false">关闭</el-button>
-              </div>
-            </el-dialog>
-             <el-dialog title="编辑公告" :visible.sync="dialogEdit" width="50%">
-              <div class="dialog-box">
-                <el-form class="edit-form">
-                <span class="star">*</span><span class="edit-span">公告标题:</span>
-                <el-input v-model="items[i].title"></el-input>
-                <span class="star">*</span><span class="edit-span">公告内容:</span>
-                <el-input v-model="items[i].content"  type="textarea" class="textarea"></el-input>
-                <div class="warning" v-show="showAnother">标题和内容都不能为空！</div>
-                <el-button type="primary" @click="editConfirm(i)" round>确 定</el-button>
-                <el-button @click="cancelConfirm(i)" round>取 消</el-button>
-                </el-form>
               </div>
             </el-dialog>
             <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
@@ -56,8 +77,6 @@
           <el-button @click="dialogDelete = false"  round>取 消</el-button>
         </span>
       </el-dialog>
-        </div>
-      </div>
     </div>
 </template>
 
@@ -69,77 +88,83 @@ export default {
     return {
       show: false,
       showAnother: false,
-      inputTitle: "",
-      inputContent: "",
-      visible: false,
+      dialogAdd: false,
       dialogView: false,
       dialogEdit: false,
       dialogDelete: false,
-      inputNewTile: "",
-      inputNewContent: "",
-      oldTitle: "",
-      oldContent: "",
-      items: [],
-      currentIndex: ""
+      addContentVal:"",
+      tableData: [],
+      viewTitle:"",
+      viewContent:"",
+      ruleForm: {
+        title:"",
+        content:"",
+      },
+      rules: {
+        title: [
+          { required: true, message: "请输入标题", trigger: "blur" },
+          { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" }
+        ],
+        content: [
+          { required: true, message: "请输入公告内容", trigger: "blur" },
+          { min: 10, max: 100, message: "长度在 10 到 100 个字符", trigger: "blur" }
+        ],
+      },
     };
   },
   methods: {
-    open: function() {
-      this.visible = true;
-    },
-    add: function() {
-      const inputTitle = this.inputTitle;
-      const inputContent = this.inputContent;
-      if (inputTitle === "" || inputContent === "") {
-        this.show = true;
-        return false;
+    // 修改table tr行的背景色
+    tableRowStyle({ row, rowIndex }) {
+      if (rowIndex / 2 === 0) {
+        return "background-color: #fff";
       } else {
-        this.$store.dispatch('addAnnouncement',{
-          id:this.announcement.id,
-          title:inputTitle,
-          content:inputContent
-        }).then(()=> {
-        this.show = false;
-        this.$store.commit('addAnnouncement',{title,content});
-        // this.items.push({ title: inputTitle, content: inputContent });
-        this.oldTitle = inputTitle;
-        this.oldContent = inputContent;
-        this.inputTitle = "";
-        this.inputContent = "";
-        this.visible = false;
-        Bus.$emit("add",'true');
-      });
+        return "background-color: #f9f9f9";
       }
     },
-    cancleOne: function() {
-      this.inputTitle = "";
-      this.inputContent = "";
-      this.show = false;
-      this.visible = false;
+    // 修改table header的背景色
+    tableHeaderColor({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        return "background-color: #409eff; color: #fff; font-weight: 500;";
+      }
     },
-    viewContent: function() {
+    open: function() {
+      this.dialogAdd = true;
+    },
+    addConfirm: function(ruleForm) {
+      const inputTitle = this.ruleForm.title;
+      const inputContent = this.ruleForm.content;
+      this.$refs[ruleForm].validate(valid => {
+        if (valid) {
+          this.tableData.push({
+            title: inputTitle,
+            content: inputContent,
+          });
+          this.$refs[ruleForm].resetFields();
+          this.dialogAdd = false;
+          this.$message({
+            message: "添加成功",
+            type: "success"
+          });
+        } else {
+          return false;
+          this.$message.error("添加失败");
+        }
+      });
+    },
+    addCancel: function(ruleForm) {
+      this.$refs[ruleForm].resetFields();
+      this.dialogAdd = false;
+    },
+    viewContent: function(rowIndex, rowVal) {
+      this.viewTitle = rowVal.title;
+      this.viewContent = rowVal.title;
       this.dialogView = true;
     },
-    edit: function(i) {
-      this.dialogEdit = true;
-      this.oldTitle = this.items[i].title;
-      this.oldContent = this.items[i].content;
-    },
-    editConfirm: function(i) {
-      if (this.items[i].title === "" || this.items[i].content === "") {
-        this.showAnother = true;
-        return false;
-      } else {
-        this.showAnother = false;
-        this.dialogEdit = false;
-        Bus.$emit("add",'true');
-      }
-    },
     cancelConfirm: function(i) {
-      this.items[i].title = this.oldTitle;
-      this.items[i].content = this.oldContent;
-      this.showAnother = false;
-      this.dialogEdit = false;
+      // this.items[i].title = this.oldTitle;
+      // this.items[i].content = this.oldContent;
+      // this.showAnother = false;
+      // this.dialogEdit = false;
     },
     deleteRow: function(index) {
       this.dialogDelete = true;
@@ -149,6 +174,10 @@ export default {
       const i = this.currentIndex;
       this.items.splice(i, 1);
       this.dialogDelete = false;
+      this.$message({
+            message: "删除成功",
+            type: "success"
+          });
     }
   }
 };
@@ -156,11 +185,29 @@ export default {
 
 <style scoped>
 .announcement {
-  width: 80%;
-  margin: 50px auto;
+  margin: 0px auto;
+  height: 770px;
+  background: #fcfcfc;
 }
 .dialog-box {
   width: 100%;
+}
+.el-table {
+  width: 90%;
+  min-width: 780px;
+  border: 1px solid #cecece;
+  margin: 30px auto;
+}
+.announcement p {
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+  color: #3a8ee6;
+  font-size: 20px;
+  font-weight: 700;
+}
+.box {
+  width: 90%;
+  margin: 0 auto;
 }
 .addOne {
   margin: 0px 60px;
@@ -214,6 +261,9 @@ export default {
   position: absolute;
   right: -46px;
   top: -5px;
+}
+.el-form{
+  width: 25%;
 }
 .textarea {
   margin: 10px 0;

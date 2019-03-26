@@ -1,22 +1,22 @@
 <template>
     <div class="pwd">
-    <el-tag>修改密码</el-tag>
-    <el-form>
-      <el-form-item label="旧密码:">
-        <el-input v-model="inputOld" type="password" placeholder="请输入旧的密码"></el-input>
+    <p>修改密码</p>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+      <el-form-item label="旧密码:" prop="oldPwd">
+        <el-input v-model="ruleForm.oldPwd" type="password" placeholder="请输入旧密码"></el-input>
       </el-form-item>
-      <el-form-item label="新密码:">
-        <el-input v-model="password" @focus.capture.native='changePasswordTip(true)'  @blur.capture.native='changePasswordTip(false)' auto-complete="new-password" type="password" placeholder="请输入新的密码"></el-input>
+      <el-form-item label="新密码:" prop="newPwd">
+        <el-input v-model="ruleForm.newPwd" @focus.capture.native='changePasswordTip(true)'  @blur.capture.native='changePasswordTip(false)' auto-complete="new-password" type="password" placeholder="请输入新密码"></el-input>
       </el-form-item>
       <div style="position: absolute">
           <verify-pass-word-tip :password="password" :isShowTip = 'isShowTip'></verify-pass-word-tip>
         </div>
-      <el-form-item label="确认新密码:">
-        <el-input v-model="inputNew" type="password"  placeholder="密码必须和新密码输入一致"></el-input>
+      <el-form-item label="确认新密码:" prop="newPwdTwo">
+        <el-input v-model="ruleForm.newPwdTwo" type="password"  placeholder="请确认新密码"></el-input>
       </el-form-item>
       <el-form-item>
-      <el-button type="primary" @click="onSubmit">确定修改</el-button>
-      <el-button type="info" @click="reset">重置</el-button>
+      <el-button type="primary" @click="onSubmit('ruleForm')">确定修改</el-button>
+      <el-button type="info" @click="reset('ruleForm')">重置</el-button>
      </el-form-item>
     </el-form>
     </div>
@@ -30,17 +30,39 @@ export default {
     return {
       password: "",
       isShowTip: false,
-      inputOld: "",
-      inputNew: ""
+      ruleForm: {
+        oldPwd: "",
+        newPwd: "",
+        newPwdTwo: "",
+      },
+      rules: {
+        oldPwd: [{ required: true, message: "请输入旧密码", trigger: "blur" },],
+        newPwd: [{ required: true, message: "请输入新密码", trigger: "blur" },
+        { min: 8, max: 24, message: "长度在 8 到 24 个字符", trigger: "blur" }],
+        newPwdTwo: [{ required: true, message: "请确认新密码", trigger: "blur" },
+        { min: 8, max: 24, message: "长度在 8 到 24 个字符", trigger: "blur" }],
+      },
     };
   },
   components: {
     verifyPassWordTip
   },
   methods: {
-    reset: function() {
-      this.password = "";
-      this.inputNew = "";
+    onSubmit:function(ruleForm){
+      this.$refs[ruleForm].validate(valid => {
+        if (valid) {
+          this.$message({
+          message: '修改成功',
+          type: 'success'
+        });
+        } else {
+          return false;
+          this.$message.error('修改失败');
+        }
+      });
+    },
+    reset: function(ruleForm) {
+      this.$refs[ruleForm].resetFields();
     },
     /**
      * 改变密码提示是否显示
@@ -58,17 +80,20 @@ export default {
 
 <style scoped>
 .pwd {
-  width: 100%;
-  height: 100%;
-  margin-top: 50px;
+  margin: 0px auto;
+  height: 770px;
+  background: #fcfcfc;
 }
 .el-form {
+  margin-top: 50px;
   width: 60%;
-  margin: 0px auto;
+  margin: 80px auto;
 }
-.el-tag {
-  font-size: 35px;
-  background-color: #fff;
-  border: none;
+.pwd p {
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+  color: #3a8ee6;
+  font-size: 20px;
+  font-weight: 700;
 }
 </style>

@@ -59,12 +59,11 @@ export default {
           this.$router.push({ path: "/manage" });
           this.$message({
             message: "登录成功",
+            type: 'success'
           });
           console.log('登录成功');
         } else {
-          this.$message({
-            message: "登录失败",
-          });
+          this.$message.error('登录失败');
           console.log('登录失败');
         }
       })
