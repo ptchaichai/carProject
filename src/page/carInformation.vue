@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="ranking-year" v-show="yearRank">
-      <p>截止目前销售排名前三的为：</p>
+      <p>当前销售排名为：</p>
       <div class="ranking-box">
         <ul class="num">
           <li v-for="(num,index) in nums" :key="index">{{num.n}}</li>
@@ -50,25 +50,27 @@ export default {
       yearRank: false,
       monthCarData: [],
       yearCarData: [],
-      cars: [{ type: "奥德赛" }, { type: "宾智" }, { type: "飞度" }],
+      cars: [],
       carsYear: [{ type: "锋范" }, { type: "雅阁" }, { type: "飞度" }],
       nums: [{ n: 1 }, { n: 2 }, { n: 3 },{ n: 4 },{ n: 5 },{ n: 6 }],
-      monthState: []
+      monthState: [],
+      arr:[{type:"奥德赛"}, {type:"宾智"}, {type:"飞度"},{type: "锋范"}, {type:"凌派"},{type: "雅阁"}],
     };
   },
   computed: {},
   mounted() {
-    this.monthCarData.splice(0, 6);
-    for (let i = 0; i < this.$store.state.monthCarData.length; i += 1) {
-      this.monthCarData.push(this.$store.state.monthCarData[i]);
-    }
-    this.yearCarData.splice(0, 6);
-    for (let i = 0; i < this.$store.state.yearCarData.length; i += 1) {
-      this.yearCarData.push(this.$store.state.yearCarData[i]);
-    }
+    // this.monthCarData.splice(0, 6);
+    // for (let i = 0; i < this.$store.state.monthCarData.length; i += 1) {
+    //   this.monthCarData.push(this.$store.state.monthCarData[i]);
+    // }
+    // this.yearCarData.splice(0, 6);
+    // for (let i = 0; i < this.$store.state.yearCarData.length; i += 1) {
+    //   this.yearCarData.push(this.$store.state.yearCarData[i]);
+    // }
     this.$refs.Month.style.background = "#f56c6c";
     this.$refs.Month.style.color = "#fff";
     this.drawMonth();
+    this.cars=this.arr;
   },
   watch: {
     monthCarData() {
@@ -256,5 +258,6 @@ ul {
 }
 .car-ul li {
   margin-bottom: 10px;
+  line-height: 20px;
 }
 </style>

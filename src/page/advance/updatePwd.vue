@@ -33,31 +33,48 @@ export default {
       ruleForm: {
         oldPwd: "",
         newPwd: "",
-        newPwdTwo: "",
+        newPwdTwo: ""
       },
       rules: {
-        oldPwd: [{ required: true, message: "请输入旧密码", trigger: "blur" },],
-        newPwd: [{ required: true, message: "请输入新密码", trigger: "blur" },
-        { min: 8, max: 24, message: "长度在 8 到 24 个字符", trigger: "blur" }],
-        newPwdTwo: [{ required: true, message: "请确认新密码", trigger: "blur" },
-        { min: 8, max: 24, message: "长度在 8 到 24 个字符", trigger: "blur" }],
-      },
+        oldPwd: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
+        newPwd: [
+          { required: true, message: "请输入新密码", trigger: "blur" },
+          { min: 8, max: 24, message: "长度在 8 到 24 个字符", trigger: "blur" }
+        ],
+        newPwdTwo: [
+          { required: true, message: "请确认新密码", trigger: "blur" },
+          { min: 8, max: 24, message: "长度在 8 到 24 个字符", trigger: "blur" }
+        ]
+      }
     };
   },
   components: {
     verifyPassWordTip
   },
   methods: {
-    onSubmit:function(ruleForm){
+    onSubmit: function(ruleForm) {
+      const form = {
+        old: this.ruleForm.oldPwd,
+        new: this.ruleForm.newPwd,
+        newTwo: this.ruleForm.newPwdTwo
+      };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this.$message({
-          message: '修改成功',
-          type: 'success'
-        });
+          if (this.ruleForm.newPwd.trim() !== this.ruleForm.newPwdTwo.trim()) {
+            this.$message.error("确认密码必须与新密码一致");
+          } else {
+            this.$axios
+              .post("api/updatePwd", this.$qs.stringify(form))
+              .then(res => {
+                if (res.data.status === 0) {
+                  this.$message.success("修改成功");
+                } else {
+                  this.$message.error("修改失败");
+                }
+              });
+          }
         } else {
           return false;
-          this.$message.error('修改失败');
         }
       });
     },

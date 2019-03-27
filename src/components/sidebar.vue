@@ -7,7 +7,8 @@
         @open="handleOpen"
         @close="handleClose"
         router>
-        <el-menu-item class="first-menu" v-for="(item ,i) in menulist"  v-if="!item.menuSubLink"
+        <el-menu-item class="first-menu" v-for="(item ,i) in menulist"
+                       v-if="!item.menuSubLink"
                       :index="item.menuUrl"
                       :key="i">
           <span slot="title" class="first-menu">{{item.menuName}}</span>
@@ -44,17 +45,17 @@
           },
           {
             menuName: '个人信息管理',
-            menuUrl: '/manage/personalMange',
+            menuUrl: '/manage/personalManage',
             menuIndex: '1',
             menuSubLink: [
               {
                 menuName: '个人信息',
-                menuUrl: '/manage/personalMange/personal',
+                menuUrl: '/manage/personalManage/personal',
                 menuIndex: '1-1'
               },
               {
                 menuName: '信息管理',
-                menuUrl: '/manage/personalMange/subordinate',
+                menuUrl: '/manage/personalManage/subordinate',
                 menuIndex: '1-3'
               },
             ]

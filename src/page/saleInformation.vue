@@ -40,22 +40,6 @@ export default {
     };
   },
   mounted() {
-    this.dayData.splice(0, 3);
-    for (let i = 0; i < this.$store.state.dayData.length; i += 1) {
-      this.dayData.push(this.$store.state.dayData[i]);
-    }
-    this.monthData.splice(0, 3);
-    for (let i = 0; i < this.$store.state.monthData.length; i += 1) {
-      this.monthData.push(this.$store.state.monthData[i]);
-    }
-    this.quarterData.splice(0, 3);
-    for (let i = 0; i < this.$store.state.quarterData.length; i += 1) {
-      this.quarterData.push(this.$store.state.quarterData[i]);
-    }
-    this.yearData.splice(0, 3);
-    for (let i = 0; i < this.$store.state.yearData.length; i += 1) {
-      this.yearData.push(this.$store.state.yearData[i]);
-    }
     this.$refs.Day.style.background = "#f56c6c";
     this.$refs.Day.style.color = "#fff";
     this.drawDay();

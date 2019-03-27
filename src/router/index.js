@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import personal from '../page/personalMange/personal'
-import subordinate from '../page/personalMange/subordinate'
+import personal from '../page/personalManage/personal'
+import subordinate from '../page/personalManage/subordinate'
 import updatePwd from '../page/advance/updatePwd'
 import saleInformation from '../page/saleInformation'
 import carInformation from '../page/carInformation'
@@ -40,12 +40,12 @@ export default new Router({
         },
 
         {
-          path: 'personalMange/personal',
+          path: 'personalManage/personal',
           name: 'personal',
           component:personal
         },
         {
-          path: 'personalMange/subordinate',
+          path: 'personalManage/subordinate',
           name: 'subordinate',
           component: subordinate
         },
@@ -65,17 +65,17 @@ export default new Router({
           component: carInformation
         },
         {
-          path: 'clietManage/callClient',
+          path: 'clientManage/callClient',
           name: 'callClient',
           component: callClient
         },
         {
-          path: 'clietManage/comeClient',
+          path: 'clientManage/comeClient',
           name: 'comeClient',
           component:comeClient
         },
         {
-          path: 'clietManage/buyClient',
+          path: 'clientManage/buyClient',
           name: 'buyClient',
           component: buyClient
         },

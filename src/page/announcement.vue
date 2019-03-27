@@ -11,7 +11,7 @@
       <el-dialog title="添加公告" :visible.sync="dialogAdd"
        width="50%">
       <div class="dialog-box">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="add-form">
           <el-form-item label="标题" prop="title">
           <el-input v-model="ruleForm.title" placeholder="请输入标题"></el-input>
          </el-form-item>
@@ -171,6 +171,7 @@ export default {
                 this.$refs[ruleForm].resetFields();
                 this.dialogAdd = false;
                 this.$message.success("添加成功");
+                Bus.$emit("add");
               } else {
                 this.$message.error("添加失败");
               }
@@ -296,7 +297,7 @@ export default {
   right: -46px;
   top: -5px;
 }
-.el-form {
+.search-form {
   width: 25%;
   position: relative;
 }

@@ -2,11 +2,16 @@
  <div class="home">
     <div class="block">
      <el-tag>欢迎来到广汽本田4s汽车销售管理系统</el-tag>
-     <el-carousel height="150px">
+     <!-- <el-carousel height="150px">
        <el-carousel-item v-for="item in items" :key="item" interval="300">
          <h3>{{ item.content }}</h3>
        </el-carousel-item>
-     </el-carousel>
+     </el-carousel> -->
+     <el-carousel :interval="2000" type="card" height="400px">
+       <el-carousel-item v-for="item in imagebox" :key="item.id">
+        <img :src="item.idView" class="image">
+       </el-carousel-item>
+      </el-carousel>
     </div>
   </div>
 </template>
@@ -15,18 +20,22 @@ export default {
   name: "home",
   data() {
     return {
-      items:[
+      imagebox:[
         {
-          content:"本系统管理主要为店内人员管理"
+          id:0,
+          idView:require('../assets/car1.jpg')
         },
         {
-          content:"用户身份分别为总经理、销售经理以及销售人员，实现上级对下级的信息管理"
+          id:1,
+          idView:require('../assets/car2.jpg')
         },
         {
-          content:"记录来电、来店以及购车客户的基本信息"
+          id:2,
+          idView:require('../assets/car3.jpg')
         },
         {
-          content:"以及记录购车的车辆信息以及排名"
+          id:3,
+          idView:require('../assets/car4.jpg')
         },
       ],
     };
@@ -51,12 +60,28 @@ export default {
   line-height: 150px;
   margin: 0;
 }
-
+.block img{
+  width: 100%;
+  height: 100%;
+}
+/*
 .el-carousel__item:nth-child(2n) {
-  background-color: #99a9bf;
+  background: url(../assets/car1.jpg) no repeat;
 }
 
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
 }
+.el-carousel__item:nth-child(1) {
+  background: url(../assets/car1.jpg) no repeat;
+}
+.el-carousel__item:nth-child(2) {
+  background: url(../assets/car2.jpg) no repeat;
+}
+.el-carousel__item:nth-child(3) {
+  background: url(../assets/car3.jpg) no repeat;
+}
+.el-carousel:nth-child(4) {
+  background-color: url(../assets/car4.jpg) no repeat;
+} */
 </style>

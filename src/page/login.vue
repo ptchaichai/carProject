@@ -1,5 +1,7 @@
 <template>
     <div class="login" >
+    <div class="bg bg-blur"></div>
+    <div class="contet content-front">
     <el-tag>用户登录</el-tag>
     <el-form  :model="rulesForm" :rules="rules" ref="rulesForm">
       <el-form-item label="账号:" prop="name">
@@ -21,55 +23,54 @@
        </el-form-item>
     </el-form>
     </div>
+    </div>
 </template>
 
 <script>
-import API from  './api.js'
+import API from "./api.js";
 export default {
   name: "login",
-  data(){
-    return{
-      rulesForm:{
-        name:'',
-      pwd:'',
-      identity:'总经理',
+  data() {
+    return {
+      rulesForm: {
+        name: "",
+        pwd: "",
+        identity: "总经理"
       },
-      rules:{
-        name: [
-          {required: true, message: '请输入账号', trigger: 'blur' }
-        ],
-        pwd: [
-          { required: true, message: '请输入登录密码', trigger: 'blur' }
-        ],
+      rules: {
+        name: [{ required: true, message: "请输入账号", trigger: "blur" }],
+        pwd: [{ required: true, message: "请输入登录密码", trigger: "blur" }],
         identity: [
-          { type: "number", required: true, message: '请选择身份', trigger: 'change' }
-        ],
+          {
+            type: "number",
+            required: true,
+            message: "请选择身份",
+            trigger: "change"
+          }
+        ]
       }
-    }
+    };
   },
-  methods:{
-    onSubmit:function(){
+  methods: {
+    onSubmit: function() {
       //this.$emit('loginSuccess');
       let param = {
         name: this.rulesForm.name,
         pwd: this.rulesForm.pwd,
-        role: '0'
-      }
-      this.$http.post(API.LOGIN, this.qs.stringify(param)).then((result) => {
-        if(result.data.status === 0) {
+        role: "0"
+      };
+      this.$http.post(API.LOGIN, this.qs.stringify(param)).then(result => {
+        if (result.data.status === 0) {
           this.$router.push({ path: "/manage" });
-          this.$message({
-            message: "登录成功",
-            type: 'success'
-          });
-          console.log('登录成功');
+          this.$message.success("登陆成功");
+          console.log("登录成功");
         } else {
-          this.$message.error('登录失败');
-          console.log('登录失败');
+          this.$message.error("登录失败");
+          console.log("登录失败");
         }
-      })
+      });
     },
-    resetForm:function(rulesForm){
+    resetForm: function(rulesForm) {
       this.$refs[rulesForm].resetFields();
     }
   }
@@ -77,18 +78,44 @@ export default {
 </script>
 
 <style scoped>
-.login{
+.login {
   width: 100%;
   height: 100%;
-  margin-top:50px;
+  font-weight: 700;
 }
-.el-form{
+.content {
+  color: #ffffff;
+  font-size: 40px;
+}
+.bg {
+  background: url(../assets/cover.png) no-repeat;
+  height: 100%;
+  text-align: center;
+  line-height: 600px;
+}
+.bg-blur {
+  float: left;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  filter: blur(1px);
+}
+.content-front {
+  width: 60%;
+  position: absolute;
+  right: 10px;
+  height: 600px;
+  text-align: center;
+  margin-top: 80px;
+}
+.el-form {
   width: 60%;
   margin: 20px auto;
 }
 .el-tag {
   font-size: 35px;
-  background-color: #fff;
   border: none;
+  background-color: #fff;
 }
 </style>

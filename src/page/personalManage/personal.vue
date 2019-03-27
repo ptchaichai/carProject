@@ -10,36 +10,68 @@
         <span class="username">张三</span>
         <div class="bing-info">
           <div class="info-title">
+            <p><span>账号：</span></p>
             <p><span>加入时间：</span></p>
             <p><span>电话号码：</span></p>
-            <p><span>邮箱：</span></p>
-            <p><span>地址：</span></p>
+            <p v-show="perfectShow"><span>性别：</span></p>
+            <p v-show="perfectShow"><span>出生日期：</span></p>
+            <p v-show="perfectShow"><span>邮箱：</span></p>
+            <p v-show="perfectShow"><span>地址：</span></p>
           </div>
           <div class="info-content">
+            <p><span>001</span></p>
             <p><span>2018-3-2</span></p>
             <p><span>15082345567</span></p>
-            <p><span>34123434@163.com</span></p>
-            <p><span>深圳市福田区</span></p>
+            <p v-show="perfectShow"><span>{{sex}}</span></p>
+            <p v-show="perfectShow"><span>{{age}}</span></p>
+            <p v-show="perfectShow"><span>{{email}}</span></p>
+            <p v-show="perfectShow"><span>{{address}}</span></p>
           </div>
         </div>
         </div>
         </div>
         <div class="role">
-          <p><span>销售经理</span></p>
+          <p><span @click="go">销售经理</span></p>
         </div>
       </div>
     </div>
 </template>
 
 <script>
+import bus from "./../bus.js";
+// import func from './vue-temp/vue-editor-bridge.js';
 export default {
   name: "personal",
   data() {
     return {
       input1: "",
       input2: "",
-      input3: ""
+      input3: "",
+      perfectShow: false,
+      sex: "",
+      age: "",
+      email: "",
+      address: "",
     };
+  },
+  mounted() {
+    bus.$on("perfectSend", form => {
+      this.perfectShow = true;
+      this.sex = form[0];
+      this.age = form[1];
+      this.email = form[2];
+      this.address = form[3];
+    });
+  },
+  methods: {
+    // go: function() {
+    //   this.perfectArr = ["女", "13", "dsfas@qq.com", "fdgdsfdfg"];
+    //   this.perfectShow = true;
+    //   this.sex = this.perfectArr[0];
+    //   this.age = this.perfectArr[1];
+    //   this.email = this.perfectArr[2];
+    //   this.address = this.perfectArr[3];
+    // },
   }
 };
 </script>
@@ -96,6 +128,9 @@ export default {
   margin: 0;
   margin-top: 4px;
   font-weight: 700;
+  display: inline-block;
+  width: 82px;
+  text-align: right;
 }
 .bing-info {
   margin: 15px 0;

@@ -2,9 +2,9 @@
   <div class="header">
     <div class="title">
       <div>
-        <img src="../assets/1.1.jpg" alt>
+        <img src="../assets/header.png" alt>
       </div>
-      <div class="header-title">汽车销售管理系统</div>
+      <div class="header-title"> </div>
         <div  class="accouncement-box">
         <el-badge is-dot class="item" v-show="badgeShow">
         </el-badge>
@@ -17,14 +17,6 @@
             <el-dropdown-item>退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <!-- <el-dialog title="警告！" :visible.sync="dialogback" width="25%">
-        <i class="el-icon-warning"></i>
-        <span>是否退出登录？</span>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="backConfirm" round>确 定</el-button>
-          <el-button @click="dialogback = false"  round>取 消</el-button>
-        </span>
-      </el-dialog> -->
       </div>
     </div>
   </div>
@@ -38,27 +30,13 @@ export default {
     return {
       val: true,
       badgeShow: false,
-      dialogback: false
     };
   },
   methods: {
     back: function(command) {
-      // this.dialogback = true;
       this.$emit("backLogin");
       this.$router.push({path:"/login"});
-      this.$message({
-        message: "成功退出",
-        type: "success"
-      });
-    },
-    backConfirm: function() {
-      // this.$emit("backLogin");
-      // this.$router.push({path:"/login"});
-      // this.$message({
-      //   message: "成功退出",
-      //   type: "success"
-      // });
-      this.dialogback = false;
+      this.$message.success("退出成功");
     },
     go() {
       this.badgeShow = false;
@@ -66,8 +44,8 @@ export default {
     }
   },
   mounted() {
-    Bus.$on("add", message => {
-      this.badgeShow = message;
+    Bus.$on("add", () => {
+      this.badgeShow = true;
     });
   }
 };
