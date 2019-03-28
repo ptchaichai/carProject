@@ -64,24 +64,4 @@ export default {
   width: 100%;
   height: 100%;
 }
-/*
-.el-carousel__item:nth-child(2n) {
-  background: url(../assets/car1.jpg) no repeat;
-}
-
-.el-carousel__item:nth-child(2n + 1) {
-  background-color: #d3dce6;
-}
-.el-carousel__item:nth-child(1) {
-  background: url(../assets/car1.jpg) no repeat;
-}
-.el-carousel__item:nth-child(2) {
-  background: url(../assets/car2.jpg) no repeat;
-}
-.el-carousel__item:nth-child(3) {
-  background: url(../assets/car3.jpg) no repeat;
-}
-.el-carousel:nth-child(4) {
-  background-color: url(../assets/car4.jpg) no repeat;
-} */
 </style>
