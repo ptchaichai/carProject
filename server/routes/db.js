@@ -23,6 +23,7 @@ var pool = mysql.createPool({
 //   }
 // })
 export default {
+  //查询
   query: function (sql, callback) {
           pool.getConnection(function (err, connection) {
               if(err) console.log('MySQL数据库建立连接失败。');

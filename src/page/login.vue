@@ -12,9 +12,9 @@
       </el-form-item>
       <el-form-item label="请选择身份：" prop="identity">
          <el-radio-group v-model="rulesForm.identity">
-            <el-radio label="总经理" border></el-radio>
-            <el-radio label="销售经理" border></el-radio>
-            <el-radio label="销售人员" border></el-radio>
+            <el-radio label="0"  border>总经理</el-radio>
+            <el-radio label="1"  border>销售经理</el-radio>
+            <el-radio label="2"  border>销售人员</el-radio>
           </el-radio-group>
       </el-form-item>
       <el-form-item>
@@ -35,14 +35,13 @@ export default {
       rulesForm: {
         name: "",
         pwd: "",
-        identity: "总经理"
+        identity: "0"
       },
       rules: {
         name: [{ required: true, message: "请输入账号", trigger: "blur" }],
         pwd: [{ required: true, message: "请输入登录密码", trigger: "blur" }],
         identity: [
           {
-            type: "number",
             required: true,
             message: "请选择身份",
             trigger: "change"
@@ -52,21 +51,26 @@ export default {
     };
   },
   methods: {
-    onSubmit: function() {
-      //this.$emit('loginSuccess');
-      let param = {
-        name: this.rulesForm.name,
-        pwd: this.rulesForm.pwd,
-        role: "0"
-      };
-      this.$http.post(API.LOGIN, this.qs.stringify(param)).then(result => {
-        if (result.data.status === 0) {
-          this.$router.push({ path: "/manage" });
-          this.$message.success("登陆成功");
-          console.log("登录成功");
+    onSubmit: function(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let param = {
+            name: this.rulesForm.name,
+            pwd: this.rulesForm.pwd,
+            role: this.rulesForm.identity
+          };
+          this.$http.post(API.LOGIN, this.qs.stringify(param)).then(result => {
+            if (result.data.status === 0) {
+              this.$router.push({ path: "/manage" });
+              this.$message.success("登陆成功");
+              console.log("登录成功");
+            } else {
+              this.$message.error("登录失败");
+              console.log("登录失败");
+              }
+          });
         } else {
-          this.$message.error("登录失败");
-          console.log("登录失败");
+          return false;
         }
       });
     },

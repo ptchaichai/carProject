@@ -28,8 +28,7 @@ http.interceptors.response.use((res) => {
 Vue.prototype.$http = http
 Vue.prototype.$http.all = axios.all
 Vue.prototype.$http.spread = axios.spread
-Vue.prototype.$qs = qs
-Vue.prototype.$axios = axios
+Vue.prototype.qs = qs
 // Vue.prototype.$echarts = echarts
 Vue.use(ElementUI)
 Vue.use(Vuex)
