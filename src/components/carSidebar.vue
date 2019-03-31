@@ -4,8 +4,6 @@
       <el-menu
         :default-active="activePath"
         class="el-menu-vertical-demo"
-        @open="handleOpen"
-        @close="handleClose"
         router>
         <el-menu-item class="first-menu" v-for="(item ,i) in menulist"
                        v-if="!item.menuSubLink"
@@ -89,8 +87,20 @@
           },
           {
             menuName: '汽车信息管理',
-            menuUrl: '/manage/carInformation',
-            menuIndex: '4'
+            menuUrl: '/manage/carManage',
+            menuIndex: '4',
+            menuSubLink:[
+              {
+                menuName: '汽车信息',
+                menuUrl: '/manage/carManage/carInformation',
+                menuIndex: '4-1'
+              },
+              {
+                menuName: '汽车销售排名',
+                menuUrl: '/manage/carManage/carRank',
+                menuIndex: '4-2'
+              }
+            ]
           },
           {
             menuName: '高级设置',

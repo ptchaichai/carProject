@@ -3,18 +3,38 @@
   <div class="saleInformation">
     <p>销售信息统计量</p>
     <div class="div-flex" style="text-align:center">
-        <div class="chart-tab" id="chart-tab0" @click="Day($event)" ref="Day">当日</div>
-        <div class="chart-tab activecss" id="chart-tab1" @click="Month($event)" ref="Month">当月</div>
-        <div class="chart-tab" id="chart-tab2" @click="Quarter($event)" ref="Quarter">当季度</div>
-        <div class="chart-tab" id="chart-tab3" @click="Year($event)" ref="Year">当年</div>
+      <div class="chart-tab" id="chart-tab0" @click="Day($event)" ref="Day">当日</div>
+      <div class="chart-tab activecss" id="chart-tab1" @click="Month($event)" ref="Month">当月</div>
+      <div class="chart-tab" id="chart-tab2" @click="Quarter($event)" ref="Quarter">当季度</div>
+      <div class="chart-tab" id="chart-tab3" @click="Year($event)" ref="Year">当年</div>
     </div>
     <div class="chart">
-    <div id="myChartDay" ref="myChartDay" :style="{width: '400px', height: '400px'}" v-show="dayShow"></div>
-    <div id="myChartMonth" ref="myChartMonth" :style="{width: '400px', height: '400px'}" v-show="monthShow"></div>
-    <div id="myChartQuarter" ref="myChartQuarter" :style="{width: '400px', height: '400px'}" v-show="quarterShow"></div>
-    <div id="myChartYear" ref="myChartYear" :style="{width: '400px', height: '400px'}" v-show="yearShow"></div>
+      <div
+        id="myChartDay"
+        ref="myChartDay"
+        :style="{width: '400px', height: '400px'}"
+        v-show="dayShow"
+      ></div>
+      <div
+        id="myChartMonth"
+        ref="myChartMonth"
+        :style="{width: '400px', height: '400px'}"
+        v-show="monthShow"
+      ></div>
+      <div
+        id="myChartQuarter"
+        ref="myChartQuarter"
+        :style="{width: '400px', height: '400px'}"
+        v-show="quarterShow"
+      ></div>
+      <div
+        id="myChartYear"
+        ref="myChartYear"
+        :style="{width: '400px', height: '400px'}"
+        v-show="yearShow"
+      ></div>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -257,8 +277,8 @@ export default {
   font-size: 20px;
   font-weight: 700;
 }
-.chart{
-  flex:1 1 1 auto;
+.chart {
+  flex: 1 1 1 auto;
 }
 .activecss {
   background: #fff;

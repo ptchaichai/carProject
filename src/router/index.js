@@ -4,7 +4,8 @@ import personal from '../page/personalManage/personal'
 import subordinate from '../page/personalManage/subordinate'
 import updatePwd from '../page/advance/updatePwd'
 import saleInformation from '../page/saleInformation'
-import carInformation from '../page/carInformation'
+import carInformation from '../page/carManage/carInformation'
+import carRank from '../page/carManage/carRank'
 import callClient from '../page/clientManage/callClient'
 import comeClient from '../page/clientManage/comeClient'
 import buyClient from '../page/clientManage/buyClient'
@@ -12,7 +13,7 @@ import announcement from '../page/announcement'
 import home from '../page/home'
 import perfect from '../page/advance/perfect'
 import Login from '../page/login'
-import Index from '../page/index'
+import manage from '../page/manage'
 Vue.use(Router)
 
 export default new Router({
@@ -25,7 +26,7 @@ export default new Router({
     },
     {
       path: '/manage',
-      component: Index,
+      component: manage,
       children: [
         {path: '', redirect: '/manage/home'},
         {
@@ -60,9 +61,14 @@ export default new Router({
           component: saleInformation
         },
         {
-          path: 'carInformation',
+          path: 'carManage/carInformation',
           name: 'carInformation',
           component: carInformation
+        },
+        {
+          path: 'carManage/carRank',
+          name: 'carRank',
+          component: carRank
         },
         {
           path: 'clientManage/callClient',

@@ -1,88 +1,85 @@
 <template>
-    <div class="announcement" >
-      <p>公告</p>
-      <div class="search-add">
+  <div class="announcement">
+    <p>公告</p>
+    <div class="search-add">
       <div class="box">
-      <el-form ref="form" :model="form" class="search-form">
-      <el-input v-model="searchInput" placeholder="请输入名称" suffix-icon="el-icon-search">
-      </el-input>
-      <el-button type="success"  class="search" @click="search">搜索</el-button>
-     </el-form>
-      <el-dialog title="添加公告" :visible.sync="dialogAdd"
-       width="50%">
-      <div class="dialog-box">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="add-form">
-          <el-form-item label="标题" prop="title">
-          <el-input v-model="ruleForm.title" placeholder="请输入标题"></el-input>
-         </el-form-item>
-          <el-form-item label="公告内容" prop="content">
-          <el-input v-model="ruleForm.content" placeholder="请输入公告内容" type="textarea"></el-input>
-         </el-form-item>
-         <el-button  round type="primary" class="addInformation" @click="addConfirm('ruleForm')">确定</el-button>
-         <el-button  round type="info" class="cancelInformation" @click="addCancel('ruleForm')">取消</el-button>
+        <el-form ref="form"  class="search-form">
+          <el-input v-model="searchData" placeholder="请输入要搜索的字段" suffix-icon="el-icon-search"></el-input>
+          <el-button type="success" class="search" @click="search">搜索</el-button>
         </el-form>
+        <el-dialog title="添加公告" :visible.sync="dialogAdd" width="50%">
+          <div class="dialog-box">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="add-form">
+              <el-form-item label="标题" prop="title">
+                <el-input v-model="ruleForm.title" placeholder="请输入标题"></el-input>
+              </el-form-item>
+              <el-form-item label="公告内容" prop="content">
+                <el-input v-model="ruleForm.content" placeholder="请输入公告内容" type="textarea"></el-input>
+              </el-form-item>
+              <el-button
+                round
+                type="primary"
+                class="addInformation"
+                @click="addConfirm('ruleForm')"
+              >确定</el-button>
+              <el-button
+                round
+                type="info"
+                class="cancelInformation"
+                @click="addCancel('ruleForm')"
+              >取消</el-button>
+            </el-form>
+          </div>
+        </el-dialog>
+        <el-button round type="primary" @click="open" class="add">添加新公告</el-button>
+      </div>
+    </div>
+    <el-table
+      :data="tableData"
+      border
+      :row-style="tableRowStyle"
+      :header-cell-style="tableHeaderColor"
+    >
+      <el-table-column prop="title" label="标题" min-width="30%" align="center"></el-table-column>
+      <el-table-column prop="author" label="发布人" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="time" label="发布时间" min-width="20%" align="center"></el-table-column>
+      <el-table-column fixed="right" label="操作" width="150" min-width="30%" align="center">
+        <template slot-scope="scope">
+          <el-button
+            slot="reference"
+            type="primary"
+            size="small"
+            round
+            class="update"
+            @click="view(scope.$index)"
+          >查看</el-button>
+          <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-dialog title="公告内容" :visible.sync="dialogView" width="50%">
+      <div class="dialog-box">
+        <span class="view-span">公告标题:</span>
+        <el-input v-model="viewTitle" readonly="readonly"></el-input>
+        <span class="view-span">公告内容:</span>
+        <el-input v-model="viewContent" type="textarea" readonly="readonly" class="textarea"></el-input>
+        <el-button round type="primary" @click="dialogView= false">关闭</el-button>
       </div>
     </el-dialog>
-     <el-button round type="primary" @click="open">添加新公告</el-button>
-      </div>
-      </div>
-     <el-table
-    :data="tableData"
-    border
-    :row-style="tableRowStyle"
-    :header-cell-style="tableHeaderColor">
-    <el-table-column
-      prop="title"
-      label="标题"
-      mix-width="30%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="author"
-      label="发布人"
-      mix-width="20%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="time"
-      label="发布时间"
-      mix-width="20%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="操作"
-      width="150"
-      mix-width="30%"
-      align="center">
-      <template slot-scope="scope">
-      <el-button slot="reference" type="primary" size="small" round class="update" @click="view(scope.$index)">查看</el-button>
-        <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-          <el-dialog title="公告内容" :visible.sync="dialogView" width="50%">
-              <div class="dialog-box">
-                    <span class="view-span">公告标题:</span>
-                    <el-input v-model="viewTitle" readonly="readonly"></el-input>
-                    <span class="view-span">公告内容:</span>
-                    <el-input v-model="viewContent" type="textarea" readonly="readonly" class="textarea"></el-input>
-                  <el-button  round type="primary" @click="dialogView= false">关闭</el-button>
-              </div>
-            </el-dialog>
-            <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
-            <i class="el-icon-warning"></i>
-            <span>是否要删除本条公告？</span>
-            <span slot="footer" class="dialog-footer">
-           <el-button type="primary" @click="removeConfirm()" round>确 定</el-button>
-          <el-button @click="dialogDelete = false"  round>取 消</el-button>
-        </span>
-      </el-dialog>
-    </div>
+    <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
+      <i class="el-icon-warning"></i>
+      <span>是否要删除本条公告？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="removeConfirm()" round>确 定</el-button>
+        <el-button @click="dialogDelete = false" round>取 消</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
 import Bus from "../components/bus.js";
+
 export default {
   name: "updatePwd",
   data() {
@@ -95,9 +92,10 @@ export default {
       dialogDelete: false,
       addContentVal: "",
       tableData: [],
+      
       viewTitle: "",
       viewContent: "",
-      searchInput: "",
+      searchData: "",
       ruleForm: {
         title: "",
         content: ""
@@ -131,17 +129,17 @@ export default {
     // 修改table header的背景色
     tableHeaderColor({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
-        return "background-color: #409eff; color: #fff; font-weight: 500;";
+        return "background-color: #409eff; color: #fff; font-weight: 500; border:none;";
       }
     },
     search: function() {
-      const val = this.searchInput;
+      const val = this.searchData;
       if (val !== "") {
         const form = {
           searchVal: val
         };
-        this.$axios
-          .post("api/searchAnnouncement", this.$qs.stringify(form))
+        this. $http
+          .post("api/searchAnnouncement", this.qs.stringify(form))
           .then(res => {
             if (res.data.status === 0) {
               this.tableData = res.data;
@@ -163,8 +161,8 @@ export default {
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this.$axios
-            .post("api/addAnnouncement", this.$qs.stringify(form))
+          this. $http
+            .post("api/addAnnouncement", this.qs.stringify(form))
             .then(res => {
               if (res.data.status === 0) {
                 this.tableData = res.data;
@@ -201,8 +199,8 @@ export default {
       let form = {
         id: this.id
       };
-      this.$axios
-        .post("api/deleteAnnouncement", this.$qs.stringify(form))
+      this. $http
+        .post("api/deleteAnnouncement", this.qs.stringify(form))
         .then(res => {
           if (res.data.status === 0) {
             const i = this.currentIndex;
@@ -243,6 +241,22 @@ export default {
 .box {
   width: 90%;
   margin: 0 auto;
+}
+.search-form {
+  width: 265px;
+  margin-top: 30px;
+  position: relative;
+}
+.search {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+.add {
+  float: right;
+  margin-top: -36px;
+  height: 32px;
+  line-height: 6px;
 }
 .addOne {
   margin: 0px 60px;

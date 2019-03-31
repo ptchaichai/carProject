@@ -1,40 +1,70 @@
 <template>
-    <div class="personal">
-      <p class="title">个人信息</p>
-      <div class="card">
-        <div class="base-info">
+  <div class="personal">
+    <p class="title">个人信息</p>
+    <div class="card">
+      <div class="base-info">
         <div class="avatar-wrap">
-          <img src="../../assets/default.jpg" alt="">
+          <img src="../../assets/default.jpg" alt>
         </div>
         <div class="base-wrap">
-        <span class="username">张三</span>
-        <div class="bing-info">
-          <div class="info-title">
-            <p><span>账号：</span></p>
-            <p><span>加入时间：</span></p>
-            <p><span>电话号码：</span></p>
-            <p v-show="perfectShow"><span>性别：</span></p>
-            <p v-show="perfectShow"><span>出生日期：</span></p>
-            <p v-show="perfectShow"><span>邮箱：</span></p>
-            <p v-show="perfectShow"><span>地址：</span></p>
+          <span class="username">张三</span>
+          <div class="bing-info">
+            <div class="info-title">
+              <p>
+                <span>账号：</span>
+              </p>
+              <p>
+                <span>加入时间：</span>
+              </p>
+              <p>
+                <span>电话号码：</span>
+              </p>
+              <p v-show="perfectShow">
+                <span>性别：</span>
+              </p>
+              <p v-show="perfectShow">
+                <span>出生日期：</span>
+              </p>
+              <p v-show="perfectShow">
+                <span>邮箱：</span>
+              </p>
+              <p v-show="perfectShow">
+                <span>地址：</span>
+              </p>
+            </div>
+            <div class="info-content">
+              <p>
+                <span>001</span>
+              </p>
+              <p>
+                <span>2018-3-2</span>
+              </p>
+              <p>
+                <span>15082345567</span>
+              </p>
+              <p v-show="perfectShow">
+                <span>{{sex}}</span>
+              </p>
+              <p v-show="perfectShow">
+                <span>{{age}}</span>
+              </p>
+              <p v-show="perfectShow">
+                <span>{{email}}</span>
+              </p>
+              <p v-show="perfectShow">
+                <span>{{address}}</span>
+              </p>
+            </div>
           </div>
-          <div class="info-content">
-            <p><span>001</span></p>
-            <p><span>2018-3-2</span></p>
-            <p><span>15082345567</span></p>
-            <p v-show="perfectShow"><span>{{sex}}</span></p>
-            <p v-show="perfectShow"><span>{{age}}</span></p>
-            <p v-show="perfectShow"><span>{{email}}</span></p>
-            <p v-show="perfectShow"><span>{{address}}</span></p>
-          </div>
-        </div>
-        </div>
-        </div>
-        <div class="role">
-          <p><span @click="go">销售经理</span></p>
         </div>
       </div>
+      <div class="role">
+        <p>
+          <span @click="go">销售经理</span>
+        </p>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -51,7 +81,7 @@ export default {
       sex: "",
       age: "",
       email: "",
-      address: "",
+      address: ""
     };
   },
   mounted() {

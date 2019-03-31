@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header-box">
     <div class="title">
       <div>
         <img src="../assets/header.png" alt>
@@ -25,7 +25,7 @@
 <script>
 import Bus from "./bus.js";
 export default {
-  name: "header",
+  name: "carHeader",
   data() {
     return {
       val: true,
@@ -34,7 +34,6 @@ export default {
   },
   methods: {
     back: function(command) {
-      this.$emit("backLogin");
       this.$router.push({path:"/login"});
       this.$message.success("退出成功");
     },
@@ -51,7 +50,7 @@ export default {
 };
 </script>
 <style scoped>
-.header {
+.header-box {
   height: 68px;
   background: #0093e6;
   padding: 0 25px 0 30px;
@@ -62,7 +61,7 @@ export default {
   z-index: 2000;
   color: #fff;
 }
-.header .title {
+.header-box .title {
   height: 100%;
   position: relative;
 }

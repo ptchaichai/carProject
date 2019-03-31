@@ -63,8 +63,8 @@ export default {
           if (this.ruleForm.newPwd.trim() !== this.ruleForm.newPwdTwo.trim()) {
             this.$message.error("确认密码必须与新密码一致");
           } else {
-            this.$axios
-              .post("api/updatePwd", this.$qs.stringify(form))
+            this.$http
+              .post("api/updatePwd", this.qs.stringify(form))
               .then(res => {
                 if (res.data.status === 0) {
                   this.$message.success("修改成功");

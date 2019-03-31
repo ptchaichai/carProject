@@ -1,32 +1,32 @@
 <template>
-    <div class="perfect-box">
-      <p>完善资料</p>
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-        <el-form-item label="性别" prop="sex">
-          <el-select v-model="ruleForm.sex" placeholder="请选择性别" @change="change">
-            <el-option v-for="(item,id) in roles" :label="item.label" :key="item.id" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="出生日期" prop="age">
+  <div class="perfect-box">
+    <p>完善资料</p>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+      <el-form-item label="性别" prop="sex">
+        <el-select v-model="ruleForm.sex" placeholder="请选择性别">
+          <el-option
+            v-for="(item,id) in roles"
+            :label="item.label"
+            :key="item.id"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="出生日期" prop="age">
         <div class="block">
-          <el-date-picker
-            v-model="ruleForm.age"
-            type="date"
-            placeholder="选择日期">
-          </el-date-picker>
+          <el-date-picker v-model="ruleForm.age" type="date" placeholder="选择日期"></el-date-picker>
         </div>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
-        </el-form-item>
-        <el-form-item label="住址" prop="address">
-          <el-input v-model="ruleForm.address" placeholder="请输入住址"></el-input>
-        </el-form-item>
-        <el-button  round type="primary" class="addInformation" @click="perfectConfirm('ruleForm')">提交</el-button>
-        <el-button  round type="info" class="addCancel" @click="perfectCancel('ruleForm')">取消</el-button>
-      </el-form>
-    </div>
+      </el-form-item>
+      <el-form-item label="邮箱" prop="email">
+        <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
+      </el-form-item>
+      <el-form-item label="住址" prop="address">
+        <el-input v-model="ruleForm.address" placeholder="请输入住址"></el-input>
+      </el-form-item>
+      <el-button round type="primary" class="addInformation" @click="perfectConfirm('ruleForm')">提交</el-button>
+      <el-button round type="info" class="addCancel" @click="perfectCancel('ruleForm')">取消</el-button>
+    </el-form>
+  </div>
 </template>
 
 <script>
@@ -79,17 +79,15 @@ export default {
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
           this.perfectArr = [form.sex, form.age, form.email, form.address];
-          this.$axios
-            .post("api/perfect", this.$qs.stringify(form))
-            .then(res => {
-              if (res.data.status === 0) {
-                bus.$emit("perfectSend", this.perfectArr);
-                this.$message.success("提交成功");
-                this.$refs[ruleForm].resetFields();
-              } else {
-                this.$message.error("提交失败");
-              }
-            });
+          this.$http.post("api/perfect", this.qs.stringify(form)).then(res => {
+            if (res.data.status === 0) {
+              bus.$emit("perfectSend", this.perfectArr);
+              this.$message.success("提交成功");
+              this.$refs[ruleForm].resetFields();
+            } else {
+              this.$message.error("提交失败");
+            }
+          });
         } else {
           return false;
         }

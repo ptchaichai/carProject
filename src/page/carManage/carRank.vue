@@ -3,11 +3,21 @@
   <div class="carInformation">
     <p>汽车销售统计量</p>
     <div class="div-flex" style="text-align:center">
-        <div class="chart-tab activecss" id="chart-tab1" @click="Month($event)" ref="Month">当月</div>
-        <div class="chart-tab" id="chart-tab2" @click="Year($event)" ref="Year">当年</div>
+      <div class="chart-tab activecss" id="chart-tab1" @click="Month($event)" ref="Month">当月</div>
+      <div class="chart-tab" id="chart-tab2" @click="Year($event)" ref="Year">当年</div>
     </div>
-    <div id="myChartMonth" ref="myChartMonth" :style="{width: '350px', height: '350px'}" v-show="monthShow"></div>
-    <div id="myChartYear" ref="myChartYear" :style="{width: '350px', height: '350px'}" v-show="yearShow"></div>
+    <div
+      id="myChartMonth"
+      ref="myChartMonth"
+      :style="{width: '350px', height: '350px'}"
+      v-show="monthShow"
+    ></div>
+    <div
+      id="myChartYear"
+      ref="myChartYear"
+      :style="{width: '350px', height: '350px'}"
+      v-show="yearShow"
+    ></div>
     <div class="ranking-month" v-show="monthRank">
       <p>当前销售排名为：</p>
       <div class="ranking-box">
@@ -30,7 +40,7 @@
         </ul>
       </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -52,9 +62,16 @@ export default {
       yearCarData: [],
       cars: [],
       carsYear: [{ type: "锋范" }, { type: "雅阁" }, { type: "飞度" }],
-      nums: [{ n: 1 }, { n: 2 }, { n: 3 },{ n: 4 },{ n: 5 },{ n: 6 }],
+      nums: [{ n: 1 }, { n: 2 }, { n: 3 }, { n: 4 }, { n: 5 }, { n: 6 }],
       monthState: [],
-      arr:[{type:"奥德赛"}, {type:"宾智"}, {type:"飞度"},{type: "锋范"}, {type:"凌派"},{type: "雅阁"}],
+      arr: [
+        { type: "奥德赛" },
+        { type: "宾智" },
+        { type: "飞度" },
+        { type: "锋范" },
+        { type: "凌派" },
+        { type: "雅阁" }
+      ]
     };
   },
   computed: {},
@@ -70,7 +87,7 @@ export default {
     this.$refs.Month.style.background = "#f56c6c";
     this.$refs.Month.style.color = "#fff";
     this.drawMonth();
-    this.cars=this.arr;
+    this.cars = this.arr;
   },
   watch: {
     monthCarData() {
@@ -243,7 +260,7 @@ ul {
 }
 .num li:nth-child(4),
 .num li:nth-child(5),
-.num li:nth-child(6){
+.num li:nth-child(6) {
   background: #8eb9f5;
   color: #fff;
 }

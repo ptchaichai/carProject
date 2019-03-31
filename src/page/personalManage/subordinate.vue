@@ -1,130 +1,130 @@
 <template>
-    <div class="subordinate">
-      <p>信息管理</p>
-      <div class="search-add">
-        <div class="box">
-      <el-form ref="form" :model="form" class="search-form">
-      <el-input v-model="searchData" placeholder="请输入名称"></el-input>
-          <el-button type="success"  class="search" @click="search">搜索</el-button>
-     </el-form>
-     <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
-     <div class="dialog-box">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-          <el-form-item label="账号" prop="account">
-            <el-input v-model="ruleForm.account" placeholder="请输入账号"></el-input>
-          </el-form-item>
-          <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
-         </el-form-item>
-          <el-form-item label="密码" prop="pwd">
-            <el-input v-model="ruleForm.pwd" @focus.capture.native='changePasswordTip(true)'  @blur.capture.native='changePasswordTip(false)' auto-complete="new-password" type="password" placeholder="请输入密码"></el-input>
-          </el-form-item>
-          <div style="position: absolute">
-            <verify-pass-word-tip :password="ruleForm.pwd" :isShowTip = 'isShowTip'></verify-pass-word-tip>
-          </div>
-          <el-form-item label="电话" prop="tel">
-            <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
-          </el-form-item>
-          <el-form-item label="角色" prop="role">
-          <el-select v-model="ruleForm.role" placeholder="请选择角色" @change="change">
-            <el-option v-for="(item,id) in roles" :label="item.label" :key="item.id" :value="item.value">
-            </el-option>
-          </el-select>
-          </el-form-item>
-         <el-button  round type="primary" class="addInformation" @click="addInformation('ruleForm')">确定</el-button>
-         <el-button  round type="info" class="addCancel" @click="addCancel('ruleForm')">取消</el-button>
+  <div class="subordinate">
+    <p>信息管理</p>
+    <div class="search-add">
+      <div class="box">
+        <el-form ref="form" :model="form" class="search-form">
+          <el-input v-model="searchData" placeholder="请输入名称"></el-input>
+          <el-button type="success" class="search" @click="search">搜索</el-button>
         </el-form>
+        <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
+          <div class="dialog-box">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+              <el-form-item label="账号" prop="account">
+                <el-input v-model="ruleForm.account" placeholder="请输入账号"></el-input>
+              </el-form-item>
+              <el-form-item label="姓名" prop="name">
+                <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
+              </el-form-item>
+              <el-form-item label="密码" prop="pwd">
+                <el-input
+                  v-model="ruleForm.pwd"
+                  @focus.capture.native="changePasswordTip(true)"
+                  @blur.capture.native="changePasswordTip(false)"
+                  auto-complete="new-password"
+                  type="password"
+                  placeholder="请输入密码"
+                ></el-input>
+              </el-form-item>
+              <div style="position: absolute">
+                <verify-pass-word-tip :password="ruleForm.pwd" :isShowTip="isShowTip"></verify-pass-word-tip>
+              </div>
+              <el-form-item label="电话" prop="tel">
+                <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
+              </el-form-item>
+              <el-form-item label="角色" prop="role">
+                <el-select v-model="ruleForm.role" placeholder="请选择角色" @change="change">
+                  <el-option
+                    v-for="(item,id) in roles"
+                    :label="item.label"
+                    :key="item.id"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+              <el-button
+                round
+                type="primary"
+                class="addInformation"
+                @click="addInformation('ruleForm')"
+              >确定</el-button>
+              <el-button round type="info" class="addCancel" @click="addCancel('ruleForm')">取消</el-button>
+            </el-form>
+          </div>
+        </el-dialog>
+        <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
       </div>
-     </el-dialog>
-     <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
-   </div>
-  </div>
-      <el-table
-    :data="tableData"
-    ref="searchTable"
-    border
-    @row-click="getDetails"
-      :row-style="tableRowStyle"
-    :header-cell-style="tableHeaderColor"
-    >
-    <el-table-column
-      prop="account"
-      label="账号"
-      min-width="10%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="name"
-      label="姓名"
-      min-width="15%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="tel"
-      label="电话"
-      min-width="15%"
-      align="center">
-    </el-table-column>
-        <el-table-column
-          prop="pwd"
-          label="密码"
-         min-width="20%"
-         align="center">
-        </el-table-column>
-        <el-table-column
-          prop="role"
-          label="角色"
-         min-width="15%"
-         align="center">
-        </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="操作"
-      min-width="25%"
-      align="center">
-      <template slot-scope="scope">
-     <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改</el-button>
-        <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-   <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
-        <i class="el-icon-warning"></i>
-        <span>是否要删除本条信息？</span>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="removeConfirm()" round>确 定</el-button>
-          <el-button @click="dialogDelete = false"  round>取 消</el-button>
-        </span>
-      </el-dialog>
-      <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
-        <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
-          <el-form-item label="账号" prop="account">
-            <el-input v-model="updateForm.account" placeholder="请输入账号"></el-input>
-          </el-form-item>
-          <el-form-item label="姓名" prop="name">
-          <el-input v-model="updateForm.name" placeholder="请输入姓名"></el-input>
-         </el-form-item>
-          <el-form-item label="电话" prop="tel">
-          <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
-         </el-form-item>
-          <el-form-item label="密码" prop="pwd">
-            <el-input v-model="updateForm.pwd" @focus.capture.native='changePasswordTip(true)'  @blur.capture.native='changePasswordTip(false)' auto-complete="new-password" type="password" placeholder="请输入密码"></el-input>
-          </el-form-item>
-          <div style="position: absolute">
-            <verify-pass-word-tip :password="ruleForm.pwd" :isShowTip = 'isShowTip'></verify-pass-word-tip>
-          </div>
-          <div class="role" prop="role">
-            <p>角色</p></div>
-          <el-select v-model="updateForm.role" placeholder="请选择角色" @change="change">
-            <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value">
-            </el-option>
-          </el-select>
-
-        </el-form>
-        <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
-          <el-button @click="updateCancel('updateForm')"  round>取 消</el-button>
-      </el-dialog>
     </div>
+    <el-table
+      :data="tableData"
+      ref="searchTable"
+      border
+      @row-click="getDetails"
+      :row-style="tableRowStyle"
+      :header-cell-style="tableHeaderColor"
+    >
+      <el-table-column prop="account" label="账号" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="pwd" label="密码" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
+      <el-table-column fixed="right" label="操作" min-width="25%" align="center">
+        <template slot-scope="scope">
+          <el-button
+            slot="reference"
+            type="primary"
+            size="small"
+            round
+            class="update"
+            @click="update(scope.$index)"
+          >修改</el-button>
+          <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
+      <i class="el-icon-warning"></i>
+      <span>是否要删除本条信息？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="removeConfirm()" round>确 定</el-button>
+        <el-button @click="dialogDelete = false" round>取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
+      <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
+        <el-form-item label="账号" prop="account">
+          <el-input v-model="updateForm.account" placeholder="请输入账号"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="updateForm.name" placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" prop="tel">
+          <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="pwd">
+          <el-input
+            v-model="updateForm.pwd"
+            @focus.capture.native="changePasswordTip(true)"
+            @blur.capture.native="changePasswordTip(false)"
+            auto-complete="new-password"
+            type="password"
+            placeholder="请输入密码"
+          ></el-input>
+        </el-form-item>
+        <div style="position: absolute">
+          <verify-pass-word-tip :password="ruleForm.pwd" :isShowTip="isShowTip"></verify-pass-word-tip>
+        </div>
+        <div class="role" prop="role">
+          <p>角色</p>
+        </div>
+        <el-select v-model="updateForm.role" placeholder="请选择角色" @change="change">
+          <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value"></el-option>
+        </el-select>
+      </el-form>
+      <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
+      <el-button @click="updateCancel('updateForm')" round>取 消</el-button>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -244,8 +244,8 @@ export default {
         const form = {
           searchVal: val
         };
-        this.$axios
-          .post("api/searchSubordinate", this.$qs.stringify(form))
+        this.$http
+          .post("api/searchSubordinate", this.qs.stringify(form))
           .then(res => {
             if (res.data.status === 0) {
               this.tableData = res.data;
@@ -269,8 +269,8 @@ export default {
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this.$axios
-            .post("api/addSubordinate", this.$qs.stringify(form))
+          this.$http
+            .post("api/addSubordinate", this.qs.stringify(form))
             .then(res => {
               if (res.data.status === 0) {
                 this.tableData = res.data;
@@ -312,8 +312,8 @@ export default {
       };
       this.$refs[updateForm].validate(valid => {
         if (valid) {
-          this.$axios
-            .post("api/updateSubordinate", this.$qs.stringify(form))
+          this.$http
+            .post("api/updateSubordinate", this.qs.stringify(form))
             .then(res => {
               if (res.data.status === 0) {
                 this.tableData[currentIndex] = res.data;
@@ -340,8 +340,8 @@ export default {
       const form = {
         id: this.id
       };
-      this.$axios
-        .post("api/deleteAnnouncement", this.$qs.stringify(form))
+      this.$http
+        .post("api/deleteAnnouncement", this.qs.stringify(form))
         .then(res => {
           if (res.data.status === 0) {
             this.tableData.splice(this.currentIndex, 1);

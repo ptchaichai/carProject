@@ -1,29 +1,29 @@
 <template>
-    <div class="login" >
+  <div class="login">
     <div class="bg bg-blur"></div>
     <div class="contet content-front">
-    <el-tag>用户登录</el-tag>
-    <el-form  :model="rulesForm" :rules="rules" ref="rulesForm">
-      <el-form-item label="账号:" prop="name">
-        <el-input v-model="rulesForm.name" placeholder="请输入账号"></el-input>
-      </el-form-item>
-       <el-form-item label="密码:" prop="pwd">
-        <el-input v-model="rulesForm.pwd" type="password" placeholder="请输入密码"></el-input>
-      </el-form-item>
-      <el-form-item label="请选择身份：" prop="identity">
-         <el-radio-group v-model="rulesForm.identity">
-            <el-radio label="0"  border>总经理</el-radio>
-            <el-radio label="1"  border>销售经理</el-radio>
-            <el-radio label="2"  border>销售人员</el-radio>
+      <el-tag>用户登录</el-tag>
+      <el-form :model="rulesForm" :rules="rules" ref="rulesForm">
+        <el-form-item label="账号:" prop="name">
+          <el-input v-model="rulesForm.name" placeholder="请输入账号"></el-input>
+        </el-form-item>
+        <el-form-item label="密码:" prop="pwd">
+          <el-input v-model="rulesForm.pwd" type="password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+        <el-form-item label="请选择身份：" prop="identity">
+          <el-radio-group v-model="rulesForm.identity">
+            <el-radio label="0" border>总经理</el-radio>
+            <el-radio label="1" border>销售经理</el-radio>
+            <el-radio label="2" border>销售人员</el-radio>
           </el-radio-group>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit('rulesForm')">登录</el-button>
-       <el-button type="info" @click="resetForm('rulesForm')">重置</el-button>
-       </el-form-item>
-    </el-form>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit('rulesForm')">登录</el-button>
+          <el-button type="info" @click="resetForm('rulesForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
     </div>
-    </div>
+  </div>
 </template>
 
 <script>
@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     onSubmit: function(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(valid => {
         if (valid) {
           let param = {
             name: this.rulesForm.name,
@@ -67,7 +67,7 @@ export default {
             } else {
               this.$message.error("登录失败");
               console.log("登录失败");
-              }
+            }
           });
         } else {
           return false;
