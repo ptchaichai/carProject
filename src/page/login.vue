@@ -55,9 +55,9 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           let param = {
-            name: this.rulesForm.name,
-            pwd: this.rulesForm.pwd,
-            role: this.rulesForm.identity
+            phone: this.rulesForm.name,
+            password: this.rulesForm.pwd,
+            // role: this.rulesForm.identity
           };
           this.$http.post(API.LOGIN, this.qs.stringify(param)).then(result => {
             if (result.data.status === 0) {

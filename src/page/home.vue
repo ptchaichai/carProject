@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="block">
-      <el-tag>欢迎来到广汽本田4s汽车销售管理系统</el-tag>
+      <el-tag>欢迎来到广汽本田4汽车销售管理系统</el-tag>
       <el-carousel :interval="2000" type="card" height="400px">
         <el-carousel-item v-for="item in imagebox" :key="item.id">
           <img :src="item.idView" class="image">
@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+import API from "./api.js";
 export default {
   name: "home",
   data() {
@@ -34,7 +35,22 @@ export default {
         }
       ]
     };
-  }
+  },
+  created() {
+    this.checkUser()
+  },
+  methods: {
+    checkUser: function(){
+       this.$http.post(API.check, this.qs.stringify({})).then(result => {
+            if (result.data.status === 0) {
+              this.$message.success("登陆成功");
+              console.log("登录成功");
+            } else {
+              this.$message.error("登录失败");
+            }
+        });
+    }
+  },
 };
 </script>
 <style>

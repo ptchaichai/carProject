@@ -6,8 +6,10 @@ var logger = require('morgan');
 var ejs = require('ejs');
 var indexRouter = require('./routes/index');
 const cookieSession = require('express-session');
+const passport = require('passport')
+const bodyParser = require("body-parser");
 const redis = require('redis');
-var RedisStore = require('connect-redis')(cookieSession);
+const RedisStore = require('connect-redis')(cookieSession);
 var app = express(); //生成一个express实例 app
 
 // view engine setup
@@ -20,34 +22,38 @@ app.set('view engine', 'html');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 // 创建Redis客户端
-var redisClient = redis.createClient(6379, '127.0.0.1', {auth_pass: 'secret'});
+var redisClient = redis.createClient(6379, '127.0.0.1');
 // 初始化中间件，传入的第一个参数为singed secret
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(cookieSession({
   store: new RedisStore({client: redisClient}),
   //session的秘钥，防止session劫持。 这个秘钥会被循环使用，秘钥越长，数量越多，破解难度越高。
   secret: 'secret',
   resave: false,
+  saveUninitialized: false,
   //session过期时间，不易太长。php默认20分钟
   cookie : {
     maxAge : 1000 * 60 * 3, // 设置 session 的有效时间，单位毫秒
   },
-  name: 'SSEID'
+  name: 'ssid',
+  unset: 'keep' ,
 }))
+app.use(passport.initialize())  
+app.use(passport.session())  
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use(function (req, res, next) {
-  if (!req.session) {
-    res.json({
-      status: 2,
-      data: '请重新登录'
-    })
-  }
-  next() // otherwise continue
-})
+// app.use(function (req, res, next) {
+//   if (!req.session && req.session.user) {
+//     res.json({
+//       status: 2,
+//       data: '请重新登录'
+//     })
+//   }
+//   next() // otherwise continue
+// })
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

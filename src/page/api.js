@@ -5,5 +5,6 @@ export default {
    * @param pid 密码
    * @param role 角色
    */
-  LOGIN: '/api/login'
+  LOGIN: '/api/login',
+  check: '/api/check',
 }
