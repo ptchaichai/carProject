@@ -14,7 +14,7 @@
       </el-form-item>
       <el-form-item label="出生日期" prop="age">
         <div class="block">
-          <el-date-picker v-model="ruleForm.age" type="date" placeholder="选择日期"></el-date-picker>
+          <el-date-picker format="yyyy-MM-dd" v-model="ruleForm.age" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
         </div>
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
@@ -45,6 +45,7 @@ export default {
   name: "perfect",
   data() {
     return {
+      dateValue:"",
       value: "",
       roles: [
         { label: "男", id: 1, value: "男" },
@@ -69,6 +70,10 @@ export default {
     };
   },
   methods: {
+    // 获取时间
+    // getTime(val) {
+    //     this.ruleForm.age = val;
+    //   },
     perfectConfirm: function(ruleForm) {
       const form = {
         sex: this.ruleForm.sex,
@@ -79,15 +84,16 @@ export default {
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
           this.perfectArr = [form.sex, form.age, form.email, form.address];
-          this.$http.post("api/perfect", this.qs.stringify(form)).then(res => {
-            if (res.data.status === 0) {
-              bus.$emit("perfectSend", this.perfectArr);
-              this.$message.success("提交成功");
-              this.$refs[ruleForm].resetFields();
-            } else {
-              this.$message.error("提交失败");
-            }
-          });
+          // this.$http.post("api/perfect", this.qs.stringify(form)).then(res => {
+          //   if (res.data.status === 0) {
+          //     bus.$emit("perfectSend", this.perfectArr);
+          //     this.$message.success("提交成功");
+          //     this.$refs[ruleForm].resetFields();
+          //   } else {
+          //     this.$message.error("提交失败");
+          //   }
+          // });
+          console.log(form.age);
         } else {
           return false;
         }

@@ -23,7 +23,7 @@
                 <el-input v-model="ruleForm.address" placeholder="请输入地址"></el-input>
               </el-form-item>
               <el-form-item label="关注车型" prop="carType">
-                <el-select v-model="ruleForm.carType" placeholder="请选择车型"  >
+                <el-select v-model="ruleForm.carType" placeholder="请选择车型">
                   <el-option
                     v-for="item in roles"
                     :label="item.label"
@@ -52,10 +52,14 @@
     </div>
     <el-table
       :data="tableData"
+      ref="multipleTable"
       border
       :row-style="tableRowStyle"
       :header-cell-style="tableHeaderColor"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column type="selection" width="50" align="center"></el-table-column>
+      <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="email" label="邮箱" min-width="15%" align="center"></el-table-column>
@@ -75,6 +79,10 @@
         </template>
       </el-table-column>
     </el-table>
+    <div style="margin-top: 20px">
+      <el-button @click="toggleSelection(tableData)">全选</el-button>
+      <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
+    </div>
     <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
       <i class="el-icon-warning"></i>
       <span>是否要删除本条信息？</span>
@@ -98,7 +106,7 @@
           <el-input v-model="updateForm.address" placeholder="请输入地址"></el-input>
         </el-form-item>
         <el-form-item label="关注车型" prop="carType">
-          <el-select v-model="updateForm.carType" placeholder="请选择车型" >
+          <el-select v-model="updateForm.carType" placeholder="请选择车型">
             <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -134,6 +142,7 @@ export default {
   name: "callClient",
   data() {
     return {
+      multipleSelection: [],
       searchData: "",
       dialogDelete: false,
       dialogUpdate: false,
@@ -199,6 +208,20 @@ export default {
     };
   },
   methods: {
+    // 全选
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      //val 为选中数据的集合
+      this.multipleSelection = val;
+    },
     // 修改table tr行的背景色
     tableRowStyle({ row, rowIndex }) {
       if (rowIndex / 2 === 0) {
@@ -219,15 +242,13 @@ export default {
         const form = {
           searchVal: val
         };
-        this. $http
-          .post("api/searchCome", this.qs.stringify(form))
-          .then(res => {
-            if (res.data.status === 0) {
-              this.tableData = res.data;
-            } else {
-              this.$message.error("搜索失败");
-            }
-          });
+        this.$http.post("api/searchCome", this.qs.stringify(form)).then(res => {
+          if (res.data.status === 0) {
+            this.tableData = res.data;
+          } else {
+            this.$message.error("搜索失败");
+          }
+        });
       }
     },
     add: function() {
@@ -243,18 +264,16 @@ export default {
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this. $http
-            .post("api/addCome", this.qs.stringify(form))
-            .then(res => {
-              if (res.data.status === 0) {
-                this.tableData = res.data;
-                this.$refs[ruleForm].resetFields();
-                this.dialogAdd = false;
-                this.$message.success("添加成功");
-              } else {
-                this.$message.error("添加失败");
-              }
-            });
+          this.$http.post("api/addCome", this.qs.stringify(form)).then(res => {
+            if (res.data.status === 0) {
+              this.tableData = res.data;
+              this.$refs[ruleForm].resetFields();
+              this.dialogAdd = false;
+              this.$message.success("添加成功");
+            } else {
+              this.$message.error("添加失败");
+            }
+          });
         } else {
           return false;
         }
@@ -284,7 +303,7 @@ export default {
       };
       this.$refs[updateForm].validate(valid => {
         if (valid) {
-          this. $http
+          this.$http
             .post("api/updateCome", this.qs.stringify(form))
             .then(res => {
               if (res.data.status === 0) {
@@ -312,7 +331,7 @@ export default {
       const form = {
         id: this.id
       };
-      this. $http.post("api/deleteCome", this.qs.stringify(form)).then(res => {
+      this.$http.post("api/deleteCome", this.qs.stringify(form)).then(res => {
         if (res.data.status === 0) {
           this.tableData.splice(this.currentIndex, 1);
           this.dialogDelete = false;

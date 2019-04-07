@@ -3,7 +3,7 @@
     <p>公告</p>
     <div class="search-add">
       <div class="box">
-        <el-form ref="form"  class="search-form">
+        <el-form ref="form" class="search-form">
           <el-input v-model="searchData" placeholder="请输入要搜索的字段" suffix-icon="el-icon-search"></el-input>
           <el-button type="success" class="search" @click="search">搜索</el-button>
         </el-form>
@@ -36,10 +36,14 @@
     </div>
     <el-table
       :data="tableData"
+      ref="multipleTable"
       border
       :row-style="tableRowStyle"
       :header-cell-style="tableHeaderColor"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column type="selection" width="50" align="center"></el-table-column>
+      <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="title" label="标题" min-width="30%" align="center"></el-table-column>
       <el-table-column prop="author" label="发布人" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="time" label="发布时间" min-width="20%" align="center"></el-table-column>
@@ -57,6 +61,10 @@
         </template>
       </el-table-column>
     </el-table>
+    <div style="margin-top: 20px">
+      <el-button @click="toggleSelection(tableData)">全选</el-button>
+      <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
+    </div>
     <el-dialog title="公告内容" :visible.sync="dialogView" width="50%">
       <div class="dialog-box">
         <span class="view-span">公告标题:</span>
@@ -84,6 +92,7 @@ export default {
   name: "updatePwd",
   data() {
     return {
+      multipleSelection: [],
       show: false,
       showAnother: false,
       dialogAdd: false,
@@ -92,7 +101,6 @@ export default {
       dialogDelete: false,
       addContentVal: "",
       tableData: [],
-      
       viewTitle: "",
       viewContent: "",
       searchData: "",
@@ -118,6 +126,20 @@ export default {
     };
   },
   methods: {
+    // 全选
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      //val 为选中数据的集合
+      this.multipleSelection = val;
+    },
     // 修改table tr行的背景色
     tableRowStyle({ row, rowIndex }) {
       if (rowIndex / 2 === 0) {
@@ -138,7 +160,7 @@ export default {
         const form = {
           searchVal: val
         };
-        this. $http
+        this.$http
           .post("api/searchAnnouncement", this.qs.stringify(form))
           .then(res => {
             if (res.data.status === 0) {
@@ -161,7 +183,7 @@ export default {
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this. $http
+          this.$http
             .post("api/addAnnouncement", this.qs.stringify(form))
             .then(res => {
               if (res.data.status === 0) {
@@ -199,7 +221,7 @@ export default {
       let form = {
         id: this.id
       };
-      this. $http
+      this.$http
         .post("api/deleteAnnouncement", this.qs.stringify(form))
         .then(res => {
           if (res.data.status === 0) {

@@ -3,7 +3,7 @@
     <p>信息管理</p>
     <div class="search-add">
       <div class="box">
-        <el-form ref="form" :model="form" class="search-form">
+        <el-form class="search-form">
           <el-input v-model="searchData" placeholder="请输入名称"></el-input>
           <el-button type="success" class="search" @click="search">搜索</el-button>
         </el-form>
@@ -33,7 +33,7 @@
                 <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
               </el-form-item>
               <el-form-item label="角色" prop="role">
-                <el-select v-model="ruleForm.role" placeholder="请选择角色" @change="change">
+                <el-select v-model="ruleForm.role" placeholder="请选择角色">
                   <el-option
                     v-for="(item,id) in roles"
                     :label="item.label"
@@ -57,12 +57,14 @@
     </div>
     <el-table
       :data="tableData"
-      ref="searchTable"
+      ref="multipleTable"
       border
-      @row-click="getDetails"
       :row-style="tableRowStyle"
       :header-cell-style="tableHeaderColor"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column type="selection" width="50" align="center"></el-table-column>
+      <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="account" label="账号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
@@ -82,6 +84,10 @@
         </template>
       </el-table-column>
     </el-table>
+    <div style="margin-top: 20px">
+      <el-button @click="toggleSelection(tableData)">全选</el-button>
+      <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
+    </div>
     <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
       <i class="el-icon-warning"></i>
       <span>是否要删除本条信息？</span>
@@ -117,7 +123,7 @@
         <div class="role" prop="role">
           <p>角色</p>
         </div>
-        <el-select v-model="updateForm.role" placeholder="请选择角色" @change="change">
+        <el-select v-model="updateForm.role" placeholder="请选择角色">
           <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value"></el-option>
         </el-select>
       </el-form>
@@ -185,7 +191,7 @@ export default {
         ],
         name: [
           { required: true, message: "请输入姓名", trigger: "blur" },
-          { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
+          { min: 2, max: 4, message: "请输入 2 到 4 个字符", trigger: "blur" }
         ],
         address: [
           { required: true, message: "请输入地址", trigger: "blur" },
@@ -202,7 +208,7 @@ export default {
         ],
         name: [
           { required: true, message: "请输入姓名", trigger: "blur" },
-          { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
+          { min: 2, max: 4, message: "请输入 2 到 4 个字符", trigger: "blur" }
         ],
         address: [
           { required: true, message: "请输入地址", trigger: "blur" },
@@ -211,10 +217,25 @@ export default {
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
         pwd: [{ required: true, trigger: "blur", message: "请填写密码" }],
         role: [{ required: true, message: "请选择角色", trigger: "blur" }]
-      }
+      },
+      multipleSelection: [],
     };
   },
   methods: {
+    // 全选
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      //val 为选中数据的集合
+      this.multipleSelection = val;
+    },
     // 修改table tr行的背景色
     tableRowStyle({ row, rowIndex }) {
       if (rowIndex / 2 === 0) {
@@ -269,18 +290,19 @@ export default {
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this.$http
-            .post("api/addSubordinate", this.qs.stringify(form))
-            .then(res => {
-              if (res.data.status === 0) {
-                this.tableData = res.data;
-                this.$refs[ruleForm].resetFields();
-                this.dialogAdd = false;
-                this.$message.success("添加成功");
-              } else {
-                this.$message.error("添加失败");
-              }
-            });
+          // this.$http
+          //   .post("api/addSubordinate", this.qs.stringify(form))
+          //   .then(res => {
+          //     if (res.data.status === 0) {
+          //       this.tableData = res.data;
+          //       this.$refs[ruleForm].resetFields();
+          //       this.dialogAdd = false;
+          //       this.$message.success("添加成功");
+          //     } else {
+          //       this.$message.error("添加失败");
+          //     }
+          //   });
+          this.tableData.push(form);
         } else {
           return false;
         }

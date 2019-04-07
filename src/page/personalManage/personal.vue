@@ -60,7 +60,7 @@
       </div>
       <div class="role">
         <p>
-          <span @click="go">销售经理</span>
+          <span >销售经理</span>
         </p>
       </div>
     </div>

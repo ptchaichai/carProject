@@ -1,140 +1,141 @@
 <template>
-    <div class="buy-client">
-      <p>购车客户信息管理</p>
-      <div class="search-add">
+  <div class="buy-client">
+    <p>购车客户信息管理</p>
+    <div class="search-add">
       <div class="box">
-      <el-form ref="form" class="search-form">
-      <el-input v-model="searchData" placeholder="请输入客户姓名"
-            suffix-icon="el-icon-search"></el-input>
-            <el-button type="success"  class="search" @click="search">搜索</el-button>
-     </el-form>
-     <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
-     <div class="dialog-box">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-          <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
-         </el-form-item>
-          <el-form-item label="电话" prop="tel">
-          <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
-         </el-form-item>
-         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
-         </el-form-item>
-          <el-form-item label="地址" prop="address">
-          <el-input v-model="ruleForm.address" placeholder="请输入地址"></el-input>
-         </el-form-item>
-         <el-form-item label="购买车型" prop="carType">
-          <el-select v-model="ruleForm.carType" placeholder="请选择车型" >
-            <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value">
-            </el-option>
-          </el-select>
-         </el-form-item>
-         <el-form-item label="购买价格" prop="price" class="price-form">
-          <el-select v-model="ruleForm.price" placeholder="请选择价格范围" >
-            <el-option v-for="item in roles1" :label="item.label" :key="item.id" :value="item.value">
-            </el-option>
-          </el-select>
-         </el-form-item>
-         <el-button  round type="primary" class="addInformation" @click="addConfirm('ruleForm')">确定</el-button>
-         <el-button  round type="info" class="cancelInformation" @click="addCancel('ruleForm')">取消</el-button>
+        <el-form ref="form" class="search-form">
+          <el-input v-model="searchData" placeholder="请输入客户姓名" suffix-icon="el-icon-search"></el-input>
+          <el-button type="success" class="search" @click="search">搜索</el-button>
         </el-form>
+        <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
+          <div class="dialog-box">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+              <el-form-item label="姓名" prop="name">
+                <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
+              </el-form-item>
+              <el-form-item label="电话" prop="tel">
+                <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱" prop="email">
+                <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
+              </el-form-item>
+              <el-form-item label="地址" prop="address">
+                <el-input v-model="ruleForm.address" placeholder="请输入地址"></el-input>
+              </el-form-item>
+              <el-form-item label="购买车型" prop="carType">
+                <el-select v-model="ruleForm.carType" placeholder="请选择车型">
+                  <el-option
+                    v-for="item in roles"
+                    :label="item.label"
+                    :key="item.id"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="购买价格" prop="price" class="price-form">
+                <el-select v-model="ruleForm.price" placeholder="请选择价格范围">
+                  <el-option
+                    v-for="item in roles1"
+                    :label="item.label"
+                    :key="item.id"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+              <el-button
+                round
+                type="primary"
+                class="addInformation"
+                @click="addConfirm('ruleForm')"
+              >确定</el-button>
+              <el-button
+                round
+                type="info"
+                class="cancelInformation"
+                @click="addCancel('ruleForm')"
+              >取消</el-button>
+            </el-form>
+          </div>
+        </el-dialog>
+        <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
       </div>
-     </el-dialog>
-       <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
-   </div>
-  </div>
-      <el-table
-    :data="tableData"
-    border
-    :row-style="tableRowStyle"
-    :header-cell-style="tableHeaderColor">
-    <el-table-column
-      prop="name"
-      label="姓名"
-      min-width="15%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="tel"
-      label="电话"
-      min-width="15%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="email"
-      label="邮箱"
-      min-width="15%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="address"
-      label="地址"
-      min-width="15%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="carType"
-      label="购买车型"
-      min-width="10%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="carType"
-      label="购买价格"
-      min-width="10%"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="操作"
-      width="150"
-      min-width="20%"
-      align="center">
-      <template slot-scope="scope">
-      <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改</el-button>
-        <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-    <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
-        <i class="el-icon-warning"></i>
-        <span>是否要删除本条信息？</span>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="removeConfirm()" round>确 定</el-button>
-          <el-button @click="dialogDelete = false"  round>取 消</el-button>
-        </span>
-      </el-dialog>
-     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
-        <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
-          <el-form-item label="姓名" prop="name">
-          <el-input v-model="updateForm.name" placeholder="请输入姓名"></el-input>
-         </el-form-item>
-          <el-form-item label="电话" prop="tel">
-          <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
-         </el-form-item>
-         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="updateForm.email" placeholder="请输入邮箱"></el-input>
-         </el-form-item>
-          <el-form-item label="地址" prop="address">
-          <el-input v-model="updateForm.address" placeholder="请输入地址"></el-input>
-         </el-form-item>
-         <el-form-item label="购买车型" prop="carType">
-          <el-select v-model="updateForm.carType" placeholder="请选择车型"  >
-            <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value">
-            </el-option>
-          </el-select>
-         </el-form-item>
-         <el-form-item label="购买价格" prop="price">
-          <el-select v-model="updateForm.price" placeholder="请选择价格范围"   class="price-form">
-            <el-option v-for="item in roles1" :label="item.label" :key="item.id" :value="item.value">
-            </el-option>
-          </el-select>
-         </el-form-item>
-        </el-form>
-        <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
-          <el-button @click="updateCancel('updateForm')"  round>取 消</el-button>
-      </el-dialog>
     </div>
+    <el-table
+      :data="tableData"
+      ref="multipleTable"
+      border
+      :row-style="tableRowStyle"
+      :header-cell-style="tableHeaderColor"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column type="selection" width="50" align="center"></el-table-column>
+      <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
+      <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="email" label="邮箱" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="address" label="地址" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="carType" label="购买车型" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="carType" label="购买价格" min-width="10%" align="center"></el-table-column>
+      <el-table-column fixed="right" label="操作" width="150" min-width="20%" align="center">
+        <template slot-scope="scope">
+          <el-button
+            slot="reference"
+            type="primary"
+            size="small"
+            round
+            class="update"
+            @click="update(scope.$index)"
+          >修改</el-button>
+          <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div style="margin-top: 20px">
+      <el-button @click="toggleSelection(tableData)">全选</el-button>
+      <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
+    </div>
+    <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
+      <i class="el-icon-warning"></i>
+      <span>是否要删除本条信息？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="removeConfirm()" round>确 定</el-button>
+        <el-button @click="dialogDelete = false" round>取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
+      <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="updateForm.name" placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" prop="tel">
+          <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="updateForm.email" placeholder="请输入邮箱"></el-input>
+        </el-form-item>
+        <el-form-item label="地址" prop="address">
+          <el-input v-model="updateForm.address" placeholder="请输入地址"></el-input>
+        </el-form-item>
+        <el-form-item label="购买车型" prop="carType">
+          <el-select v-model="updateForm.carType" placeholder="请选择车型">
+            <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="购买价格" prop="price">
+          <el-select v-model="updateForm.price" placeholder="请选择价格范围" class="price-form">
+            <el-option
+              v-for="item in roles1"
+              :label="item.label"
+              :key="item.id"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
+      <el-button @click="updateCancel('updateForm')" round>取 消</el-button>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -162,7 +163,8 @@ export default {
   name: "buyClient",
   data() {
     return {
-      searchData:"",
+      multipleSelection: [],
+      searchData: "",
       dialogDelete: false,
       visible: false,
       dialogUpdate: false,
@@ -179,12 +181,12 @@ export default {
         { label: "凌派", value: "凌派" },
         { label: "雅阁", value: "雅阁" }
       ],
-      roles1:[
-        {label:'10万以下',value:'10万以下'},
-        {label:'10~20(万)',value:'10~20(万)'},
-        {label:'20~30(万)',value:'20~30(万)'},
-        {label:'30~40(万)',value:'30~40(万)'},
-        {label:'40万以上',value:'40万以上'},
+      roles1: [
+        { label: "10万以下", value: "10万以下" },
+        { label: "10~20(万)", value: "10~20(万)" },
+        { label: "20~30(万)", value: "20~30(万)" },
+        { label: "30~40(万)", value: "30~40(万)" },
+        { label: "40万以上", value: "40万以上" }
       ],
       ruleForm: {
         name: "",
@@ -192,7 +194,7 @@ export default {
         email: "",
         address: "",
         carType: "",
-        price:""
+        price: ""
       },
       rules: {
         name: [
@@ -214,7 +216,7 @@ export default {
         email: "",
         address: "",
         carType: "",
-        price:"",
+        price: ""
       },
       rulesUpdate: {
         name: [
@@ -233,6 +235,20 @@ export default {
     };
   },
   methods: {
+    // 全选
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      //val 为选中数据的集合
+      this.multipleSelection = val;
+    },
     // 修改table tr行的背景色
     tableRowStyle({ row, rowIndex }) {
       if (rowIndex / 2 === 0) {
@@ -253,15 +269,13 @@ export default {
         const form = {
           searchVal: val
         };
-        this. $http
-          .post("api/searchCall", this.qs.stringify(form))
-          .then(res => {
-            if (res.data.status === 0) {
-              this.tableData = res.data;
-            } else {
-              this.$message.error("搜索失败");
-            }
-          });
+        this.$http.post("api/searchCall", this.qs.stringify(form)).then(res => {
+          if (res.data.status === 0) {
+            this.tableData = res.data;
+          } else {
+            this.$message.error("搜索失败");
+          }
+        });
       }
     },
     add: function() {
@@ -273,23 +287,21 @@ export default {
         tel: this.ruleForm.tel,
         email: this.ruleForm.email,
         address: this.ruleForm.address,
-        carType:this.ruleForm.carType,
-        price:this.ruleForm.price,
+        carType: this.ruleForm.carType,
+        price: this.ruleForm.price
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this. $http
-            .post("api/addBuy", this.qs.stringify(form))
-            .then(res => {
-              if (res.data.status === 0) {
-                this.tableData = res.data;
-                this.$refs[ruleForm].resetFields();
-                this.dialogAdd = false;
-                this.$message.success("添加成功");
-              } else {
-                this.$message.error("添加失败");
-              }
-            });
+          this.$http.post("api/addBuy", this.qs.stringify(form)).then(res => {
+            if (res.data.status === 0) {
+              this.tableData = res.data;
+              this.$refs[ruleForm].resetFields();
+              this.dialogAdd = false;
+              this.$message.success("添加成功");
+            } else {
+              this.$message.error("添加失败");
+            }
+          });
         } else {
           return false;
         }
@@ -321,17 +333,15 @@ export default {
       };
       this.$refs[updateForm].validate(valid => {
         if (valid) {
-          this. $http
-            .post("api/updatBuy", this.qs.stringify(form))
-            .then(res => {
-              if (res.data.status === 0) {
-                this.tableData[currentIndex] = res.data;
-                this.dialogUpdate = false;
-                this.$message.success("添加成功");
-              } else {
-                this.$message.error("修改失败");
-              }
-            });
+          this.$http.post("api/updatBuy", this.qs.stringify(form)).then(res => {
+            if (res.data.status === 0) {
+              this.tableData[currentIndex] = res.data;
+              this.dialogUpdate = false;
+              this.$message.success("添加成功");
+            } else {
+              this.$message.error("修改失败");
+            }
+          });
         } else {
           return false;
         }
@@ -346,20 +356,18 @@ export default {
       this.currentIndex = index;
     },
     removeConfirm: function() {
-       const form = {
+      const form = {
         id: this.id
       };
-      this. $http
-        .post("api/deleteBuy", this.qs.stringify(form))
-        .then(res => {
-          if (res.data.status === 0) {
-            this.tableData.splice(this.currentIndex, 1);
-            this.dialogDelete = false;
-            this.$message.success("删除成功");
-          } else {
-            this.$message.error("删除失败");
-          }
-        });
+      this.$http.post("api/deleteBuy", this.qs.stringify(form)).then(res => {
+        if (res.data.status === 0) {
+          this.tableData.splice(this.currentIndex, 1);
+          this.dialogDelete = false;
+          this.$message.success("删除成功");
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
     }
   }
 };
@@ -420,7 +428,7 @@ export default {
   width: 100%;
   margin-bottom: 20px;
 }
-.price-form{
-  margin-top:-20px;
+.price-form {
+  margin-top: -20px;
 }
 </style>

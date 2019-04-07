@@ -1,30 +1,7 @@
 <template>
   <div class="call-client">
     <p>汽车销售信息</p>
-    <el-checkbox v-model="checked" @change="checkBack">已退回</el-checkbox>
-    <span v-show="backShow" @click="edit" class="reason-span">输入理由</span>
-    <el-dialog title="添加信息" :visible.sync="reasonEdit" width="50%">
-      <div class="dialog-box">
-        <el-form>
-          <el-form-item label="退回理由">
-            <el-input v-model="reason" placeholder="请输入退回理由" type="textarea"></el-input>
-          </el-form-item>
-          <el-button type="primary" @click="addReason()" round>确 定</el-button>
-          <el-button @click="reasonEdit = false" round>取 消</el-button>
-        </el-form>
-      </div>
-    </el-dialog>
-    <span v-show="viewShow" @click="viewReason" class="reason-span">查看理由</span>
-    <el-dialog title="添加信息" :visible.sync="reasonView" width="50%">
-      <div class="dialog-box">
-        <el-form>
-          <el-form-item label="退回理由">
-            <el-input v-model="reasonText" type="textarea"></el-input>
-          </el-form-item>
-          <el-button @click="reasonView = false" round type="primary">关闭</el-button>
-        </el-form>
-      </div>
-    </el-dialog>
+
     <div class="search-add">
       <div class="box">
         <el-form ref="form" class="search-form">
@@ -37,15 +14,27 @@
               <el-form-item label="编号" prop="id">
                 <el-input v-model="ruleForm.id" placeholder="请输入编号"></el-input>
               </el-form-item>
-              <el-form-item label="型号" prop="type">
-                <el-input v-model="ruleForm.type" placeholder="请输入型号"></el-input>
+              <el-form-item label="购买车型" prop="type">
+                <el-select v-model="ruleForm.type" placeholder="请选择车型" class="carType">
+                  <el-option
+                    v-for="item in roles1"
+                    :label="item.label"
+                    :key="item.id"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="颜色" prop="color">
                 <el-input v-model="ruleForm.color" placeholder="请输入颜色"></el-input>
               </el-form-item>
               <el-form-item label="售出日期" prop="date">
                 <div class="block">
-                  <el-date-picker v-model="ruleForm.date" type="date" placeholder="选择日期"></el-date-picker>
+                  <el-date-picker
+                    v-model="ruleForm.date"
+                    type="date"
+                    placeholder="选择日期"
+                    value-format="yyyy-MM-dd"
+                  ></el-date-picker>
                 </div>
               </el-form-item>
               <el-form-item label="售出价格(万元)" prop="price">
@@ -71,20 +60,24 @@
     </div>
     <el-table
       :data="tableData"
+      ref="multipleTable"
       border
       :row-style="tableRowStyle"
       :header-cell-style="tableHeaderColor"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column type="selection" width="50" align="center"></el-table-column>
+      <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="id" label="编号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="type" label="型号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="color" label="颜色" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="date" label="售出日期" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="price" label="售出价格(万元)" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="back" label="是否退货" min-width="20%" align="center">
-        <template>
-          <el-checkbox v-model="checked" @change="checkBack">已退回</el-checkbox>
-          <p v-show="backShow">编写理由</p>
-          <p v-show="viewShow">查看理由</p>
+        <template slot-scope="scope">
+          <el-checkbox v-model="checked" @change="checkBack(scope.$index)">已退回</el-checkbox>
+          <span v-show="backShow" @click="edit" class="reason-span">输入理由</span>
+          <span v-show="viewShow" @click="viewReason" class="reason-span">查看理由</span>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" min-width="20%" align="center">
@@ -101,6 +94,31 @@
         </template>
       </el-table-column>
     </el-table>
+    <div style="margin-top: 20px">
+      <el-button @click="toggleSelection(tableData)">全选</el-button>
+      <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
+    </div>
+    <el-dialog title="添加信息" :visible.sync="reasonEdit" width="50%">
+      <div class="dialog-box">
+        <el-form :model="reasonForm" :rules="rulesReason">
+          <el-form-item label="退回理由" prop="reason">
+            <el-input v-model="reasonForm.reason" placeholder="请输入退回理由" type="textarea"></el-input>
+          </el-form-item>
+          <el-button type="primary" @click="addReason(reasonForm)" round>确 定</el-button>
+          <el-button @click="reasonEdit = false" round>取 消</el-button>
+        </el-form>
+      </div>
+    </el-dialog>
+    <el-dialog title="添加信息" :visible.sync="reasonView" width="50%">
+      <div class="dialog-box">
+        <el-form>
+          <el-form-item label="退回理由">
+            <el-input v-model="reasonText" type="textarea"></el-input>
+          </el-form-item>
+          <el-button @click="reasonView = false" round type="primary">关闭</el-button>
+        </el-form>
+      </div>
+    </el-dialog>
     <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
       <i class="el-icon-warning"></i>
       <span>是否要删除本条信息？</span>
@@ -116,7 +134,12 @@
         </el-form-item>
         <el-form-item label="售出日期" prop="date">
           <div class="block">
-            <el-date-picker v-model="updateForm.date" type="date" placeholder="选择日期"></el-date-picker>
+            <el-date-picker
+              v-model="updateForm.date"
+              type="date"
+              placeholder="选择日期"
+              value-format="yyyy-MM-dd"
+            ></el-date-picker>
           </div>
         </el-form-item>
         <el-form-item label="售出价格(万元)" prop="price">
@@ -144,6 +167,7 @@ export default {
   name: "callClient",
   data() {
     return {
+      multipleSelection: [],
       reasonEdit: false,
       reasonView: false,
       dialogDelete: false,
@@ -159,13 +183,21 @@ export default {
       currentIndex: "",
       currentIndex: "",
       tableData: [],
-      reasonText:"",
+      reasonText: "",
       roles: [
         { label: "10万以下", value: "10万以下" },
         { label: "10~20(万)", value: "10~20(万)" },
         { label: "20~30(万)", value: "20~30(万)" },
         { label: "30~40(万)", value: "30~40(万)" },
         { label: "40万以上", value: "40万以上" }
+      ],
+      roles1: [
+        { label: "奥德赛", value: "奥德赛" },
+        { label: "宾智", value: "宾智" },
+        { label: "飞度", value: "飞度" },
+        { label: "锋范", value: "锋范" },
+        { label: "凌派", value: "凌派" },
+        { label: "雅阁", value: "雅阁" }
       ],
       ruleForm: {
         id: "",
@@ -179,10 +211,7 @@ export default {
           { required: true, message: "请输入编号", trigger: "blur" },
           { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
         ],
-        type: [
-          { required: true, message: "请输入型号", trigger: "blur" },
-          { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
-        ],
+        type: [{ required: true, trigger: "blur", message: "请选择车型" }],
         color: [
           { required: true, message: "请输入颜色", trigger: "blur" },
           { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
@@ -195,6 +224,15 @@ export default {
             trigger: "change"
           },
           { validator: checkPrice, trigger: "change" }
+        ]
+      },
+      reasonForm: {
+        reason: ""
+      },
+      rulesReason: {
+        reason: [
+          { required: true, message: "请输入理由", trigger: "blur" },
+          { min: 10, message: "请输入 10 个字符以上", trigger: "blur" }
         ]
       },
       updateForm: {
@@ -221,17 +259,38 @@ export default {
     };
   },
   methods: {
+    // 全选
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      //val 为选中数据的集合
+      this.multipleSelection = val;
+    },
     checkBack: function() {
       if (this.checked) {
         this.backShow = true;
+      } else {
+        this.backShow = false;
+        this.viewShow = false;
       }
     },
     edit: function() {
       this.reasonEdit = true;
     },
-    addReason: function() {
-      this.reasonEdit = false;
-      this.viewShow = true;
+    addReason: function(reasonForm) {
+      this.$refs[reasonForm].validate(valid => {
+        if (valid) {
+          this.reasonEdit = false;
+          this.viewShow = true;
+        }
+      });
     },
     viewReason: function() {
       this.reasonView = true;
@@ -278,16 +337,17 @@ export default {
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          this.$http.post("api/addCall", this.qs.stringify(form)).then(res => {
-            if (res.data.status === 0) {
-              this.tableData = res.data;
-              this.$refs[ruleForm].resetFields();
-              this.dialogAdd = false;
-              this.$message.success("添加成功");
-            } else {
-              this.$message.error("添加失败");
-            }
-          });
+          // this.$http.post("api/addCall", this.qs.stringify(form)).then(res => {
+          //   if (res.data.status === 0) {
+          //     this.tableData = res.data;
+          //     this.$refs[ruleForm].resetFields();
+          //     this.dialogAdd = false;
+          //     this.$message.success("添加成功");
+          //   } else {
+          //     this.$message.error("添加失败");
+          //   }
+          // });
+          this.tableData.push(form);
         } else {
           return false;
         }
@@ -416,5 +476,8 @@ export default {
   font-size: 10px;
   color: red;
   cursor: pointer;
+}
+.carType {
+  margin: -10px 0 -10px;
 }
 </style>
