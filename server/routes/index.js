@@ -23,17 +23,35 @@ import passport from '../middlewire/passport'
 //     }
 //   })
 // });
-router.post('/api/login', passport.authenticate('local', {session: true}), function(req, res) {
-  console.log("-------req.user-----------");
-  // console.log(req);
-  console.log("-------req.user-----------");
-  if(req.user) {
-    res.json({
-      status: 0,
-      data: '登录成功'
-    })
-  }
-
+router.post('/api/login', function(req, res, next) {
+  passport.authenticate('local-login', function(err, user, info) {
+      if(err) {
+        res.json({
+          status: 1,
+          data: err
+        })
+      } else if(info) {
+        res.json({
+          status: 1,
+          data: info
+        })
+      } else {
+        req.logIn(user, function(err) {
+          if(err) {
+            res.json({
+              status: 1,
+              data: err
+            })
+          } else {
+            res.json({
+              status: 0,
+              data: '登录成功'
+            })
+            console.log('此时的session', req.session)
+          }
+        })
+      }
+  })(req, res, next)
 })
 router.post('/api/check',passport.authenticateMiddleware(),function(req, res, next) {
   res.json({

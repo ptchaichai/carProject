@@ -3,11 +3,12 @@ const LocalStrategy = require('passport-local').Strategy
 import db from '../routes/db'
 const reqBody = {  
   usernameField: 'phone',
-  passwordFieldord: 'password'
+  passwordFieldord: 'password',
+  passReqToCallback: true
 }
 
-passport.use('local', new LocalStrategy(reqBody,
-  function(phone, password, done) {
+passport.use('local-login', new LocalStrategy(reqBody,
+  function(req, phone, password, done) {
     let sql = `select * from user where phone = '${phone}' and password = '${password}'`
     db.query(sql, function(err, user) {
       if(err) {
@@ -20,38 +21,31 @@ passport.use('local', new LocalStrategy(reqBody,
         console.log('不存在')
         return done(null, false, {mesage: '没有此用户'})
       } else {
-        //console.log(JSON.parse(JSON.stringify(user)))
         let userName = JSON.parse(JSON.stringify(user))
+        console.log('登陆成功之后查找： ', userName)
         return done(null,userName[0])
       }
-      // let user = JSON.stringify(user)
-      // if (user.password != password) {
-      //   console.log('密码匹配有误.');
-      //   console.log(user)
-      //   console.log(password)
-      //   return done(null, false, {message: '密码匹配有误.'});
-      // }
     
     })
   }
 ))
 passport.serializeUser(function (user, done) {//保存user对象
-  console.log(user.id)
+  console.log('保存对象', user.id)
   done(null, user.id);//可以通过数据库方式操作
 });
 
-passport.deserializeUser(function (userId, done) {//删除user对象
-  db.query(`select * from user where id = '${userId}'`, function(err, user) {
+passport.deserializeUser(function (userId, done) {
+  console.log('数据库查找的', userId)
+  db.query(`select * from user where id = '${userId}'`, function(err, rows) {
     if(err) {
       return done(err);
     }
-    done(null, user)
+    done(null, rows.id)
   })
 });
 passport.authenticateMiddleware = function authenticationMiddleware() {
   return function (req, res, next) {
-    console.log(req.isAuthenticated())
-    console.log(req.session)
+    console.log('登录后的session', req.session)
     if (req.isAuthenticated()) {
       return next();
     } else {
@@ -60,7 +54,6 @@ passport.authenticateMiddleware = function authenticationMiddleware() {
         data: '没有登录'
       })
     }
-    //res.redirect('/login');
   }
 };
 export default passport
