@@ -143,15 +143,11 @@ export default {
       }
     },
     onSubmit: function(formName) {
-      let codestatus = this.checkCode();
-      if (codestatus) {
-        this.$refs[formName].validate(valid => {
-          if (valid) {
-            let param = {
-              account: this.rulesForm.account,
-              password: this.rulesForm.pwd
-            };
-            this.$http
+        let param = {
+              phone: this.rulesForm.account,
+               password: this.rulesForm.pwd
+             };
+                  this.$http
               .post(API.LOGIN, this.qs.stringify(param))
               .then(result => {
                 if (result.data.status === 0) {
@@ -163,15 +159,35 @@ export default {
                   console.log("登录失败");
                 }
               });
-          } else {
-            return false;
-          }
-        });
-      } else if (codestatus === "") {
-        this.$message.error("请输入验证码!");
-      } else if (codestatus === 0) {
-        this.$message.error("验证码输入错误!");
-      }
+      //let codestatus = this.checkCode();
+      // if (codestatus) {
+        // this.$refs[formName].validate(valid => {
+        //   if (valid) {
+        //     let param = {
+        //       account: this.rulesForm.account,
+        //       password: this.rulesForm.pwd
+        //     };
+        //     this.$http
+        //       .post(API.LOGIN, this.qs.stringify(param))
+        //       .then(result => {
+        //         if (result.data.status === 0) {
+        //           this.$router.push({ path: "/manage" });
+        //           this.$message.success("登陆成功");
+        //           console.log("登录成功");
+        //         } else {
+        //           this.$message.error("登录失败");
+        //           console.log("登录失败");
+        //         }
+        //       });
+        //   } else {
+        //     return false;
+        //   }
+        // });
+      // } else if (codestatus === "") {
+      //   this.$message.error("请输入验证码!");
+      // } else if (codestatus === 0) {
+      //   this.$message.error("验证码输入错误!");
+      // }
     },
     resetForm: function(rulesForm) {
       this.$refs[rulesForm].resetFields();

@@ -6,10 +6,26 @@ const reqBody = {
   passwordFieldord: 'password',
   passReqToCallback: true
 }
+passport.serializeUser(function (user, done) {//保存user对象
+  console.log('serializeUser', user.id)
+  done(null, user.id);//可以通过数据库方式操作
+});
+
+passport.deserializeUser(function (id, done) {
+  console.log('deserializeUser', id)
+  db.query(`select * from user where id = '${id}'`, function(err, rows) {
+    // if(err) {
+    //   return done(err);
+    // }
+    console.log(user)
+    done(err, rows)
+  })
+});
 
 passport.use('local-login', new LocalStrategy(reqBody,
   function(req, phone, password, done) {
     let sql = `select * from user where phone = '${phone}' and password = '${password}'`
+    console.log(sql)
     db.query(sql, function(err, user) {
       if(err) {
         console.log(err)
@@ -22,27 +38,14 @@ passport.use('local-login', new LocalStrategy(reqBody,
         return done(null, false, {mesage: '没有此用户'})
       } else {
         let userName = JSON.parse(JSON.stringify(user))
-        console.log('登陆成功之后查找： ', userName)
+        console.log('登陆成功之后查找： ', userName[0])
         return done(null,userName[0])
       }
     
     })
   }
 ))
-passport.serializeUser(function (user, done) {//保存user对象
-  console.log('保存对象', user.id)
-  done(null, user.id);//可以通过数据库方式操作
-});
 
-passport.deserializeUser(function (userId, done) {
-  console.log('数据库查找的', userId)
-  db.query(`select * from user where id = '${userId}'`, function(err, rows) {
-    if(err) {
-      return done(err);
-    }
-    done(null, rows.id)
-  })
-});
 passport.authenticateMiddleware = function authenticationMiddleware() {
   return function (req, res, next) {
     console.log('登录后的session', req.session)

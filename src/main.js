@@ -9,7 +9,8 @@ import qs from 'qs'
 Vue.config.productionTip = false
 const http = axios.create({
   baseURL: window.location.origin,
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+  withCredentials: true
 })
 
 // 增加请求拦截器
