@@ -31,13 +31,13 @@ app.use(cookieSession({
   // store: new RedisStore({client: redisClient}),
   //session的秘钥，防止session劫持。 这个秘钥会被循环使用，秘钥越长，数量越多，破解难度越高。
   secret: 'secret',
-  // resave: true,
+  resave: true,
   saveUninitialized: true,
   //session过期时间，不易太长。php默认20分钟
-  cookie : {
-    maxAge : 1000 * 60 * 3, // 设置 session 的有效时间，单位毫秒,
-    secure: true
-  },
+  // cookie : {
+  //   maxAge : 1000 * 60 * 3, // 设置 session 的有效时间，单位毫秒,
+  //   secure: true
+  // },
   name: 'ssid',
   unset: 'keep' ,
 }))
