@@ -122,6 +122,7 @@
         ]
       };
     },
+    created (){},
     methods: {
       gologin() {
         this.$router.push({ path: "/login" });

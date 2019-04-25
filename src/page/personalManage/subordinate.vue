@@ -10,9 +10,6 @@
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-              <el-form-item label="账号" prop="account">
-                <el-input v-model="ruleForm.account" placeholder="请输入账号"></el-input>
-              </el-form-item>
               <el-form-item label="姓名" prop="name">
                 <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
               </el-form-item>
@@ -134,6 +131,7 @@
 </template>
 
 <script>
+import API from './../api.js'
 import { isvalidPhone } from "./../valid";
 import verifyPassWordTip from "./../verifyPassWordTip";
 var validPhone = (rule, value, callback) => {
@@ -152,8 +150,11 @@ export default {
   },
   data() {
     return {
-      searchData: "",
-      tableData: [],
+      page: 1, //页码
+      pageSize: 10, //一条默认页数
+      searchName: 'username', //搜索的条件
+      searchData: "", //搜索的名字
+      tableData: [], //数据
       password: "",
       newTableData: [],
       dialogDelete: false,
@@ -221,7 +222,28 @@ export default {
       multipleSelection: [],
     };
   },
+  created(){
+    this.getPerssionList()
+  },
+
   methods: {
+    //获取列表
+    getPerssionList(){
+      const params = {
+        role: sessionStorage.getItem('role'),
+        page: this.page,
+        page_size: this.pageSize,
+        search_idx: this.searchName,
+        search_value: this.searchData
+      }
+      this.$http.post(API.GET_PERSON_LIST,this.qs.stringify(params)).then((result) => {
+        if (result.data.status === 0) {
+          this.tableData = result.data.data;
+        } else {
+          this.$message.error("登录失败");
+        }
+      })
+    },
     // 全选
     toggleSelection(rows) {
       if (rows) {
@@ -281,27 +303,25 @@ export default {
     },
     addInformation: function(ruleForm) {
       const form = {
-        account: this.ruleForm.account,
-        name: this.ruleForm.name,
-        tel: this.ruleForm.tel,
-        pwd: this.ruleForm.pwd,
-        address: this.ruleForm.address,
+        username: this.ruleForm.name,
+        phone: this.ruleForm.tel,
+        password: this.ruleForm.pwd,
         role: this.ruleForm.role
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
-          // this.$http
-          //   .post("api/addSubordinate", this.qs.stringify(form))
-          //   .then(res => {
-          //     if (res.data.status === 0) {
-          //       this.tableData = res.data;
-          //       this.$refs[ruleForm].resetFields();
-          //       this.dialogAdd = false;
-          //       this.$message.success("添加成功");
-          //     } else {
-          //       this.$message.error("添加失败");
-          //     }
-          //   });
+          this.$http
+            .post(API.ADD_ACCOUNT, this.qs.stringify(form))
+            .then(res => {
+              if (res.data.status === 0) {
+                this.tableData = res.data;
+                this.$refs[ruleForm].resetFields();
+                this.dialogAdd = false;
+                this.$message.success("添加成功");
+              } else {
+                this.$message.error("添加失败");
+              }
+            });
           this.tableData.push(form);
         } else {
           return false;

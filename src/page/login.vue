@@ -5,12 +5,12 @@
       <el-tag>用户登录</el-tag>
       <el-form :model="rulesForm" :rules="rules" ref="rulesForm">
         <el-form-item label="账号:" prop="account">
-          <el-input v-model="rulesForm.account" placeholder="请输入账号"></el-input>
+          <el-input v-model="rulesForm.account" placeholder="请输入手机号"></el-input>
         </el-form-item>
         <el-form-item label="密码:" prop="pwd">
           <el-input v-model="rulesForm.pwd" type="password" placeholder="请输入密码"></el-input>
         </el-form-item>
-        <el-form-item label="请选择身份：" prop="identity" class="identity-box">
+        <!-- <el-form-item label="请选择身份：" prop="identity" class="identity-box">
           <el-select v-model="rulesForm.identity" placeholder="请选择身份">
             <el-option
               v-for="item in roles"
@@ -19,7 +19,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="验证码:" prop="vCode">
           <input type="text" placeholder="请输入验证码" class="yanzhengma_input" v-model="rulesForm.vCode">
           <input type="button"  @click="createCode"  class="verification" v-model="cCode"/>
@@ -53,20 +53,20 @@ export default {
       rulesForm: {
         account: "",
         pwd: "",
-        identity: "",
+        // identity: "",
         vCode: ""
       },
       rules: {
         account: [{ required: true, message: "请输入账号", trigger: "blur" }],
         pwd: [{ required: true, message: "请输入登录密码", trigger: "blur" }],
-        identity: [{ required: true, trigger: "blur", message: "请选择身份" }],
+        // identity: [{ required: true, trigger: "blur", message: "请选择身份" }],
         vCode: [{ required: true, validator: validatevCode, triger: "blur" }]
       },
-      roles: [
-        { label: "总经理", value: "总经理" },
-        { label: "销售经理", value: "销售经理" },
-        { label: "销售人员", value: "销售人员" }
-      ]
+      // roles: [
+      //   { label: "总经理", value: "总经理" },
+      //   { label: "销售经理", value: "销售经理" },
+      //   { label: "销售人员", value: "销售人员" }
+      // ]
     };
   },
   mounted() {
@@ -143,46 +143,47 @@ export default {
       }
     },
     onSubmit: function(formName) {
-        let param = {
-              phone: this.rulesForm.account,
-               password: this.rulesForm.pwd
-             };
-                  this.$http
-              .post(API.LOGIN, this.qs.stringify(param))
-              .then(result => {
-                if (result.data.status === 0) {
-                  this.$router.push({ path: "/manage" });
-                  this.$message.success("登陆成功");
-                  console.log("登录成功");
-                } else {
-                  this.$message.error("登录失败");
-                  console.log("登录失败");
-                }
-              });
-      //let codestatus = this.checkCode();
+      let codestatus = this.checkCode();
+      let param = {
+        phone: this.rulesForm.account,
+        password: this.rulesForm.pwd
+      };
+       this.$http
+          .post(API.LOGIN, this.qs.stringify(param))
+          .then(result => {
+            if (result.data.status === 0) {
+              sessionStorage.setItem('role', result.data.data)
+              this.$message.success("登陆成功");
+              this.$router.push({ path: "/manage" });
+              console.log("登录成功");
+            } else {
+              this.$message.error("登录失败");
+              console.log("登录失败");
+            }
+          });
       // if (codestatus) {
-        // this.$refs[formName].validate(valid => {
-        //   if (valid) {
-        //     let param = {
-        //       account: this.rulesForm.account,
-        //       password: this.rulesForm.pwd
-        //     };
-        //     this.$http
-        //       .post(API.LOGIN, this.qs.stringify(param))
-        //       .then(result => {
-        //         if (result.data.status === 0) {
-        //           this.$router.push({ path: "/manage" });
-        //           this.$message.success("登陆成功");
-        //           console.log("登录成功");
-        //         } else {
-        //           this.$message.error("登录失败");
-        //           console.log("登录失败");
-        //         }
-        //       });
-        //   } else {
-        //     return false;
-        //   }
-        // });
+      //   this.$refs[formName].validate(valid => {
+      //     if (valid) {
+      //       let param = {
+      //         phone: this.rulesForm.account,
+      //         password: this.rulesForm.pwd
+      //       };
+      //       this.$http
+      //         .post(API.LOGIN, this.qs.stringify(param))
+      //         .then(result => {
+      //           if (result.data.status === 0) {
+      //             this.$router.push({ path: "/manage" });
+      //             this.$message.success("登陆成功");
+      //             console.log("登录成功");
+      //           } else {
+      //             this.$message.error("登录失败");
+      //             console.log("登录失败");
+      //           }
+      //         });
+      //     } else {
+      //       return false;
+      //     }
+      //   });
       // } else if (codestatus === "") {
       //   this.$message.error("请输入验证码!");
       // } else if (codestatus === 0) {
