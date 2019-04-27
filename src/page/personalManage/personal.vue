@@ -7,7 +7,7 @@
           <img src="../../assets/default.jpg" alt>
         </div>
         <div class="base-wrap">
-          <span class="username">张三</span>
+          <span class="username">banana</span>
           <div class="bing-info">
             <div class="info-title">
               <p>
@@ -110,7 +110,7 @@ export default {
 .personal {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .personal .title {
   text-align: left;

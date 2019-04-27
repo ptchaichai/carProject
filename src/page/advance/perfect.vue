@@ -110,12 +110,12 @@ export default {
 .perfect-box {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .el-form {
   margin-top: 50px;
   width: 60%;
-  margin: 80px auto;
+  margin: 30px auto;
 }
 .el-date-editor {
   width: 100%;

@@ -10,7 +10,7 @@
         <el-form-item label="密码:" prop="pwd">
           <el-input v-model="rulesForm.pwd" type="password" placeholder="请输入密码"></el-input>
         </el-form-item>
-        <el-form-item label="请选择身份：" prop="identity" class="identity-box">
+        <!-- <el-form-item label="请选择身份：" prop="identity" class="identity-box">
           <el-select v-model="rulesForm.identity" placeholder="请选择身份">
             <el-option
               v-for="item in roles"
@@ -19,7 +19,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="验证码:" prop="vCode">
           <input type="text" placeholder="请输入验证码" class="yanzhengma_input" v-model="rulesForm.vCode">
           <input type="button"  @click="createCode"  class="verification" v-model="cCode"/>
@@ -62,11 +62,11 @@ export default {
         identity: [{ required: true, trigger: "blur", message: "请选择身份" }],
         vCode: [{ required: true, validator: validatevCode, triger: "blur" }]
       },
-      roles: [
-        { label: "总经理", value: "总经理" },
-        { label: "销售经理", value: "销售经理" },
-        { label: "销售人员", value: "销售人员" }
-      ]
+      // roles: [
+      //   { label: "总经理", value: "总经理" },
+      //   { label: "销售经理", value: "销售经理" },
+      //   { label: "销售人员", value: "销售人员" }
+      // ]
     };
   },
   mounted() {
@@ -121,7 +121,7 @@ export default {
       );
       for (let i = 0; i < 4; i++) {
         //取得随机数的索引（0~35）
-        const index = Math.floor(Math.random() * 36);
+        var index = Math.floor(Math.random() * 36);
         //根据索引取得随机数加到code上
         code += random[index];
       }

@@ -1,6 +1,6 @@
 <template>
   <div class="subordinate">
-    <p>信息管理</p>
+    <p>销售人员信息管理</p>
     <div class="search-add">
       <div class="box">
         <el-form class="search-form">
@@ -382,7 +382,7 @@ export default {
 .subordinate {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .subordinate p {
   text-align: left;

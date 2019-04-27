@@ -377,7 +377,7 @@ export default {
 .buy-client {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .dialog-box {
   width: 100%;

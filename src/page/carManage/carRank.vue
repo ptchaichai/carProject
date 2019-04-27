@@ -194,7 +194,7 @@ export default {
 .carInformation {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .carInformation p {
   text-align: left;
