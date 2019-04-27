@@ -24,13 +24,15 @@ import passport from '../middlewire/passport'
 //   })
 // });
 router.post('/api/login', function(req, res, next) {
-  passport.authenticate('local-login', function(err, user, info) {
+  passport.authenticate('local-login',{session: true}, function(err, user, info) {
       if(err) {
+        console.log(err)
         res.json({
           status: 1,
           data: err
         })
       } else if(info) {
+        console.log(info)
         res.json({
           status: 1,
           data: info

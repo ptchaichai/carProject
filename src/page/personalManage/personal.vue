@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import API from './../api.js'
 import bus from "./../bus.js";
 // import func from './vue-temp/vue-editor-bridge.js';
 export default {
@@ -81,8 +82,22 @@ export default {
       sex: "",
       age: "",
       email: "",
-      address: ""
+      address: "",
+      personData : {
+        username: '', //姓名
+        role: '', //角色
+        phone: '', //电话
+        sex: '', //性别
+        time: '', //加入时间
+        idcard: '',//身份证号,
+        birthday: '',//生日,
+        email: '',//邮箱,
+        address: ''//地址
+      }
     };
+  },
+  created() {
+    this.getPersonalInfo()
   },
   mounted() {
     bus.$on("perfectSend", form => {
@@ -94,6 +109,17 @@ export default {
     });
   },
   methods: {
+    getPersonalInfo(){
+      this.$http
+        .post(API.GET_PERSON, this.qs.stringify({}))
+          .then(result => {
+            if (result.data.status === 0) {
+                  this.personData = result.data.data;
+                } else {
+                  this.$message.error("请求失败");
+                }
+              });
+    }
     // go: function() {
     //   this.perfectArr = ["女", "13", "dsfas@qq.com", "fdgdsfdfg"];
     //   this.perfectShow = true;
