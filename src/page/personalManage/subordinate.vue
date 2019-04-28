@@ -153,7 +153,7 @@ export default {
       page: 1, //页码
       pageSize: 10, //一条默认页数
       searchName: 'username', //搜索的条件
-      searchData: "", //搜索的名字
+      searchData: "张", //搜索的名字
       tableData: [], //数据
       password: "",
       newTableData: [],

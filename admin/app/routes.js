@@ -99,27 +99,49 @@ module.exports = function(app, passport) {
 	//新增个人信息
 	app.post('/api/get', isLoggedIn, function(){
 		let id = req.session.passport.user || userInfo.id;
-
 	})
 
 	/**
 	 * 增加个人信息
 	 */
 	app.post('/api/addSubordinate', isLoggedIn, function(req, res, next){
-
+		if(req.body) {
+			let param = req.body;
+			let sql = `INSERT INTO　user (username, password, phone,  subarea, role) VALUES ('${param.usename}', '${param.usename}','${param.phone}','${param.subarea}','${param.role}') `;
+			addOne(sql,res)
+		}
 	})
 
+	/**
+	 * 删除列表个人信息
+	 */
+	app.post('/api/deleteSubordinate', isLoggedIn, function(req, res, next){
+		if(req.body) {
+			let param = req.body;
+			let sql = `DELETE FROM　user WHERE id = ${param.id} `;
+			deleteOne(sql,res)
+		}
+	})
+
+	/**
+	 * 修改个人信息
+	 */
+	app.post('/api/updateSubordinate', isLoggedIn, function(req,res,next){
+		if(req.body) {
+			let param = req.body;
+			let sql = `UPDATE  user SET　username, password, phone,  subarea, role) VALUES ('${param.usename}', '${param.usename}','${param.phone}','${param.subarea}','${param.role}') `;
+			addOne(sql,res)
+		}
+	})
+  
 	//根据权限获取列表
 	app.post('/api/getPersonList', isLoggedIn, function(req, res, next){
 		let id = req.session.passport.user || userInfo.id;
 		if(req.body) {
 			let param = req.body; //获取的参数
 			let sql = null;
-			let role = req.body.role || userInfo.role;
-			let optionParams = [];
-			
+			let role = req.body.role || userInfo.role;		
 			if(param.page == -1) {
-				optionParams = [];
 				sql = role == 0 ? "SELECT username, phone, role, birthday, time, sex  FROM user" : "SELECT username, phone, role, birthday, time, sex FROM user where role = 2";
 				findAll(sql, res);
 			} else {
@@ -130,32 +152,17 @@ module.exports = function(app, passport) {
 					name: param.search_idx,
 					value: param.search_value
 				};
-				console.log(search.value)
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = role == 1 ? "SELECT COUNT(*) FROM  user where role = 2 and pass" : "SELECT COUNT(*) FROM  user"
-				// if(role == 1) {
-				// 	if(search.name == 'username') {
-				// 		sql = search.value ? "SELECT * FROM user order by time desc limit ?, ? where role = 2 and username like ?" : "SELECT *  FROM user ORDER BY time desc limit ?, ? where role = 2" 
-				// 	} else if(search.name == 'sex') {
-				// 		sql = search.value ? "SELECT * FROM user order by time desc limit ?, ? where role = 2 and sex like ?" : "SELECT * FROM user order by time desc limit ?, ? where role = 2" 
-				// 	} else if(search.name == 'phone') {
-				// 		sql = search.value ? "SELECT * FROM user order by time desc limit ?, ? where role = 2 and phone like ?" : "SELECT * FROM user order by time desc limit ?, ? where role = 2" 
-				// 	}
-				// } else if(role == 0) {
-				// 	if(search.name == 'username') {
-				// 		sql = search.value ? "SELECT * FROM user order by time desc limit ?, ? where username like ?" : "SELECT *  FROM user order by time desc limit ?, ?" 
-				// 	} else if(search.name == 'sex') {
-				// 		sql = search.value ? "SELECT * FROM user order by time desc limit ?, ? where sex like ?" : "SELECT * FROM user order by time desc limit ?, ?" 
-				// 	} else if(search.name == 'phone') {
-				// 		sql = search.value ? "SELECT * FROM user order by time desc limit ?, ? where phone like ?" : "SELECT * FROM user order by time desc limit ?, ?" 
-				// 	} else if(search.name == 'role') {
-				// 		sql = search.value ? "SELECT * FROM user order by time desc limit ?, ? where role like ?" : "SELECT * FROM user order by time desc limit ?, ?" 
-				// 	}
-				// }
+				if(role == 1) {
+					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 ORDER BY time desc limit ${start}, ${end}` 
+				} else if(role == 0) {
+					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' ORDER BY time desc limit ${start}, ${end}` : `SELECT * FROM user ORDER BY time desc limit ${start}, ${end}`
+				}
 
 				sql = {
 					count: countSql,
-					page: `SELECT * FROM user WHERE username LIKE '%${search.value}%' ORDER BY time desc limit ${start}, ${end}`
+					page: sql
 				}
 				pageNation(param, sql, res)
 			}
@@ -235,4 +242,62 @@ function isLoggedIn(req, res, next) {
 			}
 		})
 	}
+	/**
+	 * 添加函数封装
+	 */
+	function addOne(sql,res){
+		connection.query(sql, function(err, rows){
+			if(err) {
+				res.json({
+					status: 1,
+					data: err
+				})
+				return
+			} else {
+				res.json({
+					status: 0,
+					data: '添加成功'
+				})
+			}
+		});
+	}
+	/**
+	 * 修改函数封装
+	 */
+	function updateeOne(sql,res){
+		connection.query(sql, function(err, rows){
+			if(err) {
+				res.json({
+					status: 1,
+					data: err
+				})
+				return
+			} else {
+				res.json({
+					status: 0,
+					data: '修改成功'
+				})
+			}
+		});
+	}
+	/**
+	 * 删除函数封装
+	 */
+	function deleteOne(sql,res){
+		connection.query(sql, function(err, rows){
+			if(err) {
+				res.json({
+					status: 1,
+					data: err
+				})
+				return
+			} else {
+				res.json({
+					status: 0,
+					data: '删除成功'
+				})
+			}
+		});
+	}
+
 }
