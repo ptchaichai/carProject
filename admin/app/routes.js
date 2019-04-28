@@ -104,13 +104,15 @@ module.exports = function(app, passport) {
 	/**
 	 * 增加个人信息
 	 */
-	app.post('/api/addSubordinate', isLoggedIn, function(req, res, next){
+	app.post('/api/addEmployee', isLoggedIn, function(req, res, next){
 		if(req.body) {
 			let param = req.body;
-			let sql = `INSERT INTO　user (username, password, phone,  subarea, role) VALUES ('${param.usename}', '${param.usename}','${param.phone}','${param.subarea}','${param.role}') `;
+			let sql = `INSERT INTO　user (username, password, phone, role) VALUES ('${param.username}', '${param.password}','${param.phone}','${param.role}') `;
 			addOne(sql,res)
 		}
 	})
+
+
 
 	/**
 	 * 删除列表个人信息
@@ -160,11 +162,65 @@ module.exports = function(app, passport) {
 					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' ORDER BY time desc limit ${start}, ${end}` : `SELECT * FROM user ORDER BY time desc limit ${start}, ${end}`
 				}
 
-				sql = {
+				let allSql = {
 					count: countSql,
 					page: sql
 				}
-				pageNation(param, sql, res)
+				pageNation(param, allSql, res)
+			}
+		}
+	})
+	//获取汽车信息列表
+	app.post('/api/getCarList', isLoggedIn, function(req, res, next){
+		if(req.body) {
+			let param = req.body; //获取的参数
+			let sql = null;
+			if(param.page == -1) {
+				sql = "SELECT *  FROM car" ;
+				findAll(sql, res);
+			} else {
+			  let page= parseInt(param.page || 1); //页码
+			  let end = parseInt(param.pageSize || 10); //页数
+				let start = (page - 1) * end
+				let search = {
+					name: param.search_idx,
+					value: param.search_value
+				};
+				//为了提高性能，就不放到一个sql语句了
+				let countSql = "SELECT COUNT(*) FROM  car" ;
+				sql = search.value ? `SELECT * FROM car WHERE carname LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM car ORDER BY add_time desc limit ${start}, ${end}`
+				let allSql = {
+					count: countSql,
+					page: sql
+				}
+				pageNation(param, allSql, res)
+			}
+		}
+	})
+	//获取客户列表
+	app.post('/api/getCustomList', isLoggedIn, function(req, res, next){
+		if(req.body) {
+			let param = req.body; //获取的参数
+			let sql = null;
+			if(param.page == -1) {
+				sql = "SELECT *  FROM custom" ;
+				findAll(sql, res);
+			} else {
+			  let page= parseInt(param.page || 1); //页码
+			  let end = parseInt(param.pageSize || 10); //页数
+				let start = (page - 1) * end
+				let search = {
+					name: param.search_idx,
+					value: param.search_value
+				};
+				//为了提高性能，就不放到一个sql语句了
+				let countSql = "SELECT COUNT(*) FROM  custom" ;
+				sql = search.value ? `SELECT * FROM car WHERE name LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM custom ORDER BY add_time desc limit ${start}, ${end}`
+				let allSql = {
+					count: countSql,
+					page: sql
+				}
+				pageNation(param, allSql, res)
 			}
 		}
 	})

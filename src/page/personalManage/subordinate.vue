@@ -62,10 +62,9 @@
     >
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
-      <el-table-column prop="account" label="账号" min-width="10%" align="center"></el-table-column>
-      <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="pwd" label="密码" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="username" label="姓名" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="password" label="密码" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="25%" align="center">
         <template slot-scope="scope">
@@ -165,9 +164,9 @@ export default {
       isShowTip: false,
       deleteVal: "",
       roles: [
-        { label: "总经理", id: 1, value: "总经理" },
-        { label: "销售经理", id: 2, value: "销售经理" },
-        { label: "销售人员", id: 3, value: "销售人员" }
+        { label: "总经理", id: 0, value: "0" },
+        { label: "销售经理", id: 1, value: "1" },
+        { label: "销售人员", id: 2, value: "2" }
       ],
       updateForm: {
         account: "",

@@ -22,5 +22,5 @@ export default {
    * @phone 电话
    * @role 角色 0总经理 1销售主管 2销售职员
    */
-  ADD_ACCOUNT: '/api/addSubordinate'
+  ADD_ACCOUNT: '/api/addEmployee'
 }
