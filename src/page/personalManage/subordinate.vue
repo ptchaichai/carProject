@@ -65,7 +65,8 @@
       <el-table-column prop="account" label="账号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="pwd" label="密码" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="belong" label="所属经理" min-width="15%" align="center"></el-table-column>
+      <!-- <el-table-column prop="pwd" label="密码" min-width="20%" align="center"></el-table-column> -->
       <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="25%" align="center">
         <template slot-scope="scope">
@@ -104,7 +105,7 @@
         <el-form-item label="电话" prop="tel">
           <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="pwd">
+        <!-- <el-form-item label="密码" prop="pwd">
           <el-input
             v-model="updateForm.pwd"
             @focus.capture.native="changePasswordTip(true)"
@@ -115,8 +116,8 @@
           ></el-input>
         </el-form-item>
         <div style="position: absolute">
-          <verify-pass-word-tip :password="ruleForm.pwd" :isShowTip="isShowTip"></verify-pass-word-tip>
-        </div>
+          <verify-pass-word-tip :password="updateForm.pwd" :isShowTip="isShowTip"></verify-pass-word-tip>
+        </div> -->
         <div class="role" prop="role">
           <p>角色</p>
         </div>
@@ -133,7 +134,7 @@
 <script>
 import API from './../api.js'
 import { isvalidPhone } from "./../valid";
-import verifyPassWordTip from "./../verifyPassWordTip";
+// import verifyPassWordTip from "./../verifyPassWordTip";
 var validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));
@@ -146,7 +147,7 @@ var validPhone = (rule, value, callback) => {
 export default {
   name: "subordinate",
   components: {
-    verifyPassWordTip
+    // verifyPassWordTip
   },
   data() {
     return {
@@ -154,8 +155,51 @@ export default {
       pageSize: 10, //一条默认页数
       searchName: 'username', //搜索的条件
       searchData: "", //搜索的名字
-      tableData: [], //数据
-      password: "",
+      // tableData: [], //数据
+      tableData:[
+        {
+          account:'001',
+          name:'张达',
+          tel:'13565895652',
+          belong:'王宇庭',
+          role:'销售人员',
+        },
+        {
+          account:'002',
+          name:'王平',
+          tel:'1856965562',
+          belong:'王宇庭',
+          role:'销售人员',
+        },
+        {
+          account:'003',
+          name:'李茶',
+          tel:'15622325652',
+          belong:'周猛',
+          role:'销售人员',
+        },
+        {
+          account:'004',
+          name:'张青青',
+          tel:'13588956698',
+          belong:'周猛',
+          role:'销售人员',
+        },
+        {
+          account:'005',
+          name:'赵信',
+          tel:'13656565854',
+          belong:'张康影',
+          role:'销售人员',
+        },
+        {
+          account:'006',
+          name:'曹聪领',
+          tel:'19565658942',
+          belong:'王宇庭',
+          role:'销售人员',
+        },
+    ],
       newTableData: [],
       dialogDelete: false,
       dialogUpdate: false,
@@ -165,15 +209,13 @@ export default {
       isShowTip: false,
       deleteVal: "",
       roles: [
-        { label: "总经理", id: 1, value: "总经理" },
-        { label: "销售经理", id: 2, value: "销售经理" },
-        { label: "销售人员", id: 3, value: "销售人员" }
+        { label: "销售经理", id: 1, value: "销售经理" },
+        { label: "销售人员", id: 2, value: "销售人员" }
       ],
       updateForm: {
         account: "",
         name: "",
         tel: "",
-        pwd: "",
         address: "",
         role: ""
       },
@@ -181,7 +223,6 @@ export default {
         account: "",
         name: "",
         tel: "",
-        pwd: "",
         address: "",
         role: ""
       },
@@ -199,7 +240,6 @@ export default {
           { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
         ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
-        pwd: [{ required: true, trigger: "blur", message: "请填写密码" }],
         role: [{ required: true, message: "请选择角色", trigger: "blur" }]
       },
       rulesUpdate: {
@@ -216,7 +256,6 @@ export default {
           { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
         ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
-        pwd: [{ required: true, trigger: "blur", message: "请填写密码" }],
         role: [{ required: true, message: "请选择角色", trigger: "blur" }]
       },
       multipleSelection: [],
@@ -273,13 +312,13 @@ export default {
       }
     },
     // 输入密码判断
-    changePasswordTip(isShow) {
-      if (isShow) {
-        this.isShowTip = true;
-      } else {
-        this.isShowTip = false;
-      }
-    },
+    // changePasswordTip(isShow) {
+    //   if (isShow) {
+    //     this.isShowTip = true;
+    //   } else {
+    //     this.isShowTip = false;
+    //   }
+    // },
     // 搜索table
     search: function() {
       const val = this.searchData;
@@ -305,7 +344,6 @@ export default {
       const form = {
         username: this.ruleForm.name,
         phone: this.ruleForm.tel,
-        password: this.ruleForm.pwd,
         role: this.ruleForm.role
       };
       this.$refs[ruleForm].validate(valid => {
@@ -337,7 +375,6 @@ export default {
       this.updateForm.account = thisData.account;
       this.updateForm.name = thisData.name;
       this.updateForm.tel = thisData.tel;
-      this.updateForm.pwd = thisData.pwd;
       this.updateForm.address = thisData.address;
       this.updateForm.role = thisData.role;
       this.currentIndex = index;
@@ -348,7 +385,6 @@ export default {
         account: this.updateForm.account,
         name: this.updateForm.name,
         tel: this.ruleForm.tel,
-        pwd: this.updateForm.pwd,
         address: this.updateForm.address,
         role: this.updateForm.role
       };

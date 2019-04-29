@@ -53,10 +53,10 @@ export default {
       monthShow: false,
       quarterShow: false,
       yearShow: false,
-      dayData: [],
-      monthData: [],
-      quarterData: [],
-      yearData: []
+      dayData: [23,12,6],
+      monthData: [56,34,27],
+      quarterData: [102,98,69],
+      yearData: [195,134,103],
     };
   },
   mounted() {

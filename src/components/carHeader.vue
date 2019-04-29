@@ -12,7 +12,7 @@
       </div>
         <div class="loginIn">
           <el-dropdown @command="back">
-            <span class="el-dropdown-link">banana<i class="el-icon-arrow-down el-icon--right"></i></span>
+            <span class="el-dropdown-link">张旭<i class="el-icon-arrow-down el-icon--right"></i></span>
             <el-dropdown-menu slot="dropdown" @click="back">
               <el-dropdown-item>退出登录</el-dropdown-item>
             </el-dropdown-menu>
