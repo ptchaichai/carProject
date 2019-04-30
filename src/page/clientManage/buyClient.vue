@@ -76,6 +76,7 @@
       <el-table-column prop="address" label="地址" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="carType" label="购买车型" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="carPrice" label="购买价格" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="addtime" label="添加时间" min-width="10%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="150" min-width="20%" align="center">
         <template slot-scope="scope">
           <el-button

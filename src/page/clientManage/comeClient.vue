@@ -65,6 +65,7 @@
       <el-table-column prop="email" label="邮箱" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="address" label="地址" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="carType" label="关注车型" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="addtime" label="添加时间" min-width="10%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="250px" min-width="25%" align="center">
         <template slot-scope="scope">
           <el-button
