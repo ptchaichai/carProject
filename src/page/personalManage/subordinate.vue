@@ -19,20 +19,8 @@
               <el-form-item label="电话" prop="tel">
                 <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
               </el-form-item>
-<<<<<<< HEAD
               <el-form-item label="邮箱" prop="email">
                 <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
-=======
-              <el-form-item label="角色" prop="role">
-                <el-select v-model="ruleForm.role" placeholder="请选择角色">
-                  <el-option
-                    v-for="(item, id) in roles"
-                    :label="item.label"
-                    :key="item.id"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
->>>>>>> 36239ed8a210599da79056329a3011133e705803
               </el-form-item>
               <el-button
                 round
