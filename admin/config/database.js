@@ -4,7 +4,9 @@ module.exports = {
         'host': 'localhost',
         'user': 'root',
         // 'password': 'tt123456'
-        'password': 'root321'
+        //'password': 'root321'.
+        'password': 'yezixuan'
+
     },
 	'database': 'car',
     'users_table': 'car'
