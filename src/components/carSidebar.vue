@@ -52,7 +52,12 @@
                 menuIndex: '1-1'
               },
               {
-                menuName: '信息管理',
+                menuName: '销售经理信息管理',
+                menuUrl: '/manage/personalManage/subordinateManager',
+                menuIndex: '1-3'
+              },
+              {
+                menuName: '销售人员信息管理',
                 menuUrl: '/manage/personalManage/subordinate',
                 menuIndex: '1-3'
               },

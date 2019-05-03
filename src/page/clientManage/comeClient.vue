@@ -60,11 +60,12 @@
     >
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
-      <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="name" label="姓名" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="email" label="邮箱" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="address" label="地址" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="email" label="邮箱" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="address" label="地址" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="carType" label="关注车型" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="addtime" label="添加时间" min-width="10%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="250px" min-width="25%" align="center">
         <template slot-scope="scope">
           <el-button
@@ -151,7 +152,36 @@ export default {
       rowVal: "",
       currentIndex: "",
       currentIndex: "",
-      tableData: [],
+      tableData: [
+      {
+          name:'王东旭',
+          tel:'15699895623',
+          email:'562398565@qq.com',
+          address:'深圳市福田区导立小区',
+          carType:'宾智',
+        },
+        {
+          name:'张冰冰',
+          tel:'15687854125',
+          email:'1236589545@qq.com',
+          address:'深圳市龙华区美格小区',
+          carType:'雅阁',
+        },
+        {
+          name:'孙琪琪',
+          tel:'18959785985',
+          email:'18959785985@163.com',
+          address:'深圳市南山区新梅小区',
+          carType:'凌派',
+        },
+        {
+          name:'余宁',
+          tel:'15699856265',
+          email:'15699856265@163.com',
+          address:'深圳市罗湖区美冠小区',
+          carType:'奥德赛',
+        },
+      ],
       roles: [
         { label: "奥德赛", value: "奥德赛" },
         { label: "宾智", value: "宾智" },
@@ -349,7 +379,7 @@ export default {
 .call-client {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .dialog-box {
   width: 100%;

@@ -46,6 +46,7 @@
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="title" label="标题" min-width="30%" align="center"></el-table-column>
       <el-table-column prop="author" label="发布人" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="identity" label="身份" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="time" label="发布时间" min-width="20%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="150" min-width="30%" align="center">
         <template slot-scope="scope">
@@ -100,7 +101,32 @@ export default {
       dialogEdit: false,
       dialogDelete: false,
       addContentVal: "",
-      tableData: [],
+      tableData: [
+        {
+          title:'店庆通知',
+          author:'王宇庭',
+          identity:'销售经理',
+          time:'2019-1-22',
+        },
+        {
+          title:'业绩下滑，需开会',
+          author:'张旭',
+          identity:'总经理',
+          time:'2019-2-4',
+        },
+        {
+          title:'清明放假通知',
+          author:'张旭',
+          identity:'总经理',
+          time:'2019-3-28',
+        },
+        {
+          title:'客户信息记录有问题，需开会商讨',
+          author:'李平',
+          identity:'销售经理',
+          time:'2019-4-6',
+        },
+        ],
       viewTitle: "",
       viewContent: "",
       searchData: "",
@@ -242,7 +268,7 @@ export default {
 .announcement {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .dialog-box {
   width: 100%;

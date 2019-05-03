@@ -70,12 +70,13 @@
     >
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
-      <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="name" label="姓名" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="email" label="邮箱" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="address" label="地址" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="email" label="邮箱" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="address" label="地址" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="carType" label="购买车型" min-width="10%" align="center"></el-table-column>
-      <el-table-column prop="carType" label="购买价格" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="carPrice" label="购买价格" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="addtime" label="添加时间" min-width="10%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="150" min-width="20%" align="center">
         <template slot-scope="scope">
           <el-button
@@ -172,7 +173,56 @@ export default {
       rowVal: "",
       currentIndex: "",
       currentIndex: "",
-      tableData: [],
+      tableData: [
+        {
+          name:'张康',
+          tel:'15489568758',
+          email:'356255263@qq.com',
+          address:'深圳市南山区菱格小区',
+          carType:'宾智',
+          carPrice:'19.8',
+        },
+        {
+          name:'王志东',
+          tel:'1555697754',
+          email:'256669875@qq.com',
+          address:'深圳市龙华区美格小区',
+          carType:'飞度',
+          carPrice:'20.22',
+        },
+        {
+          name:'赵斗淳',
+          tel:'19568556855',
+          email:'256625488@qq.com',
+          address:'深圳市南山区新梅小区',
+          carType:'宾智',
+          carPrice:'17.8',
+        },
+        {
+          name:'赵鑫鑫',
+          tel:'19568658652',
+          email:'236555895@qq.com',
+          address:'深圳市光明新区',
+          carType:'奥德赛',
+          carPrice:'23.5',
+        },
+        {
+          name:'张磊',
+          tel:'18977645652',
+          email:'233345895@qq.com',
+          address:'深圳市光明新区',
+          carType:'宾智',
+          carPrice:'22.5',
+        },
+        {
+          name:'孙琪琪',
+          tel:'15444798344',
+          email:'33345233445@qq.com',
+          address:'深圳市光明新区',
+          carType:'宾智',
+          carPrice:'19.5',
+        }
+      ],
       roles: [
         { label: "奥德赛", value: "奥德赛" },
         { label: "宾智", value: "宾智" },
@@ -377,7 +427,7 @@ export default {
 .buy-client {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .dialog-box {
   width: 100%;

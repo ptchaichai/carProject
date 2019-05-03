@@ -7,7 +7,7 @@
           <img src="../../assets/default.jpg" alt>
         </div>
         <div class="base-wrap">
-          <span class="username">张三</span>
+          <span class="username">张旭</span>
           <div class="bing-info">
             <div class="info-title">
               <p>
@@ -34,7 +34,7 @@
             </div>
             <div class="info-content">
               <p>
-                <span>001</span>
+                <span>1001</span>
               </p>
               <p>
                 <span>2018-3-2</span>
@@ -60,7 +60,7 @@
       </div>
       <div class="role">
         <p>
-          <span >销售经理</span>
+          <span>总经理</span>
         </p>
       </div>
     </div>
@@ -115,6 +115,7 @@ export default {
           .then(result => {
             if (result.data.status === 0) {
                   this.personData = result.data.data;
+                  console.log(this.personData);
                 } else {
                   this.$message.error("请求失败");
                 }
@@ -136,7 +137,7 @@ export default {
 .personal {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .personal .title {
   text-align: left;

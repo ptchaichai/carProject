@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import personal from '../page/personalManage/personal'
 import subordinate from '../page/personalManage/subordinate'
+import subordinateManager from '../page/personalManage/subordinateManager'
 import updatePwd from '../page/advance/updatePwd'
 import saleInformation from '../page/saleInformation'
 import carInformation from '../page/carManage/carInformation'
@@ -49,6 +50,11 @@ export default new Router({
           path: 'personalManage/subordinate',
           name: 'subordinate',
           component: subordinate
+        },
+        {
+          path: 'personalManage/subordinateManager',
+          name: 'subordinateManager',
+          component: subordinateManager
         },
         {
           path: 'advance/updatePwd',

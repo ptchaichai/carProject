@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="block">
-      <el-tag>欢迎来到广汽本田4汽车销售管理系统</el-tag>
+      <el-tag>欢迎来到广汽本田汽车销售管理系统</el-tag>
       <el-carousel :interval="2000" type="card" height="400px">
         <el-carousel-item v-for="item in imagebox" :key="item.id">
           <img :src="item.idView" class="image">

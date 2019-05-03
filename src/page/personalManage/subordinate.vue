@@ -1,6 +1,6 @@
 <template>
   <div class="subordinate">
-    <p>信息管理</p>
+    <p>销售人员信息管理</p>
     <div class="search-add">
       <div class="box">
         <el-form class="search-form">
@@ -62,14 +62,12 @@
     >
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
-      <el-table-column prop="username" label="姓名" min-width="10%" align="center"></el-table-column>
-      <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="password" label="密码" min-width="20%" align="center"></el-table-column>
-      <el-table-column prop="role" label="角色" min-width="15%" align="center">
-        <template slot-scope="scop1">
-          {{scop1.row.role == 0 ? '总经理' : (scop1.row.role == 1? '销售经理' : '销售' )}}
-        </template>
-      </el-table-column>
+      <el-table-column prop="account" label="账号" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="belong" label="所属经理" min-width="15%" align="center"></el-table-column>
+      <!-- <el-table-column prop="pwd" label="密码" min-width="20%" align="center"></el-table-column> -->
+      <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="25%" align="center">
         <template slot-scope="scope">
           <el-button
@@ -107,7 +105,7 @@
         <el-form-item label="电话" prop="tel">
           <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="pwd">
+        <!-- <el-form-item label="密码" prop="pwd">
           <el-input
             v-model="updateForm.pwd"
             @focus.capture.native="changePasswordTip(true)"
@@ -118,8 +116,8 @@
           ></el-input>
         </el-form-item>
         <div style="position: absolute">
-          <verify-pass-word-tip :password="ruleForm.pwd" :isShowTip="isShowTip"></verify-pass-word-tip>
-        </div>
+          <verify-pass-word-tip :password="updateForm.pwd" :isShowTip="isShowTip"></verify-pass-word-tip>
+        </div> -->
         <div class="role" prop="role">
           <p>角色</p>
         </div>
@@ -136,7 +134,7 @@
 <script>
 import API from './../api.js'
 import { isvalidPhone } from "./../valid";
-import verifyPassWordTip from "./../verifyPassWordTip";
+// import verifyPassWordTip from "./../verifyPassWordTip";
 var validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));
@@ -149,7 +147,7 @@ var validPhone = (rule, value, callback) => {
 export default {
   name: "subordinate",
   components: {
-    verifyPassWordTip
+    // verifyPassWordTip
   },
   data() {
     return {
@@ -176,7 +174,6 @@ export default {
         account: "",
         name: "",
         tel: "",
-        pwd: "",
         address: "",
         role: ""
       },
@@ -184,7 +181,6 @@ export default {
         account: "",
         name: "",
         tel: "",
-        pwd: "",
         address: "",
         role: ""
       },
@@ -202,7 +198,6 @@ export default {
           { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
         ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
-        pwd: [{ required: true, trigger: "blur", message: "请填写密码" }],
         role: [{ required: true, message: "请选择角色", trigger: "blur" }]
       },
       rulesUpdate: {
@@ -219,7 +214,6 @@ export default {
           { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
         ],
         tel: [{ required: true, trigger: "blur", validator: validPhone }],
-        pwd: [{ required: true, trigger: "blur", message: "请填写密码" }],
         role: [{ required: true, message: "请选择角色", trigger: "blur" }]
       },
       multipleSelection: [],
@@ -276,13 +270,13 @@ export default {
       }
     },
     // 输入密码判断
-    changePasswordTip(isShow) {
-      if (isShow) {
-        this.isShowTip = true;
-      } else {
-        this.isShowTip = false;
-      }
-    },
+    // changePasswordTip(isShow) {
+    //   if (isShow) {
+    //     this.isShowTip = true;
+    //   } else {
+    //     this.isShowTip = false;
+    //   }
+    // },
     // 搜索table
     search: function() {
       const val = this.searchData;
@@ -308,7 +302,6 @@ export default {
       const form = {
         username: this.ruleForm.name,
         phone: this.ruleForm.tel,
-        password: this.ruleForm.pwd,
         role: this.ruleForm.role
       };
       this.$refs[ruleForm].validate(valid => {
@@ -340,7 +333,6 @@ export default {
       this.updateForm.account = thisData.account;
       this.updateForm.name = thisData.name;
       this.updateForm.tel = thisData.tel;
-      this.updateForm.pwd = thisData.pwd;
       this.updateForm.address = thisData.address;
       this.updateForm.role = thisData.role;
       this.currentIndex = index;
@@ -351,7 +343,6 @@ export default {
         account: this.updateForm.account,
         name: this.updateForm.name,
         tel: this.ruleForm.tel,
-        pwd: this.updateForm.pwd,
         address: this.updateForm.address,
         role: this.updateForm.role,
       };
@@ -405,7 +396,7 @@ export default {
 .subordinate {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .subordinate p {
   text-align: left;

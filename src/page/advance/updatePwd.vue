@@ -9,7 +9,7 @@
         <el-input v-model="ruleForm.newPwd" @focus.capture.native='changePasswordTip(true)'  @blur.capture.native='changePasswordTip(false)' auto-complete="new-password" type="password" placeholder="请输入新密码"></el-input>
       </el-form-item>
       <div style="position: absolute">
-          <verify-pass-word-tip :password="password" :isShowTip = 'isShowTip'></verify-pass-word-tip>
+          <verify-pass-word-tip :password="ruleForm.newPwd" :isShowTip = 'isShowTip'></verify-pass-word-tip>
         </div>
       <el-form-item label="确认新密码:" prop="newPwdTwo">
         <el-input v-model="ruleForm.newPwdTwo" type="password"  placeholder="请确认新密码"></el-input>
@@ -99,12 +99,12 @@ export default {
 .pwd {
   margin: 0px auto;
   height: 770px;
-  background: #fcfcfc;
+  background: #fefefe;
 }
 .el-form {
   margin-top: 50px;
   width: 60%;
-  margin: 80px auto;
+  margin: 30px auto;
 }
 .pwd p {
   text-align: left;
