@@ -3,10 +3,14 @@
     <p>销售经理信息管理</p>
     <div class="search-add">
       <div class="box">
-        <el-form class="search-form">
-          <el-input v-model="searchData" placeholder="请输入名称"></el-input>
-          <el-button type="success" class="search" >搜索</el-button>
-        </el-form>
+        <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
+          <el-select v-model="select" slot="prepend" placeholder="请选择">
+            <el-option label="餐厅名" value="1"></el-option>
+            <el-option label="订单号" value="2"></el-option>
+            <el-option label="用户电话" value="3"></el-option>
+          </el-select>
+          <el-button slot="append" icon="el-icon-search"></el-button>
+        </el-input>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
@@ -19,11 +23,15 @@
               <el-form-item label="电话" prop="tel">
                 <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
               </el-form-item>
+              <el-form-item label="邮箱" prop="email">
+                <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
+              </el-form-item>
               <el-form-item label="分区" prop="subarea" style="margin-bottom:5px">
-              <el-select v-model="ruleForm.subarea" placeholder="请选择分区">
-                <el-option v-for="item in rolesArea" :label="item.label" :key="item.id" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
+                <el-select v-model="ruleForm.subarea" placeholder="请选择分区">
+                  <el-option v-for="item in rolesArea" :label="item.label" :key="item.id" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
               <el-form-item label="角色" prop="role">
                 <el-select v-model="ruleForm.role" placeholder="请选择角色">
                   <el-option v-for="(item,id) in roles" :label="item.label" :key="item.id" :value="item.value">
@@ -79,6 +87,9 @@
         <el-form-item label="电话" prop="tel">
           <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
         </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="updateForm.eamil" placeholder="请输入邮箱"></el-input>
+        </el-form-item>
         <el-form-item label="分区" prop="subarea" style="margin-bottom:5px">
           <el-select v-model="updateForm.subarea" placeholder="请选择分区">
             <el-option v-for="item in rolesArea" :label="item.label" :key="item.id" :value="item.value"></el-option>
@@ -100,12 +111,21 @@
 <script>
   import API from './../api.js'
   import { isvalidPhone } from "./../valid";
-  // import verifyPassWordTip from "./../verifyPassWordTip";
-  var validPhone = (rule, value, callback) => {
+  import { isvalidEmail } from "./../valid";
+  const validPhone = (rule, value, callback) => {
     if (!value) {
       callback(new Error("请输入电话号码"));
     } else if (!isvalidPhone(value)) {
       callback(new Error("请输入正确的11位手机号码"));
+    } else {
+      callback();
+    }
+  };
+  const validEmail = (rule, value, callback) => {
+    if (!value) {
+      callback(new Error("请输入邮箱"));
+    } else if (!isvalidEmail(value)) {
+      callback(new Error("请输入正确邮箱格式"));
     } else {
       callback();
     }
@@ -174,18 +194,19 @@
           { label: "销售经理", id: 1, value: "销售经理" },
           { label: "销售人员", id: 2, value: "销售人员" }
         ],
-        rolesArea:[
-        { label: "福田区", id: 1, value: "福田区" },
-        { label: "南山区", id: 2, value: "南山区" },
-        { label: "罗湖区", id: 2, value: "罗湖区" },
-        { label: "龙华区", id: 2, value: "龙华区" },
-        { label: "龙岗区", id: 2, value: "龙岗区" },
-        { label: "宝安区", id: 2, value: "宝安区" },
+        rolesArea: [
+          { label: "福田区", id: 1, value: "福田区" },
+          { label: "南山区", id: 2, value: "南山区" },
+          { label: "罗湖区", id: 2, value: "罗湖区" },
+          { label: "龙华区", id: 2, value: "龙华区" },
+          { label: "龙岗区", id: 2, value: "龙岗区" },
+          { label: "宝安区", id: 2, value: "宝安区" },
         ],
         updateForm: {
           account: "",
           name: "",
           tel: "",
+          email: "",
           address: "",
           role: ""
         },
@@ -193,6 +214,7 @@
           account: "",
           name: "",
           tel: "",
+          email: "",
           subarea: "",
           role: ""
         },
@@ -205,8 +227,9 @@
             { required: true, message: "请输入姓名", trigger: "blur" },
             { min: 2, max: 4, message: "请输入 2 到 4 个字符", trigger: "blur" }
           ],
-          subarea:[{ required: true, message: "请选择分区", trigger: "blur" }],
+          subarea: [{ required: true, message: "请选择分区", trigger: "blur" }],
           tel: [{ required: true, trigger: "blur", validator: validPhone }],
+          email: [{ required: true, trigger: "blur", validator: validEmail }],
           role: [{ required: true, message: "请选择角色", trigger: "blur" }]
         },
         rulesUpdate: {
@@ -218,8 +241,9 @@
             { required: true, message: "请输入姓名", trigger: "blur" },
             { min: 2, max: 4, message: "请输入 2 到 4 个字符", trigger: "blur" }
           ],
-          subarea:[{ required: true, message: "请选择分区", trigger: "blur" }],
+          subarea: [{ required: true, message: "请选择分区", trigger: "blur" }],
           tel: [{ required: true, trigger: "blur", validator: validPhone }],
+          email: [{ required: true, trigger: "blur", validator: validEmail }],
           role: [{ required: true, message: "请选择角色", trigger: "blur" }]
         },
         multipleSelection: [],
@@ -230,6 +254,10 @@
     },
 
     methods: {
+      handleCommand(command) {
+        // this.$message('click on item ' + command);
+        this.$refs.dropLink.innerText = command;
+      },
       //获取列表
       getPerssionList() {
         const params = {
@@ -436,6 +464,17 @@
     margin: 25px auto;
   }
 
+  .drop-type {
+    position: absolute;
+    z-index: 1;
+    top: 9px;
+    left: 7px;
+  }
+
+  .el-input__inner {
+    padding-left: 66px;
+  }
+
   .el-table__row td {
     text-align: center;
   }
@@ -465,8 +504,16 @@
     height: 32px;
   }
 
+  .search-icon {
+    position: absolute;
+    top: 8px;
+    font-size: 25px;
+    color: #999;
+    right: 8px;
+  }
+
   .search-form {
-    width: 265px;
+    width: 340px;
     margin-top: 30px;
     position: relative;
   }
