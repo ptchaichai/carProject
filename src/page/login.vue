@@ -143,51 +143,53 @@ export default {
     },
     onSubmit: function(formName) {
       let codestatus = this.checkCode();
-      // let param = {
-      //   phone: this.rulesForm.account,
-      //   password: this.rulesForm.pwd
-      // };
-      //  this.$http
-      //     .post(API.LOGIN, this.qs.stringify(param))
-      //     .then(result => {
-      //       if (result.data.status === 0) {
-      //         sessionStorage.setItem('role', result.data.data)
-      //         this.$message.success("登陆成功");
-      //         this.$router.push({ path: "/manage" });
-      //         console.log("登录成功");
-      //       } else {
-      //         this.$message.error("登录失败");
-      //         console.log("登录失败");
-      //       }
-      //     });
-      if (codestatus) {
-        this.$refs[formName].validate(valid => {
-          if (valid) {
-            let param = {
-              phone: this.rulesForm.account,
-              password: this.rulesForm.pwd
-            };
-            this.$http
-              .post(API.LOGIN, this.qs.stringify(param))
-              .then(result => {
-                if (result.data.status === 0) {
-                  this.$router.push({ path: "/manage" });
-                  this.$message.success("登陆成功");
-                  console.log("登录成功");
-                } else {
-                  this.$message.error("登录失败");
-                  console.log("登录失败");
-                }
-              });
-          } else {
-            return false;
-          }
-        });
-      } else if (codestatus === "") {
-        this.$message.error("请输入验证码!");
-      } else if (codestatus === 0) {
-        this.$message.error("账号不存在!");
-      }
+      let param = {
+        phone: this.rulesForm.account,
+        password: this.rulesForm.pwd
+      };
+       this.$http
+          .post(API.LOGIN, this.qs.stringify(param))
+          .then(result => {
+            if (result.data.status === 0) {
+              sessionStorage.setItem('role', result.data.data.role)
+              sessionStorage.setItem('name', result.data.data.name)
+              sessionStorage.setItem('storeID', result.data.data.store_id)
+              sessionStorage.setItem('phone', result.data.data.phone)
+              sessionStorage.setItem('id', result.data.data.id)
+              this.$message.success("登陆成功");
+              this.$router.push({ path: "/manage" });
+            } else {
+              this.$message.error("登录失败");
+            }
+          });
+      // if (codestatus) {
+      //   this.$refs[formName].validate(valid => {
+      //     if (valid) {
+      //       let param = {
+      //         phone: this.rulesForm.account,
+      //         password: this.rulesForm.pwd
+      //       };
+      //       this.$http
+      //         .post(API.LOGIN, this.qs.stringify(param))
+      //         .then(result => {
+      //           if (result.data.status === 0) {
+      //             this.$router.push({ path: "/manage" });
+      //             this.$message.success("登陆成功");
+      //             console.log("登录成功");
+      //           } else {
+      //             this.$message.error("登录失败");
+      //             console.log("登录失败");
+      //           }
+      //         });
+      //     } else {
+      //       return false;
+      //     }
+      //   });
+      // } else if (codestatus === "") {
+      //   this.$message.error("请输入验证码!");
+      // } else if (codestatus === 0) {
+      //   this.$message.error("账号不存在!");
+      // }
     },
     resetForm: function(rulesForm) {
       this.$refs[rulesForm].resetFields();
