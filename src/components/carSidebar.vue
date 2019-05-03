@@ -19,7 +19,8 @@
           <el-menu-item-group>
             <el-menu-item  v-for="(subitem ,sub) in item.menuSubLink"
                            :index="subitem.menuUrl"
-                           :key='sub' >
+                           :key='sub'
+                            v-show="subitem.show">
               <span>{{subitem.menuName}}</span></el-menu-item>
           </el-menu-item-group>
         </el-submenu>
@@ -49,17 +50,20 @@
               {
                 menuName: '个人信息',
                 menuUrl: '/manage/personalManage/personal',
-                menuIndex: '1-1'
+                menuIndex: '1-1',
+                show: true
               },
               {
                 menuName: '销售经理信息管理',
                 menuUrl: '/manage/personalManage/subordinateManager',
-                menuIndex: '1-3'
+                menuIndex: '1-3',
+                show: false
               },
               {
                 menuName: '销售人员信息管理',
                 menuUrl: '/manage/personalManage/subordinate',
-                menuIndex: '1-3'
+                menuIndex: '1-3',
+                show: false
               },
             ]
           },
@@ -71,17 +75,20 @@
               {
                 menuName: '来电客户',
                 menuUrl: '/manage/clientManage/callClient',
-                menuIndex: '2-1'
+                menuIndex: '2-1',
+                show: true
               },
               {
                 menuName: '来店客户',
                 menuUrl: '/manage/clientManage/comeClient',
-                menuIndex: '2-2'
+                menuIndex: '2-2',
+                show: true
               },
               {
                 menuName: '购车客户',
                 menuUrl: '/manage/clientManage/buyClient',
-                menuIndex: '2-3'
+                menuIndex: '2-3',
+                show: true
               },
             ]
           },
@@ -98,12 +105,14 @@
               {
                 menuName: '汽车信息',
                 menuUrl: '/manage/carManage/carInformation',
-                menuIndex: '4-1'
+                menuIndex: '4-1',
+                show: true
               },
               {
                 menuName: '汽车销售排名',
                 menuUrl: '/manage/carManage/carRank',
-                menuIndex: '4-2'
+                menuIndex: '4-2',
+                show: true
               }
             ]
           },
@@ -115,19 +124,29 @@
               {
                 menuName: '完善资料',
                 menuUrl: '/manage/advance/perfect',
-                menuIndex: '5-1'
+                menuIndex: '5-1',
+                show: true
               },
               {
                 menuName: '修改密码',
                 menuUrl: '/manage/advance/updatePwd',
-                menuIndex: '5-2'
+                menuIndex: '5-2',
+                show: true
               },
             ]
           },
         ]
       };
     },
-    created (){},
+    created (){
+      let role = sessionStorage.getItem('role');
+      if(+role === 0) {
+        this.menulist[1].menuSubLink[1].show = true
+        this.menulist[1].menuSubLink[2].show = true
+      } else if(+role === 1) {
+         this.menulist[1].menuSubLink[2].show = true
+      }
+    },
     methods: {
       gologin() {
         this.$router.push({ path: "/login" });

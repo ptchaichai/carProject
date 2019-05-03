@@ -7,52 +7,36 @@
           <img src="../../assets/default.jpg" alt>
         </div>
         <div class="base-wrap">
-          <span class="username">张旭</span>
+          <span class="username">{{personData.username}}</span>
           <div class="bing-info">
             <div class="info-title">
               <p>
-                <span>账号：</span>
-              </p>
-              <p>
                 <span>加入时间：</span>
+                <span>{{personData.time}}</span>
               </p>
               <p>
                 <span>电话号码：</span>
+                <span>{{personData.phone}}</span>
               </p>
-              <p v-show="perfectShow">
+              <p>
                 <span>性别：</span>
+                <span>{{personData.sex ? '男' : '女'}}</span>
               </p>
-              <p v-show="perfectShow">
+              <p>
                 <span>出生日期：</span>
+                <span>{{personData.birthday}}</span>
               </p>
-              <p v-show="perfectShow">
+              <p>
                 <span>邮箱：</span>
+                <span>{{personData.email}}</span>
               </p>
-              <p v-show="perfectShow">
+              <p>
+                <span>身份证号：</span>
+                <span>{{personData.idcard}}</span>
+              </p>
+              <p>
                 <span>地址：</span>
-              </p>
-            </div>
-            <div class="info-content">
-              <p>
-                <span>1001</span>
-              </p>
-              <p>
-                <span>2018-3-2</span>
-              </p>
-              <p>
-                <span>15082345567</span>
-              </p>
-              <p v-show="perfectShow">
-                <span>{{sex}}</span>
-              </p>
-              <p v-show="perfectShow">
-                <span>{{age}}</span>
-              </p>
-              <p v-show="perfectShow">
-                <span>{{email}}</span>
-              </p>
-              <p v-show="perfectShow">
-                <span>{{address}}</span>
+                <span>{{personData.address}}</span>
               </p>
             </div>
           </div>
@@ -60,7 +44,7 @@
       </div>
       <div class="role">
         <p>
-          <span>总经理</span>
+          <span>{{role}}</span>
         </p>
       </div>
     </div>
@@ -78,11 +62,7 @@ export default {
       input1: "",
       input2: "",
       input3: "",
-      perfectShow: false,
-      sex: "",
-      age: "",
-      email: "",
-      address: "",
+      role: '',
       personData : {
         username: '', //姓名
         role: '', //角色
@@ -115,11 +95,25 @@ export default {
           .then(result => {
             if (result.data.status === 0) {
                   this.personData = result.data.data;
+                  this.getRoleName(this.personData.role)
                   console.log(this.personData);
                 } else {
                   this.$message.error("请求失败");
                 }
               });
+    },
+    getRoleName(role){
+      switch(+role) {
+        case 0: 
+          this.role = '总经理';
+          break;
+        case 1: 
+          this.role = '经理';
+          break;
+        case 2: 
+          this.role = '销售'
+          break;
+      }
     }
     // go: function() {
     //   this.perfectArr = ["女", "13", "dsfas@qq.com", "fdgdsfdfg"];
@@ -196,7 +190,11 @@ export default {
 .info-title {
   display: inline-block;
   line-height: 25px;
+}
+.info-title span:first-child {
   text-align: right;
+  width: 90px;
+  display: inline-block;
 }
 .info-content {
   display: inline-block;

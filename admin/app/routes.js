@@ -4,7 +4,8 @@ const connection = mysql.createConnection(dbconfig.connection);
 connection.query('USE ' + dbconfig.database);
 var userInfo = {
 	role: '',
-	id: ''
+	id: '',
+	store_id: ''
 }
 module.exports = function(app, passport) {
 	/**
@@ -32,11 +33,18 @@ module.exports = function(app, passport) {
 						} else {
 							userInfo = {
 								id: user.id,
-								role: user.role
+								role: user.role,
+								store_id: user.store_id
 							}
 							res.json({
 								status: 0,
-								data: user.role
+								data: {
+									name: user.username,
+									phone: user.phone,
+									id: user.id,
+									role: user.role,
+									store_id: user.store_id
+								}
 							})
 							console.log('此时的session', req.session)
 						}
@@ -82,7 +90,7 @@ module.exports = function(app, passport) {
 					role: rows[0].role,
 					phone: rows[0].phone,
 					sex: rows[0].sex, 
-					time: rows[0].time, 
+					time: rows[0].add_time, 
 					idcard: rows[0].idcard,
 					birthday: rows[0].birthday,
 					email: rows[0].email,
@@ -97,20 +105,32 @@ module.exports = function(app, passport) {
 	})
 
 	//新增个人信息
-	app.post('/api/get', isLoggedIn, function(){
-		let id = req.session.passport.user || userInfo.id;
-	})
+	// app.post('/api/get', isLoggedIn, function(){
+	// 	let id = req.session.passport.user || userInfo.id;
+	// })
 
 	/**
-	 * 增加个人信息
+	 * 增加个人销售人员信息
+	 */
+	// app.post('/api/addEmployee', isLoggedIn, function(req, res, next){
+	// 	if(req.body) {
+	// 		let param = req.body;
+	// 		let sql = `INSERT INTO user (username, password,role, phone, store_id) VALUES ('${param.username}', '123456',2,'${param.phone}', '${userInfo.store_id}')`;
+	// 		addOne(sql,res)
+	// 	}
+	// })
+
+	/**
+	 * 增加经理
 	 */
 	app.post('/api/addEmployee', isLoggedIn, function(req, res, next){
 		if(req.body) {
 			let param = req.body;
-			let sql = `INSERT INTO user (username, password,role, phone) VALUES ('${param.username}', '${param.password}','${param.role}','${param.phone}')`;
+			let sql = `INSERT INTO user (username, password,role, phone, store_id) VALUES ('${param.username}', '123456','${param.role}','${param.phone}', '${param.store_id}')`;
 			addOne(sql,res)
 		}
 	})
+
 
 
 	/**

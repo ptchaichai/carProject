@@ -3,38 +3,27 @@
     <p>销售经理信息管理</p>
     <div class="search-add">
       <div class="box">
-        <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-          <el-select v-model="select" slot="prepend" placeholder="请选择">
-            <el-option label="餐厅名" value="1"></el-option>
-            <el-option label="订单号" value="2"></el-option>
-            <el-option label="用户电话" value="3"></el-option>
+        <div class="search-input">
+        <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
+          <el-select v-model="searchName" slot="prepend" placeholder="请选择" style="width: 60px;">
+            <el-option label="名称" value="username"></el-option>
+            <el-option label="用户电话" value="phone"></el-option>
           </el-select>
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
+        </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-              <el-form-item label="账号" prop="account">
-                <el-input v-model="ruleForm.account" placeholder="请输入账号"></el-input>
-              </el-form-item>
-              <el-form-item label="姓名" prop="name">
+              <el-form-item label="账号" prop="name">
                 <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
               </el-form-item>
               <el-form-item label="电话" prop="tel">
                 <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
               </el-form-item>
-              <el-form-item label="邮箱" prop="email">
-                <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
-              </el-form-item>
               <el-form-item label="分区" prop="subarea" style="margin-bottom:5px">
                 <el-select v-model="ruleForm.subarea" placeholder="请选择分区">
                   <el-option v-for="item in rolesArea" :label="item.label" :key="item.id" :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="角色" prop="role">
-                <el-select v-model="ruleForm.role" placeholder="请选择角色">
-                  <el-option v-for="(item,id) in roles" :label="item.label" :key="item.id" :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -195,7 +184,7 @@
           { label: "销售人员", id: 2, value: "销售人员" }
         ],
         rolesArea: [
-          { label: "福田区", id: 1, value: "福田区" },
+          { label: "福田区", id: 0, value: "福田区" },
           { label: "南山区", id: 2, value: "南山区" },
           { label: "罗湖区", id: 2, value: "罗湖区" },
           { label: "龙华区", id: 2, value: "龙华区" },
@@ -255,7 +244,6 @@
 
     methods: {
       handleCommand(command) {
-        // this.$message('click on item ' + command);
         this.$refs.dropLink.innerText = command;
       },
       //获取列表
@@ -336,7 +324,9 @@
         const form = {
           username: this.ruleForm.name,
           phone: this.ruleForm.tel,
-          role: this.ruleForm.role
+          store_id: this.ruleForm.subarea,
+          role: 1,
+
         };
         this.$refs[ruleForm].validate(valid => {
           if (valid) {
@@ -458,7 +448,12 @@
     width: 60% !important;
     height: 45% !important;
   }
-
+  .input-with-select input{
+    width: 120px !important;
+  }
+  .search-input {
+    width: 260px;
+  }
   .el-table {
     width: 90%;
     margin: 25px auto;

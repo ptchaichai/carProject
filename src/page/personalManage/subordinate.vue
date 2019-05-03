@@ -10,9 +10,6 @@
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-              <el-form-item label="账号" prop="account">
-                  <el-input v-model="ruleForm.account" placeholder="请输入账号"></el-input>
-              </el-form-item>
               <el-form-item label="姓名" prop="name">
                 <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
               </el-form-item>
@@ -32,7 +29,7 @@
             </el-form>
           </div>
         </el-dialog>
-        <el-button type="primary" size="small" round class="add" @click="add" v-if="">添加</el-button>
+        <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
       </div>
     </div>
     <el-table
