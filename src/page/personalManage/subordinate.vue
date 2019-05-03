@@ -19,8 +19,20 @@
               <el-form-item label="电话" prop="tel">
                 <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
               </el-form-item>
+<<<<<<< HEAD
               <el-form-item label="邮箱" prop="email">
                 <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
+=======
+              <el-form-item label="角色" prop="role">
+                <el-select v-model="ruleForm.role" placeholder="请选择角色">
+                  <el-option
+                    v-for="(item, id) in roles"
+                    :label="item.label"
+                    :key="item.id"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+>>>>>>> 36239ed8a210599da79056329a3011133e705803
               </el-form-item>
               <el-button
                 round
@@ -32,7 +44,7 @@
             </el-form>
           </div>
         </el-dialog>
-        <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
+        <el-button type="primary" size="small" round class="add" @click="add" v-if="">添加</el-button>
       </div>
     </div>
     <el-table
@@ -135,51 +147,8 @@ export default {
       pageSize: 10, //一条默认页数
       searchName: 'username', //搜索的条件
       searchData: "", //搜索的名字
-      // tableData: [], //数据
-      tableData:[
-        {
-          account:'001',
-          name:'张达',
-          tel:'13565895652',
-          belong:'王宇庭',
-          role:'销售人员',
-        },
-        {
-          account:'002',
-          name:'王平',
-          tel:'1856965562',
-          belong:'王宇庭',
-          role:'销售人员',
-        },
-        {
-          account:'003',
-          name:'李茶',
-          tel:'15622325652',
-          belong:'周猛',
-          role:'销售人员',
-        },
-        {
-          account:'004',
-          name:'张青青',
-          tel:'13588956698',
-          belong:'周猛',
-          role:'销售人员',
-        },
-        {
-          account:'005',
-          name:'赵信',
-          tel:'13656565854',
-          belong:'张康影',
-          role:'销售人员',
-        },
-        {
-          account:'006',
-          name:'曹聪领',
-          tel:'19565658942',
-          belong:'王宇庭',
-          role:'销售人员',
-        },
-    ],
+      tableData: [], //数据
+      password: "",
       newTableData: [],
       dialogDelete: false,
       dialogUpdate: false,
@@ -189,8 +158,9 @@ export default {
       isShowTip: false,
       deleteVal: "",
       roles: [
-        { label: "销售经理", id: 1, value: "销售经理" },
-        { label: "销售人员", id: 2, value: "销售人员" }
+        { label: "总经理", id: 0, value: "1" },
+        { label: "销售经理", id: 1, value: "2" },
+        { label: "销售人员", id: 2, value: "3" }
       ],
       updateForm: {
         account: "",
@@ -368,7 +338,7 @@ export default {
         name: this.updateForm.name,
         tel: this.ruleForm.tel,
         address: this.updateForm.address,
-        role: this.updateForm.role
+        role: this.updateForm.role,
       };
       this.$refs[updateForm].validate(valid => {
         if (valid) {

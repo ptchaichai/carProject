@@ -107,11 +107,10 @@ module.exports = function(app, passport) {
 	app.post('/api/addEmployee', isLoggedIn, function(req, res, next){
 		if(req.body) {
 			let param = req.body;
-			let sql = `INSERT INTO　user (username, password, phone, role) VALUES ('${param.username}', '${param.password}','${param.phone}','${param.role}') `;
+			let sql = `INSERT INTO user (username, password,role, phone) VALUES ('${param.username}', '${param.password}','${param.role}','${param.phone}')`;
 			addOne(sql,res)
 		}
 	})
-
 
 
 	/**
@@ -157,9 +156,9 @@ module.exports = function(app, passport) {
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = role == 1 ? "SELECT COUNT(*) FROM  user where role = 2 and pass" : "SELECT COUNT(*) FROM  user"
 				if(role == 1) {
-					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 ORDER BY time desc limit ${start}, ${end}` 
+					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 ORDER BY aad_time desc limit ${start}, ${end}` 
 				} else if(role == 0) {
-					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' ORDER BY time desc limit ${start}, ${end}` : `SELECT * FROM user ORDER BY time desc limit ${start}, ${end}`
+					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user ORDER BY add_time desc limit ${start}, ${end}`
 				}
 
 				let allSql = {
