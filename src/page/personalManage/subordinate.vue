@@ -32,7 +32,7 @@
               <el-form-item label="角色" prop="role">
                 <el-select v-model="ruleForm.role" placeholder="请选择角色">
                   <el-option
-                    v-for="(item,id) in roles"
+                    v-for="(item, id) in roles"
                     :label="item.label"
                     :key="item.id"
                     :value="item.value"
@@ -49,7 +49,7 @@
             </el-form>
           </div>
         </el-dialog>
-        <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
+        <el-button type="primary" size="small" round class="add" @click="add" v-if="">添加</el-button>
       </div>
     </div>
     <el-table
@@ -65,7 +65,11 @@
       <el-table-column prop="username" label="姓名" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="password" label="密码" min-width="20%" align="center"></el-table-column>
-      <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="role" label="角色" min-width="15%" align="center">
+        <template slot-scope="scop1">
+          {{scop1.row.role == 0 ? '总经理' : (scop1.row.role == 1? '销售经理' : '销售' )}}
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" min-width="25%" align="center">
         <template slot-scope="scope">
           <el-button
@@ -152,7 +156,7 @@ export default {
       page: 1, //页码
       pageSize: 10, //一条默认页数
       searchName: 'username', //搜索的条件
-      searchData: "张", //搜索的名字
+      searchData: "", //搜索的名字
       tableData: [], //数据
       password: "",
       newTableData: [],
@@ -164,9 +168,9 @@ export default {
       isShowTip: false,
       deleteVal: "",
       roles: [
-        { label: "总经理", id: 0, value: "0" },
-        { label: "销售经理", id: 1, value: "1" },
-        { label: "销售人员", id: 2, value: "2" }
+        { label: "总经理", id: 0, value: "1" },
+        { label: "销售经理", id: 1, value: "2" },
+        { label: "销售人员", id: 2, value: "3" }
       ],
       updateForm: {
         account: "",
@@ -349,7 +353,7 @@ export default {
         tel: this.ruleForm.tel,
         pwd: this.updateForm.pwd,
         address: this.updateForm.address,
-        role: this.updateForm.role
+        role: this.updateForm.role,
       };
       this.$refs[updateForm].validate(valid => {
         if (valid) {
