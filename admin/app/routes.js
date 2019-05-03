@@ -126,7 +126,7 @@ module.exports = function(app, passport) {
 	app.post('/api/addEmployee', isLoggedIn, function(req, res, next){
 		if(req.body) {
 			let param = req.body;
-			let sql = `INSERT INTO user (username, password,role, phone, store_id) VALUES ('${param.username}', '123456','${param.role}','${param.phone}', '${param.store_id}')`;
+			let sql = `INSERT INTO user (username, password,role, phone, store_id, sex) VALUES ('${param.username}', '123456','${param.role}','${param.phone}', '${param.store_id}', 0)`;
 			addOne(sql,res)
 		}
 	})
