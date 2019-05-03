@@ -93,6 +93,8 @@ export default {
   name: "updatePwd",
   data() {
     return {
+      searchName: 'username', //搜索的条件
+      searchData: "", //搜索的名字
       multipleSelection: [],
       show: false,
       showAnother: false,

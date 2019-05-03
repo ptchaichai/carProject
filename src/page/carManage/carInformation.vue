@@ -3,10 +3,15 @@
     <p>汽车销售信息</p>
     <div class="search-add">
       <div class="box">
-        <el-form ref="form" class="search-form">
-          <el-input v-model="searchData" placeholder="请输入汽车车型" suffix-icon="el-icon-search"></el-input>
-          <el-button type="success" class="search" @click="search">搜索</el-button>
-        </el-form>
+        <div class="search-input" style="width:400px">
+        <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
+          <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
+            <el-option label="姓名" value="username"></el-option>
+            <el-option label="电话" value="phone"></el-option>
+          </el-select>
+          <el-button slot="append" icon="el-icon-search"></el-button>
+        </el-input>
+        </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
@@ -127,6 +132,8 @@
     name: "callClient",
     data() {
       return {
+        searchName: 'username', //搜索的条件
+        searchData: "", //搜索的名字
         multipleSelection: [],
         dialogDelete: false,
         dialogUpdate: false,
@@ -419,7 +426,7 @@
     color: red;
   }
 
-  .el-select {
+  .carType {
     width: 100%;
     margin-bottom: 20px;
   }

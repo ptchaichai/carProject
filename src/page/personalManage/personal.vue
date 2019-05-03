@@ -42,6 +42,9 @@
           </div>
         </div>
       </div>
+      <div class="update-page">
+        <span @click="goUpdate">前往修改/完善资料</span>
+      </div>
       <div class="role">
         <p>
           <span>{{role}}</span>
@@ -52,7 +55,7 @@
 </template>
 
 <script>
-import API from './../api.js'
+import API from "./../api.js";
 import bus from "./../bus.js";
 // import func from './vue-temp/vue-editor-bridge.js';
 export default {
@@ -62,22 +65,22 @@ export default {
       input1: "",
       input2: "",
       input3: "",
-      role: '',
-      personData : {
-        username: '', //姓名
-        role: '', //角色
-        phone: '', //电话
-        sex: '', //性别
-        time: '', //加入时间
-        idcard: '',//身份证号,
-        birthday: '',//生日,
-        email: '',//邮箱,
-        address: ''//地址
+      role: "",
+      personData: {
+        username: "", //姓名
+        role: "", //角色
+        phone: "", //电话
+        sex: "", //性别
+        time: "", //加入时间
+        idcard: "", //身份证号,
+        birthday: "", //生日,
+        email: "", //邮箱,
+        address: "" //地址
       }
     };
   },
   created() {
-    this.getPersonalInfo()
+    this.getPersonalInfo();
   },
   mounted() {
     bus.$on("perfectSend", form => {
@@ -89,29 +92,30 @@ export default {
     });
   },
   methods: {
-    getPersonalInfo(){
-      this.$http
-        .post(API.GET_PERSON, this.qs.stringify({}))
-          .then(result => {
-            if (result.data.status === 0) {
-                  this.personData = result.data.data;
-                  this.getRoleName(this.personData.role)
-                  console.log(this.personData);
-                } else {
-                  this.$message.error("请求失败");
-                }
-              });
+    goUpdate() {
+      this.$router.push({ path: "/manage/advance/perfect" });
     },
-    getRoleName(role){
-      switch(+role) {
-        case 0: 
-          this.role = '总经理';
+    getPersonalInfo() {
+      this.$http.post(API.GET_PERSON, this.qs.stringify({})).then(result => {
+        if (result.data.status === 0) {
+          this.personData = result.data.data;
+          this.getRoleName(this.personData.role);
+          console.log(this.personData);
+        } else {
+          this.$message.error("请求失败");
+        }
+      });
+    },
+    getRoleName(role) {
+      switch (+role) {
+        case 0:
+          this.role = "总经理";
           break;
-        case 1: 
-          this.role = '经理';
+        case 1:
+          this.role = "销售经理";
           break;
-        case 2: 
-          this.role = '销售'
+        case 2:
+          this.role = "销售人员";
           break;
       }
     }
@@ -210,9 +214,21 @@ export default {
   font-size: 16px;
   font-weight: 400;
 }
+.role {
+  float: right;
+}
 .role p {
   text-align: right;
   font-size: 24px;
   color: #888;
+}
+
+.update-page {
+  float: left;
+}
+.update-page span {
+  font-size: 20px;
+  color: #0093e6;
+  cursor: pointer;
 }
 </style>
