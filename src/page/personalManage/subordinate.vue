@@ -174,6 +174,7 @@ export default {
     getPerssionList() {
       const params = {
         role: sessionStorage.getItem("role"),
+        store_id: sessionStorage.getItem("storeID"),
         page: this.page,
         page_size: this.pageSize,
         search_idx: this.searchName,
