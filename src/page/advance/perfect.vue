@@ -12,6 +12,9 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="身份证号" prop="idcard">
+          <el-input v-model="ruleForm.idcard" placeholder="请输入身份证号"></el-input>
+        </el-form-item>
       <el-form-item label="出生日期" prop="age">
         <div class="block">
           <el-date-picker format="yyyy-MM-dd" v-model="ruleForm.age" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
@@ -55,7 +58,8 @@ export default {
         email: "",
         address: "",
         age: "",
-        sex: ""
+        sex: "",
+        idcard :"",
       },
       rules: {
         address: [
@@ -64,7 +68,11 @@ export default {
         ],
         email: [{ required: true, trigger: "blur", validator: validEmail }],
         age: [{ required: true, trigger: "blur", message: "请选择出生日期" }],
-        sex: [{ required: true, message: "请选择性别", trigger: "blur" }]
+        sex: [{ required: true, message: "请选择性别", trigger: "blur" }],
+        idcard: [
+            { required: true, message: "请输入账号", trigger: "blur" },
+            { min: 1, max: 18, message: "请输入 1 到 18 个字符", trigger: "blur" }
+          ],
       },
       perfectArr: []
     };

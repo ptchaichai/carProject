@@ -3,14 +3,15 @@
     <p>销售经理信息管理</p>
     <div class="search-add">
       <div class="box">
-        <div class="search-input">
-        <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
-          <el-select v-model="searchName" slot="prepend" placeholder="请选择" style="width: 60px;">
-            <el-option label="名称" value="username"></el-option>
-            <el-option label="用户电话" value="phone"></el-option>
-          </el-select>
-          <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-input>
+        <div style="margin-top: 15px;">
+          <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
+            <el-select v-model="select" slot="prepend" placeholder="请选择">
+              <el-option label="餐厅名" value="1"></el-option>
+              <el-option label="订单号" value="2"></el-option>
+              <el-option label="用户电话" value="3"></el-option>
+            </el-select>
+            <el-button slot="append" icon="el-icon-search"></el-button>
+          </el-input>
         </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
@@ -39,12 +40,11 @@
       :header-cell-style="tableHeaderColor" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
-      <el-table-column prop="account" label="账号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="subarea" label="所属分区" min-width="15%" align="center"></el-table-column>
-      <!-- <el-table-column prop="pwd" label="密码" min-width="20%" align="center"></el-table-column> -->
       <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="email" label="邮箱" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="subarea" label="所属分区" min-width="15%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="25%" align="center">
         <template slot-scope="scope">
           <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改
@@ -75,9 +75,6 @@
         </el-form-item>
         <el-form-item label="电话" prop="tel">
           <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="updateForm.eamil" placeholder="请输入邮箱"></el-input>
         </el-form-item>
         <el-form-item label="分区" prop="subarea" style="margin-bottom:5px">
           <el-select v-model="updateForm.subarea" placeholder="请选择分区">
@@ -132,43 +129,6 @@
         searchData: "", //搜索的名字
         // tableData: [], //数据
         tableData: [
-          // {
-          //   account: '01',
-          //   name: 'jack',
-          //   tel: '13545656521',
-          //   subarea: '罗湖区',
-          //   role: '销售经理',
-          // },
-          // {
-          //   account: '02',
-          //   name: '周猛',
-          //   tel: '13567655623',
-          //   subarea: '南山区',
-
-          //   role: '销售经理',
-          // },
-          {
-            account: '03',
-            name: '张康影',
-            tel: '15655678652',
-            subarea: '龙华区',
-
-            role: '销售经理',
-          },
-          // {
-          //   account: '04',
-          //   name: '李平',
-          //   tel: '13655487562',
-          //   subarea: '龙岗区',
-          //   role: '销售经理',
-          // },
-          {
-            account: '05',
-            name: '张华',
-            tel: '13659866562',
-            subarea: '龙岗区',
-            role: '销售经理',
-          },
         ],
         password: "",
         newTableData: [],
@@ -195,7 +155,6 @@
           account: "",
           name: "",
           tel: "",
-          email: "",
           address: "",
           role: ""
         },
@@ -203,14 +162,13 @@
           account: "",
           name: "",
           tel: "",
-          email: "",
           subarea: "",
           role: ""
         },
         rules: {
           account: [
             { required: true, message: "请输入账号", trigger: "blur" },
-            { min: 1, max: 20, message: "请输入 1 到 20 个字符", trigger: "blur" }
+            { min: 1, max: 10, message: "请输入 1 到 10 个字符", trigger: "blur" }
           ],
           name: [
             { required: true, message: "请输入姓名", trigger: "blur" },
@@ -218,7 +176,6 @@
           ],
           subarea: [{ required: true, message: "请选择分区", trigger: "blur" }],
           tel: [{ required: true, trigger: "blur", validator: validPhone }],
-          email: [{ required: true, trigger: "blur", validator: validEmail }],
           role: [{ required: true, message: "请选择角色", trigger: "blur" }]
         },
         rulesUpdate: {
@@ -232,7 +189,6 @@
           ],
           subarea: [{ required: true, message: "请选择分区", trigger: "blur" }],
           tel: [{ required: true, trigger: "blur", validator: validPhone }],
-          email: [{ required: true, trigger: "blur", validator: validEmail }],
           role: [{ required: true, message: "请选择角色", trigger: "blur" }]
         },
         multipleSelection: [],

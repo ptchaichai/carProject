@@ -142,6 +142,7 @@ export default {
       currentIndex: "",
       isShowTip: false,
       deleteVal: "",
+      select:"",
       roles: [
         { label: "总经理", id: 0, value: "1" },
         { label: "销售经理", id: 1, value: "2" },
