@@ -3,18 +3,23 @@
     <p>购车客户信息管理</p>
     <div class="search-add">
       <div class="box">
-        <el-form ref="form" class="search-form">
-          <el-input v-model="searchData" placeholder="请输入客户姓名" suffix-icon="el-icon-search"></el-input>
-          <el-button type="success" class="search" @click="search">搜索</el-button>
-        </el-form>
+        <div class="search-input" style="width:400px">
+        <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
+          <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
+            <el-option label="姓名" value="username"></el-option>
+            <el-option label="电话" value="phone"></el-option>
+          </el-select>
+          <el-button slot="append" icon="el-icon-search"></el-button>
+        </el-input>
+        </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
               <el-form-item label="姓名" prop="name">
                 <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
               </el-form-item>
-              <el-form-item label="电话" prop="tel">
-                <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
+              <el-form-item label="电话" prop="phone">
+                <el-input v-model="ruleForm.phone" placeholder="请输入电话"></el-input>
               </el-form-item>
               <el-form-item label="邮箱" prop="email">
                 <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
@@ -23,7 +28,7 @@
                 <el-input v-model="ruleForm.address" placeholder="请输入地址"></el-input>
               </el-form-item>
               <el-form-item label="购买车型" prop="carType">
-                <el-select v-model="ruleForm.carType" placeholder="请选择车型">
+                <el-select v-model="ruleForm.carType" placeholder="请选择车型" class="select-input">
                   <el-option
                     v-for="item in roles"
                     :label="item.label"
@@ -33,7 +38,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="购买价格" prop="price" class="price-form">
-                <el-select v-model="ruleForm.price" placeholder="请选择价格范围">
+                <el-select v-model="ruleForm.price" placeholder="请选择价格范围" class="select-input">
                   <el-option
                     v-for="item in roles1"
                     :label="item.label"
@@ -57,7 +62,7 @@
             </el-form>
           </div>
         </el-dialog>
-        <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
+        <el-button type="primary" size="small" round class="add" @click="add" v-show="showAdd">添加</el-button>
       </div>
     </div>
     <el-table
@@ -71,13 +76,13 @@
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="name" label="姓名" min-width="10%" align="center"></el-table-column>
-      <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="email" label="邮箱" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="address" label="地址" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="carType" label="购买车型" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="carPrice" label="购买价格" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="addtime" label="添加时间" min-width="10%" align="center"></el-table-column>
-      <el-table-column fixed="right" label="操作" width="150" min-width="20%" align="center">
+      <el-table-column fixed="right" label="操作" width="150" min-width="20%" align="center" v-if="showAdd">
         <template slot-scope="scope">
           <el-button
             slot="reference"
@@ -108,8 +113,8 @@
         <el-form-item label="姓名" prop="name">
           <el-input v-model="updateForm.name" placeholder="请输入姓名"></el-input>
         </el-form-item>
-        <el-form-item label="电话" prop="tel">
-          <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
+        <el-form-item label="电话" prop="phone">
+          <el-input v-model="updateForm.phone" placeholder="请输入电话"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="updateForm.email" placeholder="请输入邮箱"></el-input>
@@ -118,12 +123,12 @@
           <el-input v-model="updateForm.address" placeholder="请输入地址"></el-input>
         </el-form-item>
         <el-form-item label="购买车型" prop="carType">
-          <el-select v-model="updateForm.carType" placeholder="请选择车型">
+          <el-select v-model="updateForm.carType" placeholder="请选择车型" class="select-input">
             <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="购买价格" prop="price">
-          <el-select v-model="updateForm.price" placeholder="请选择价格范围" class="price-form">
+          <el-select v-model="updateForm.price" placeholder="请选择价格范围" class="select-input">
             <el-option
               v-for="item in roles1"
               :label="item.label"
@@ -164,6 +169,9 @@ export default {
   name: "buyClient",
   data() {
     return {
+      showAdd:false,
+      searchName: 'username', //搜索的条件
+      searchData: "", //搜索的名字
       multipleSelection: [],
       searchData: "",
       dialogDelete: false,
@@ -176,7 +184,7 @@ export default {
       tableData: [
         {
           name:'张康',
-          tel:'15489568758',
+          phone:'15489568758',
           email:'356255263@qq.com',
           address:'深圳市南山区菱格小区',
           carType:'宾智',
@@ -184,7 +192,7 @@ export default {
         },
         {
           name:'王志东',
-          tel:'1555697754',
+          phone:'1555697754',
           email:'256669875@qq.com',
           address:'深圳市龙华区美格小区',
           carType:'飞度',
@@ -192,7 +200,7 @@ export default {
         },
         {
           name:'赵斗淳',
-          tel:'19568556855',
+          phone:'19568556855',
           email:'256625488@qq.com',
           address:'深圳市南山区新梅小区',
           carType:'宾智',
@@ -200,7 +208,7 @@ export default {
         },
         {
           name:'赵鑫鑫',
-          tel:'19568658652',
+          phone:'19568658652',
           email:'236555895@qq.com',
           address:'深圳市光明新区',
           carType:'奥德赛',
@@ -208,7 +216,7 @@ export default {
         },
         {
           name:'张磊',
-          tel:'18977645652',
+          phone:'18977645652',
           email:'233345895@qq.com',
           address:'深圳市光明新区',
           carType:'宾智',
@@ -216,7 +224,7 @@ export default {
         },
         {
           name:'孙琪琪',
-          tel:'15444798344',
+          phone:'15444798344',
           email:'33345233445@qq.com',
           address:'深圳市光明新区',
           carType:'宾智',
@@ -240,7 +248,7 @@ export default {
       ],
       ruleForm: {
         name: "",
-        tel: "",
+        phone: "",
         email: "",
         address: "",
         carType: "",
@@ -257,12 +265,12 @@ export default {
         ],
         carType: [{ required: true, trigger: "blur", message: "请选择车型" }],
         price: [{ required: true, trigger: "blur", message: "请选择价格" }],
-        tel: [{ required: true, trigger: "blur", validator: validPhone }],
+        phone: [{ required: true, trigger: "blur", validator: validPhone }],
         email: [{ required: true, trigger: "blur", validator: validEmail }]
       },
       updateForm: {
         name: "",
-        tel: "",
+        phone: "",
         email: "",
         address: "",
         carType: "",
@@ -279,10 +287,18 @@ export default {
         ],
         carType: [{ required: true, trigger: "blur", message: "请选择车型" }],
         price: [{ required: true, trigger: "blur", message: "请选择价格" }],
-        tel: [{ required: true, trigger: "blur", validator: validPhone }],
+        phone: [{ required: true, trigger: "blur", validator: validPhone }],
         email: [{ required: true, trigger: "blur", validator: validEmail }]
       }
     };
+  },
+  created() {
+    let role = sessionStorage.getItem("role");
+    if (+role === 0 || +role === 1) {
+      this.showAdd = false;
+    } else if (+role === 2) {
+      this.showAdd = true;
+    }
   },
   methods: {
     // 全选
@@ -334,7 +350,7 @@ export default {
     addConfirm: function(ruleForm) {
       const form = {
         name: this.ruleForm.name,
-        tel: this.ruleForm.tel,
+        phone: this.ruleForm.phone,
         email: this.ruleForm.email,
         address: this.ruleForm.address,
         carType: this.ruleForm.carType,
@@ -364,7 +380,7 @@ export default {
     update: function(index) {
       const thisData = this.tableData[index].data;
       this.updateForm.name = thisData.name;
-      this.updateForm.tel = thisData.tel;
+      this.updateForm.phone = thisData.phone;
       this.updateForm.email = thisData.email;
       this.updateForm.address = thisData.address;
       this.updateForm.carType = thisData.carType;
@@ -375,7 +391,7 @@ export default {
     updateConfirm: function(updateForm) {
       const form = {
         name: this.updateForm.name,
-        tel: this.ruleForm.tel,
+        phone: this.ruleForm.phone,
         email: this.updateForm.email,
         address: this.updateForm.address,
         carType: this.updateForm.carType,
@@ -474,7 +490,7 @@ export default {
 .el-icon-warning {
   color: red;
 }
-.el-select {
+.select-input {
   width: 100%;
   margin-bottom: 20px;
 }

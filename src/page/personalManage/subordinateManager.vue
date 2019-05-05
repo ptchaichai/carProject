@@ -3,27 +3,26 @@
     <p>销售经理信息管理</p>
     <div class="search-add">
       <div class="box">
-        <div style="margin-top: 15px;">
-          <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-            <el-select v-model="select" slot="prepend" placeholder="请选择">
-              <el-option label="餐厅名" value="1"></el-option>
-              <el-option label="订单号" value="2"></el-option>
-              <el-option label="用户电话" value="3"></el-option>
-            </el-select>
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
+        <div class="search-input">
+        <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
+          <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
+            <el-option label="姓名" value="username"></el-option>
+            <el-option label="电话" value="phone"></el-option>
+          </el-select>
+          <el-button slot="append" icon="el-icon-search"></el-button>
+        </el-input>
         </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-              <el-form-item label="账号" prop="name">
+              <el-form-item label="姓名" prop="name">
                 <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
               </el-form-item>
-              <el-form-item label="电话" prop="tel">
-                <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
+              <el-form-item label="电话" prop="phone">
+                <el-input v-model="ruleForm.phone" placeholder="请输入电话"></el-input>
               </el-form-item>
               <el-form-item label="分区" prop="subarea" style="margin-bottom:5px">
-                <el-select v-model="ruleForm.subarea" placeholder="请选择分区">
+                <el-select v-model="ruleForm.subarea" placeholder="请选择分区" class="role-select">
                   <el-option v-for="item in rolesArea" :label="item.label" :key="item.id" :value="item.value">
                   </el-option>
                 </el-select>
@@ -41,10 +40,9 @@
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="email" label="邮箱" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="subarea" label="所属分区" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="25%" align="center">
         <template slot-scope="scope">
           <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改
@@ -67,24 +65,9 @@
     </el-dialog>
     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
       <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
-        <el-form-item label="账号" prop="account">
-          <el-input v-model="updateForm.account" placeholder="请输入账号"></el-input>
-        </el-form-item>
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="updateForm.name" placeholder="请输入姓名"></el-input>
-        </el-form-item>
-        <el-form-item label="电话" prop="tel">
-          <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
-        </el-form-item>
         <el-form-item label="分区" prop="subarea" style="margin-bottom:5px">
           <el-select v-model="updateForm.subarea" placeholder="请选择分区">
             <el-option v-for="item in rolesArea" :label="item.label" :key="item.id" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="角色" prop="role">
-          <el-select v-model="updateForm.role" placeholder="请选择角色">
-            <el-option v-for="(item,id) in roles" :label="item.label" :key="item.id" :value="item.value">
-            </el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -129,6 +112,43 @@
         searchData: "", //搜索的名字
         // tableData: [], //数据
         tableData: [
+          // {
+          //   account: '01',
+          //   name: 'jack',
+          //   phone: '13545656521',
+          //   subarea: '罗湖区',
+          //   role: '销售经理',
+          // },
+          // {
+          //   account: '02',
+          //   name: '周猛',
+          //   phone: '13567655623',
+          //   subarea: '南山区',
+
+          //   role: '销售经理',
+          // },
+          {
+            account: '03',
+            name: '张康影',
+            phone: '15655678652',
+            subarea: '龙华区',
+
+            role: '销售经理',
+          },
+          // {
+          //   account: '04',
+          //   name: '李平',
+          //   phone: '13655487562',
+          //   subarea: '龙岗区',
+          //   role: '销售经理',
+          // },
+          {
+            account: '05',
+            name: '张华',
+            phone: '13659866562',
+            subarea: '龙岗区',
+            role: '销售经理',
+          },
         ],
         password: "",
         newTableData: [],
@@ -144,52 +164,30 @@
           { label: "销售人员", id: 2, value: "销售人员" }
         ],
         rolesArea: [
-          { label: "福田区", id: 0, value: "福田区" },
-          { label: "南山区", id: 2, value: "南山区" },
-          { label: "罗湖区", id: 2, value: "罗湖区" },
-          { label: "龙华区", id: 2, value: "龙华区" },
-          { label: "龙岗区", id: 2, value: "龙岗区" },
-          { label: "宝安区", id: 2, value: "宝安区" },
+          { label: "福田区总店", value: "0" },
+          { label: "南山区分店1号", value: "1" },
+          { label: "罗湖区分店2号", value: "2" },
+          { label: "龙华区", value: "3" },
+          { label: "龙岗区", value: "4" },
+          { label: "宝安区", value: "5" },
         ],
         updateForm: {
-          account: "",
           name: "",
-          tel: "",
-          address: "",
-          role: ""
+          phone: "",
         },
         ruleForm: {
-          account: "",
-          name: "",
-          tel: "",
           subarea: "",
-          role: ""
         },
         rules: {
-          account: [
-            { required: true, message: "请输入账号", trigger: "blur" },
-            { min: 1, max: 10, message: "请输入 1 到 10 个字符", trigger: "blur" }
-          ],
           name: [
             { required: true, message: "请输入姓名", trigger: "blur" },
             { min: 2, max: 4, message: "请输入 2 到 4 个字符", trigger: "blur" }
           ],
           subarea: [{ required: true, message: "请选择分区", trigger: "blur" }],
-          tel: [{ required: true, trigger: "blur", validator: validPhone }],
-          role: [{ required: true, message: "请选择角色", trigger: "blur" }]
+          phone: [{ required: true, trigger: "blur", validator: validPhone }],
         },
         rulesUpdate: {
-          account: [
-            { required: true, message: "请输入账号", trigger: "blur" },
-            { min: 1, max: 20, message: "请输入 1 到 20 个字符", trigger: "blur" }
-          ],
-          name: [
-            { required: true, message: "请输入姓名", trigger: "blur" },
-            { min: 2, max: 4, message: "请输入 2 到 4 个字符", trigger: "blur" }
-          ],
           subarea: [{ required: true, message: "请选择分区", trigger: "blur" }],
-          tel: [{ required: true, trigger: "blur", validator: validPhone }],
-          role: [{ required: true, message: "请选择角色", trigger: "blur" }]
         },
         multipleSelection: [],
       };
@@ -279,10 +277,9 @@
       addInformation: function (ruleForm) {
         const form = {
           username: this.ruleForm.name,
-          phone: this.ruleForm.tel,
+          phone: this.ruleForm.phone,
           store_id: this.ruleForm.subarea,
           role: 1,
-
         };
         this.$refs[ruleForm].validate(valid => {
           if (valid) {
@@ -295,10 +292,10 @@
                   this.dialogAdd = false;
                   this.$message.success("添加成功");
                 } else {
+                  this.dialogAdd = false;
                   this.$message.error("添加失败");
                 }
               });
-            this.tableData.push(form);
           } else {
             this.$message.error("添加失败");
             return false;
@@ -310,21 +307,14 @@
         this.dialogAdd = false;
       },
       update: function (index) {
-        // const thisData = this.tableData[index].data;
-        // this.updateForm.account = thisData.account;
-        // this.updateForm.name = thisData.name;
-        // this.updateForm.tel = thisData.tel;
-        // this.updateForm.subarea = thisData.subarea;
-        // this.updateForm.role = thisData.role;
         this.currentIndex = index;
         this.dialogUpdate = true;
       },
       updateConfirm: function (updateForm) {
         const form = {
-          account: this.updateForm.account,
-          name: this.updateForm.name,
-          tel: this.ruleForm.tel,
-          subarea: this.updateForm.subarea,
+          username: this.updateForm.name,
+          phone: this.ruleForm.phone,
+          store_id: this.updateForm.subarea,
           role: this.updateForm.role
         };
         this.$refs[updateForm].validate(valid => {
@@ -404,11 +394,8 @@
     width: 60% !important;
     height: 45% !important;
   }
-  .input-with-select input{
-    width: 120px !important;
-  }
   .search-input {
-    width: 260px;
+    width: 400px;
   }
   .el-table {
     width: 90%;
@@ -487,7 +474,7 @@
     color: red;
   }
 
-  .el-select {
+  .role-select {
     width: 100%;
     margin-bottom: 20px;
   }

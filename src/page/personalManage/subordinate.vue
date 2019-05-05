@@ -3,21 +3,23 @@
     <p>销售人员信息管理</p>
     <div class="search-add">
       <div class="box">
-        <el-form class="search-form">
-          <el-input v-model="searchData" placeholder="请输入名称"></el-input>
-          <el-button type="success" class="search" @click="search">搜索</el-button>
-        </el-form>
+        <div class="search-input" style="width:400px">
+          <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
+            <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
+              <el-option label="姓名" value="username"></el-option>
+              <el-option label="电话" value="phone"></el-option>
+            </el-select>
+            <el-button slot="append" icon="el-icon-search"></el-button>
+          </el-input>
+        </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-              <el-form-item label="姓名" prop="name">
-                <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
+              <el-form-item label="账号" prop="name">
+                <el-input v-model="ruleForm.name" placeholder="请输入账号"></el-input>
               </el-form-item>
-              <el-form-item label="电话" prop="tel">
-                <el-input v-model="ruleForm.tel" placeholder="请输入电话"></el-input>
-              </el-form-item>
-              <el-form-item label="邮箱" prop="email">
-                <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
+              <el-form-item label="电话" prop="phone">
+                <el-input v-model="ruleForm.phone" placeholder="请输入电话"></el-input>
               </el-form-item>
               <el-button
                 round
@@ -29,7 +31,7 @@
             </el-form>
           </div>
         </el-dialog>
-        <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
+        <el-button type="primary" size="small" round class="add" @click="add" v-show="showAdd">添加</el-button>
       </div>
     </div>
     <el-table
@@ -42,15 +44,13 @@
     >
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
-      <el-table-column prop="account" label="账号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="tel" label="电话" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="email" label="邮箱" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="belong" label="所属经理" min-width="15%" align="center"></el-table-column>
       <!-- <el-table-column prop="pwd" label="密码" min-width="20%" align="center"></el-table-column> -->
       <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="25%" align="center">
-        <template slot-scope="scope">
+      <el-table-column fixed="right" label="操作" min-width="25%" align="center" >
+        <template slot-scope="scope" v-show="showAdd">
           <el-button
             slot="reference"
             type="primary"
@@ -83,40 +83,24 @@
         <el-form-item label="姓名" prop="name">
           <el-input v-model="updateForm.name" placeholder="请输入姓名"></el-input>
         </el-form-item>
-        <el-form-item label="电话" prop="tel">
-          <el-input v-model="updateForm.tel" placeholder="请输入电话"></el-input>
+        <el-form-item label="电话" prop="phone">
+          <el-input v-model="updateForm.phone" placeholder="请输入电话"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="updateForm.eamil" placeholder="请输入邮箱"></el-input>
-        </el-form-item>
-        <div style="position: absolute">
-          <verify-pass-word-tip :password="updateForm.pwd" :isShowTip="isShowTip"></verify-pass-word-tip>
-        </div>
-      <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
-      <el-button @click="updateCancel('updateForm')" round>取 消</el-button>
-    </el-form>
+        <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
+        <el-button @click="updateCancel('updateForm')" round>取 消</el-button>
+      </el-form>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import API from './../api.js'
+import API from "./../api.js";
 import { isvalidPhone } from "./../valid";
-import { isvalidEmail } from "./../valid";
 const validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));
   } else if (!isvalidPhone(value)) {
     callback(new Error("请输入正确的11位手机号码"));
-  } else {
-    callback();
-  }
-};
-const validEmail = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error("请输入邮箱"));
-  } else if (!isvalidEmail(value)) {
-    callback(new Error("请输入正确邮箱格式"));
   } else {
     callback();
   }
@@ -128,9 +112,10 @@ export default {
   },
   data() {
     return {
+      showAdd: false,
       page: 1, //页码
       pageSize: 10, //一条默认页数
-      searchName: 'username', //搜索的条件
+      searchName: "username", //搜索的条件
       searchData: "", //搜索的名字
       tableData: [], //数据
       password: "",
@@ -142,42 +127,22 @@ export default {
       currentIndex: "",
       isShowTip: false,
       deleteVal: "",
-      select:"",
-      roles: [
-        { label: "总经理", id: 0, value: "1" },
-        { label: "销售经理", id: 1, value: "2" },
-        { label: "销售人员", id: 2, value: "3" }
-      ],
       updateForm: {
-        account: "",
         name: "",
-        tel: "",
-        email: "",
+        phone: "",
         role: ""
       },
       ruleForm: {
-        account: "",
         name: "",
-        tel: "",
-        email: "",
+        phone: "",
         role: ""
       },
       rules: {
-        account: [
-          { required: true, message: "请输入账号", trigger: "blur" },
-          { min: 1, max: 20, message: "请输入 1 到 20 个字符", trigger: "blur" }
-        ],
         name: [
           { required: true, message: "请输入姓名", trigger: "blur" },
           { min: 2, max: 4, message: "请输入 2 到 4 个字符", trigger: "blur" }
         ],
-        address: [
-          { required: true, message: "请输入地址", trigger: "blur" },
-          { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
-        ],
-        tel: [{ required: true, trigger: "blur", validator: validPhone }],
-        role: [{ required: true, message: "请选择角色", trigger: "blur" }],
-        email: [{ required: true, trigger: "blur", validator: validEmail }],
+        phone: [{ required: true, trigger: "blur", validator: validPhone }]
       },
       rulesUpdate: {
         account: [
@@ -188,38 +153,41 @@ export default {
           { required: true, message: "请输入姓名", trigger: "blur" },
           { min: 2, max: 4, message: "请输入 2 到 4 个字符", trigger: "blur" }
         ],
-        address: [
-          { required: true, message: "请输入地址", trigger: "blur" },
-          { min: 2, max: 40, message: "长度在 2 到 40 个字符", trigger: "blur" }
-        ],
-        tel: [{ required: true, trigger: "blur", validator: validPhone }],
-        role: [{ required: true, message: "请选择角色", trigger: "blur" }],
-        email: [{ required: true, trigger: "blur", validator: validEmail }],
+        phone: [{ required: true, trigger: "blur", validator: validPhone }],
+        role: [{ required: true, message: "请选择角色", trigger: "blur" }]
       },
-      multipleSelection: [],
+      multipleSelection: []
     };
   },
-  created(){
-    this.getPerssionList()
+  created() {
+    this.getPerssionList();
+    let role = sessionStorage.getItem("role");
+    if (+role === 0) {
+      this.showAdd = false;
+    } else if (+role === 1) {
+      this.showAdd = true;
+    }
   },
 
   methods: {
     //获取列表
-    getPerssionList(){
+    getPerssionList() {
       const params = {
-        role: sessionStorage.getItem('role'),
+        role: sessionStorage.getItem("role"),
         page: this.page,
         page_size: this.pageSize,
         search_idx: this.searchName,
         search_value: this.searchData
-      }
-      this.$http.post(API.GET_PERSON_LIST,this.qs.stringify(params)).then((result) => {
-        if (result.data.status === 0) {
-          this.tableData = result.data.data;
-        } else {
-          this.$message.error("登录失败");
-        }
-      })
+      };
+      this.$http
+        .post(API.GET_PERSON_LIST, this.qs.stringify(params))
+        .then(result => {
+          if (result.data.status === 0) {
+            this.tableData = result.data.data;
+          } else {
+            this.$message.error("登录失败");
+          }
+        });
     },
     // 全选
     toggleSelection(rows) {
@@ -281,7 +249,7 @@ export default {
     addInformation: function(ruleForm) {
       const form = {
         username: this.ruleForm.name,
-        phone: this.ruleForm.tel,
+        phone: this.ruleForm.phone,
         role: this.ruleForm.role
       };
       this.$refs[ruleForm].validate(valid => {
@@ -298,7 +266,6 @@ export default {
                 this.$message.error("添加失败");
               }
             });
-          this.tableData.push(form);
         } else {
           return false;
         }
@@ -312,7 +279,7 @@ export default {
       const thisData = this.tableData[index].data;
       this.updateForm.account = thisData.account;
       this.updateForm.name = thisData.name;
-      this.updateForm.tel = thisData.tel;
+      this.updateForm.phone = thisData.phone;
       this.updateForm.address = thisData.address;
       this.updateForm.role = thisData.role;
       this.currentIndex = index;
@@ -322,9 +289,9 @@ export default {
       const form = {
         account: this.updateForm.account,
         name: this.updateForm.name,
-        tel: this.ruleForm.tel,
+        phone: this.ruleForm.phone,
         address: this.updateForm.address,
-        role: this.updateForm.role,
+        role: this.updateForm.role
       };
       this.$refs[updateForm].validate(valid => {
         if (valid) {
@@ -441,9 +408,5 @@ export default {
 }
 .el-icon-warning {
   color: red;
-}
-.el-select {
-  width: 100%;
-  margin-bottom: 20px;
 }
 </style>

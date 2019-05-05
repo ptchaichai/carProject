@@ -5,21 +5,11 @@
       <el-tag>用户登录</el-tag>
       <el-form :model="rulesForm" :rules="rules" ref="rulesForm">
         <el-form-item label="账号:" prop="account">
-          <el-input v-model="rulesForm.account" placeholder="请输入手机号"></el-input>
+          <el-input v-model="rulesForm.account" placeholder="请输入账号"></el-input>
         </el-form-item>
         <el-form-item label="密码:" prop="pwd">
           <el-input v-model="rulesForm.pwd" type="password" placeholder="请输入密码"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="请选择身份：" prop="identity" class="identity-box">
-          <el-select v-model="rulesForm.identity" placeholder="请选择身份">
-            <el-option
-              v-for="item in roles"
-              :label="item.label"
-              :key="item.id"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item> -->
         <el-form-item label="验证码:" prop="vCode">
           <input type="text" placeholder="请输入验证码" class="yanzhengma_input" v-model="rulesForm.vCode">
           <input type="button"  @click="createCode"  class="verification" v-model="cCode"/>
@@ -52,20 +42,13 @@ export default {
       rulesForm: {
         account: "",
         pwd: "",
-        // identity: "",
         vCode: ""
       },
       rules: {
         account: [{ required: true, message: "请输入账号", trigger: "blur" }],
         pwd: [{ required: true, message: "请输入登录密码", trigger: "blur" }],
-        // identity: [{ required: true, trigger: "blur", message: "请选择身份" }],
         vCode: [{ required: true, validator: validatevCode, triger: "blur" }]
       },
-      // roles: [
-      //   { label: "总经理", value: "总经理" },
-      //   { label: "销售经理", value: "销售经理" },
-      //   { label: "销售人员", value: "销售人员" }
-      // ]
     };
   },
   mounted() {

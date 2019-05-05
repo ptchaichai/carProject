@@ -3,10 +3,15 @@
     <p>公告</p>
     <div class="search-add">
       <div class="box">
-        <el-form ref="form" class="search-form">
-          <el-input v-model="searchData" placeholder="请输入要搜索的字段" suffix-icon="el-icon-search"></el-input>
-          <el-button type="success" class="search" @click="search">搜索</el-button>
-        </el-form>
+        <div class="search-input">
+          <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
+            <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
+              <el-option label="姓名" value="username"></el-option>
+              <el-option label="电话" value="phone"></el-option>
+            </el-select>
+            <el-button slot="append" icon="el-icon-search"></el-button>
+          </el-input>
+          </div>
         <el-dialog title="添加公告" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="add-form">
@@ -31,7 +36,7 @@
             </el-form>
           </div>
         </el-dialog>
-        <el-button round type="primary" @click="open" class="add">添加新公告</el-button>
+        <el-button round type="primary" @click="open" class="add" v-show="showAdd">添加新公告</el-button>
       </div>
     </div>
     <el-table
@@ -56,7 +61,7 @@
             size="small"
             round
             class="update"
-            @click="view(scope.$index)"
+            @click="view(scope.row,scope.$index)"
           >查看</el-button>
           <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
         </template>
@@ -93,6 +98,9 @@ export default {
   name: "updatePwd",
   data() {
     return {
+      showAdd: false,
+      searchName: 'username', //搜索的条件
+      searchData: "", //搜索的名字
       multipleSelection: [],
       show: false,
       showAnother: false,
@@ -151,6 +159,14 @@ export default {
       }
     };
   },
+  created() {
+    let role = sessionStorage.getItem("role");
+    if (+role === 0 || +role === 1) {
+      this.showAdd = true;
+    } else if (+role === 2) {
+      this.showAdd = false;
+    }
+  },
   methods: {
     // 全选
     toggleSelection(rows) {
@@ -198,6 +214,7 @@ export default {
       }
     },
     open: function() {
+      console.log(vala);
       this.dialogAdd = true;
     },
     // 添加公告
@@ -231,7 +248,7 @@ export default {
       this.$refs[ruleForm].resetFields();
       this.dialogAdd = false;
     },
-    view: function(index) {
+    view: function(rowVal,index) {
       this.viewTitle = rowVal.title;
       this.viewContent = rowVal.title;
       this.dialogView = true;
@@ -385,5 +402,8 @@ export default {
   position: absolute;
   top: -2px;
   left: 10px;
+}
+.search-input {
+  width: 400px;
 }
 </style>

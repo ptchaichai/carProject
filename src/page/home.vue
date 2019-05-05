@@ -43,10 +43,10 @@ export default {
     checkUser: function(){
        this.$http.post(API.check, this.qs.stringify({})).then(result => {
             if (result.data.status === 0) {
-              this.$message.success("登陆成功");
-              console.log("登录成功");
+              // this.$message.success("登陆成功");
+              // console.log("登录成功");
             } else {
-              this.$message.error("登录失败");
+              // this.$message.error("登录失败");
             }
         });
     }

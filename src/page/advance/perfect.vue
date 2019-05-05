@@ -2,6 +2,23 @@
   <div class="perfect-box">
     <p>完善资料</p>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+      <el-form-item label="电话" prop="phone">
+        <el-input v-model="ruleForm.phone" placeholder="请输入电话"></el-input>
+      </el-form-item>
+      <el-form-item label="身份证号" prop="idcard">
+        <el-input v-model="ruleForm.idcard" placeholder="请输入身份证号"></el-input>
+      </el-form-item>
+      <el-form-item label="出生日期" prop="age">
+        <div class="block">
+          <el-date-picker
+            format="yyyy-MM-dd"
+            v-model="ruleForm.age"
+            type="date"
+            placeholder="选择日期"
+            value-format="yyyy-MM-dd"
+          ></el-date-picker>
+        </div>
+      </el-form-item>
       <el-form-item label="性别" prop="sex">
         <el-select v-model="ruleForm.sex" placeholder="请选择性别">
           <el-option
@@ -11,14 +28,6 @@
             :value="item.value"
           ></el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="身份证号" prop="idcard">
-          <el-input v-model="ruleForm.idcard" placeholder="请输入身份证号"></el-input>
-        </el-form-item>
-      <el-form-item label="出生日期" prop="age">
-        <div class="block">
-          <el-date-picker format="yyyy-MM-dd" v-model="ruleForm.age" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
-        </div>
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
@@ -34,7 +43,7 @@
 
 <script>
 import { isvalidEmail } from "./../valid";
-import bus from "./../bus.js";
+import { isvalidPhone } from "./../valid";
 const validEmail = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入邮箱"));
@@ -44,19 +53,30 @@ const validEmail = (rule, value, callback) => {
     callback();
   }
 };
+const validPhone = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error("请输入电话号码"));
+  } else if (!isvalidPhone(value)) {
+    callback(new Error("请输入正确的11位手机号码"));
+  } else {
+    callback();
+  }
+};
 export default {
   name: "perfect",
   data() {
     return {
-      dateValue:"",
+      dateValue: "",
       value: "",
       roles: [
         { label: "男", id: 1, value: "男" },
         { label: "女", id: 2, value: "女" }
       ],
       ruleForm: {
+        phome:"",
         email: "",
         address: "",
+        idcard:"",
         age: "",
         sex: "",
         idcard :"",
@@ -66,13 +86,14 @@ export default {
           { required: true, message: "请输入地址", trigger: "blur" },
           { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
         ],
+        idcard: [
+          { required: true, message: "请输入地址", trigger: "blur" },
+          { min: 18, max: 18, message: "请输入正确的身份证号", trigger: "blur" }
+        ],
         email: [{ required: true, trigger: "blur", validator: validEmail }],
         age: [{ required: true, trigger: "blur", message: "请选择出生日期" }],
-        sex: [{ required: true, message: "请选择性别", trigger: "blur" }],
-        idcard: [
-            { required: true, message: "请输入账号", trigger: "blur" },
-            { min: 1, max: 18, message: "请输入 1 到 18 个字符", trigger: "blur" }
-          ],
+        phone: [{ required: true, trigger: "blur", validator: validPhone }],
+        sex: [{ required: true, message: "请选择性别", trigger: "blur" }]
       },
       perfectArr: []
     };
