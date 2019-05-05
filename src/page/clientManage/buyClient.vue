@@ -145,6 +145,7 @@
 </template>
 
 <script>
+  import API from './../api.js'
 import { isvalidPhone } from "./../valid";
 import { isvalidEmail } from "./../valid";
 const validPhone = (rule, value, callback) => {
@@ -170,8 +171,12 @@ export default {
   data() {
     return {
       showAdd:false,
-      searchName: 'username', //搜索的条件
+      page: 1, //页码
+      pageSize: 10, //一条默认页数
+      searchName: 'username', //搜索的条件，
+      totalCount: 0,
       searchData: "", //搜索的名字
+      tableData: [],
       multipleSelection: [],
       searchData: "",
       dialogDelete: false,
@@ -299,8 +304,27 @@ export default {
     } else if (+role === 2) {
       this.showAdd = true;
     }
+    this.getCustomList()
   },
   methods: {
+      //获取列表
+      getCustomList() {
+        const params = {
+          page: this.page,
+          page_size: this.pageSize,
+          search_idx: this.searchName,
+          search_value: this.searchData,
+          label: 2 
+        }
+        this.$http.post(API.GET_CUSTOM, this.qs.stringify(params)).then((result) => {
+          if (result.data.status === 0) {
+            this.tableData = result.data.data;
+            this.totalCount = result.data.count;
+          } else {
+            this.$message.error("获取失败");
+          }
+        })
+      },
     // 全选
     toggleSelection(rows) {
       if (rows) {

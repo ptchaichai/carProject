@@ -46,5 +46,19 @@ export default {
   /**
    * 修改汽车信息
    */
-  UPDATE_CAR: '/api/updateCar'
+  UPDATE_CAR: '/api/updateCar',
+  /**
+   * 删除销售人员
+   */
+  DEL_PERSON: '/api/delPerson',
+  /**
+   * 修改销售人员
+   */
+  UPDATE_PERSON: '/api/updatePerson',
+  /**
+   * 获取客户信息
+   * @param label: 0来电 1来店 购车2
+   */
+  GET_CUSTOM: '/api/getCustomList'
+  
 }
