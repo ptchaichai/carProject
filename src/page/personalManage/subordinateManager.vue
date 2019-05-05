@@ -9,7 +9,7 @@
             <el-option label="姓名" value="username"></el-option>
             <el-option label="电话" value="phone"></el-option>
           </el-select>
-          <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
         </el-input>
         </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
@@ -39,11 +39,19 @@
       :header-cell-style="tableHeaderColor" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
-      <el-table-column prop="name" label="账号" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="username" label="账号" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="subarea" label="所属分区" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="store_id" label="所属分区" min-width="15%" align="center">
+        <template slot-scope="scop1">
+          {{getStoreName(scop1.row.store_id)}}
+        </template>
+      </el-table-column>
       <!-- <el-table-column prop="pwd" label="密码" min-width="20%" align="center"></el-table-column> -->
-      <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="role" label="角色" min-width="15%" align="center">
+        <template slot-scope="scop">
+          销售经理
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" min-width="25%" align="center">
         <template slot-scope="scope">
           <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改
@@ -52,10 +60,21 @@
         </template>
       </el-table-column>
     </el-table>
-    <div style="margin-top: 20px">
+      <el-pagination
+      layout="prev, pager, next"
+      :total="totalCount"
+      :page-count="page"
+      :page-size.sync="pageSize"
+      :current-page.sync="page"
+      @size-change="getPerssionList()"
+      @current-change="getPerssionList()"
+      @prev-click="getPerssionList()"
+      @next-click="getPerssionList()">
+  </el-pagination>
+    <!-- <div style="margin-top: 20px">
       <el-button @click="toggleSelection(tableData)">全选</el-button>
       <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
-    </div>
+    </div> -->
     <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
       <i class="el-icon-warning"></i>
       <span>是否要删除本条信息？</span>
@@ -109,48 +128,10 @@
       return {
         page: 1, //页码
         pageSize: 10, //一条默认页数
-        searchName: 'username', //搜索的条件
+        searchName: 'username', //搜索的条件，
+        totalCount: 0,
         searchData: "", //搜索的名字
-        // tableData: [], //数据
-        tableData: [
-          // {
-          //   account: '01',
-          //   name: 'jack',
-          //   phone: '13545656521',
-          //   subarea: '罗湖区',
-          //   role: '销售经理',
-          // },
-          // {
-          //   account: '02',
-          //   name: '周猛',
-          //   phone: '13567655623',
-          //   subarea: '南山区',
-
-          //   role: '销售经理',
-          // },
-          {
-            account: '03',
-            name: '张康影',
-            phone: '15655678652',
-            subarea: '龙华区',
-
-            role: '销售经理',
-          },
-          // {
-          //   account: '04',
-          //   name: '李平',
-          //   phone: '13655487562',
-          //   subarea: '龙岗区',
-          //   role: '销售经理',
-          // },
-          {
-            account: '05',
-            name: '张华',
-            phone: '13659866562',
-            subarea: '龙岗区',
-            role: '销售经理',
-          },
-        ],
+        tableData: [],
         password: "",
         newTableData: [],
         dialogDelete: false,
@@ -165,16 +146,15 @@
           { label: "销售人员", id: 2, value: "销售人员" }
         ],
         rolesArea: [
-          { label: "福田区总店", value: "0" },
-          { label: "南山区分店1号", value: "1" },
-          { label: "罗湖区分店2号", value: "2" },
-          { label: "龙华区", value: "3" },
-          { label: "龙岗区", value: "4" },
-          { label: "宝安区", value: "5" },
+          { label: "福田区总店", value: 0 },
+          { label: "南山区分店1号", value: 1 },
+          { label: "罗湖区分店2号", value: 2 },
+          { label: "龙华区", value: 3 },
+          { label: "龙岗区", value: 4 },
+          { label: "宝安区", value: 5 },
         ],
         updateForm: {
-          name: "",
-          phone: "",
+          subarea: ""
         },
         ruleForm: {
           subarea: "",
@@ -196,7 +176,6 @@
     created() {
       this.getPerssionList()
     },
-
     methods: {
       handleCommand(command) {
         this.$refs.dropLink.innerText = command;
@@ -210,13 +189,25 @@
           search_idx: this.searchName,
           search_value: this.searchData
         }
-        this.$http.post(API.GET_PERSON_LIST, this.qs.stringify(params)).then((result) => {
+        this.$http.post(API.GET_MANAGER_LIST, this.qs.stringify(params)).then((result) => {
           if (result.data.status === 0) {
             this.tableData = result.data.data;
+            this.totalCount = result.data.count;
           } else {
             this.$message.error("登录失败");
           }
         })
+      },
+      //获取分区的名字
+      getStoreName(id){
+        if(id >= 0) {
+          let store = this.rolesArea.find((item) => {
+            return +item.value === +id
+          })
+          return store.label;
+        } else {
+          return '暂无分配'
+        }
       },
       // 全选
       toggleSelection(rows) {
@@ -246,31 +237,11 @@
           return "background-color: #409eff; color: #fff; font-weight: 500;";
         }
       },
-      // 输入密码判断
-      // changePasswordTip(isShow) {
-      //   if (isShow) {
-      //     this.isShowTip = true;
-      //   } else {
-      //     this.isShowTip = false;
-      //   }
-      // },
       // 搜索table
       search: function () {
-        const val = this.searchData;
-        if (val !== "") {
-          const form = {
-            searchVal: val
-          };
-          this.$http
-            .post("api/searchsubordinateManager", this.qs.stringify(form))
-            .then(res => {
-              if (res.data.status === 0) {
-                this.tableData = res.data;
-              } else {
-                this.$message.error("搜索失败");
-              }
-            });
-        }
+        this.page = 1;
+        this.pageSize = 10;
+        this.getPerssionList();
       },
       add: function () {
         this.dialogAdd = true;
@@ -292,11 +263,13 @@
                   this.$refs[ruleForm].resetFields();
                   this.dialogAdd = false;
                   this.$message.success("添加成功");
+                  this.page = 1;
+                  this.pageSize = 10;
+                  this.getPerssionList();
                 } else {
                   this.$message.error("添加失败");
                 }
               });
-            this.tableData.push(form);
           } else {
             this.$message.error("添加失败");
             return false;
@@ -307,45 +280,32 @@
         this.$refs[ruleForm].resetFields();
         this.dialogAdd = false;
       },
+      //修改
       update: function (index) {
-        // const thisData = this.tableData[index].data;
-        // this.updateForm.account = thisData.account;
-        // this.updateForm.name = thisData.name;
-        // this.updateForm.phone = thisData.phone;
-        // this.updateForm.subarea = thisData.subarea;
-        // this.updateForm.role = thisData.role;
         this.currentIndex = index;
+        this.updateForm.subarea = this.tableData[index].store_id
+        console.log(this.updateForm.subarea)
         this.dialogUpdate = true;
       },
+      //修改经理信息
       updateConfirm: function (updateForm) {
-        const form = {
-          username: this.updateForm.name,
-          phone: this.ruleForm.phone,
-          store_id: this.updateForm.subarea,
-          role: this.updateForm.role
-        };
-        this.$refs[updateForm].validate(valid => {
-          if (valid) {
-            this.dialogUpdate = false;
+        const params = {
+          subarea: this.updateForm.subarea,
+          id: this.tableData[this.currentIndex].id
+        }
+         this.$http.post(API.UPDATE_MANAGER, this.qs.stringify(params)).then((result) => {
+          if (result.data.status === 0) {
             this.$message.success("修改成功");
-            // this.$http
-            //   .post("api/updatesubordinateManager", this.qs.stringify(form))
-            //   .then(res => {
-            //     if (res.data.status === 0) {
-            //       this.tableData[currentIndex] = res.data;
-            //       this.dialogUpdate = false;
-            //       this.$message.success("添加成功");
-            //     } else {
-            //       this.$message.error("修改失败");
-            //     }
-            //   });
+            this.getPerssionList()
+            this.currentIndex = null;
+            this.dialogUpdate=false;
           } else {
             this.$message.error("修改失败");
-            return false;
           }
-        });
+        })
       },
       updateCancel: function (updateForm) {
+         this.currentIndex = null;
         this.$refs[updateForm].resetFields();
         this.dialogUpdate = false;
       },
@@ -353,24 +313,23 @@
         this.dialogDelete = true;
         this.currentIndex = index;
       },
+      //删除经理信息
       removeConfirm: function () {
-        // const form = {
-        //   id: this.id
-        // };
-        // this.$http
-        //   .post("api/deleteAnnouncement", this.qs.stringify(form))
-        //   .then(res => {
-        //     if (res.data.status === 0) {
-        //       this.tableData.splice(this.currentIndex, 1);
-        //       this.dialogDelete = false;
-        //       this.$message.success("删除成功");
-        //     } else {
-        //       this.$message.error("删除失败");
-        //     }
-        //   });
-        this.tableData.splice(this.currentIndex, 1);
-        this.dialogDelete = false;
-        this.$message.success("删除成功");
+        const params = {
+          id: this.tableData[this.currentIndex].id
+        }
+        this.$http.post(API.DEL_MANAGER, this.qs.stringify(params)).then((result) => {
+          if (result.data.status === 0) {
+           if(this.tableData.length === 1 && this.page > 1) {
+             this.page = 1;
+           }
+          this.getPerssionList();
+          this.$message.success("删除成功");
+          } else {
+            this.$message.error("删除失败");
+          }
+          this.dialogDelete = false;
+        })
       }
     }
   };

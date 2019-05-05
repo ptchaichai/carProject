@@ -110,52 +110,77 @@ module.exports = function(app, passport) {
 	// })
 
 	/**
-	 * 增加个人销售人员信息
-	 */
-	// app.post('/api/addEmployee', isLoggedIn, function(req, res, next){
-	// 	if(req.body) {
-	// 		let param = req.body;
-	// 		let sql = `INSERT INTO user (username, password,role, phone, store_id) VALUES ('${param.username}', '123456',2,'${param.phone}', '${userInfo.store_id}')`;
-	// 		addOne(sql,res)
-	// 	}
-	// })
-
-	/**
-	 * 增加经理
+	 * 增加经理和人员
 	 */
 	app.post('/api/addEmployee', isLoggedIn, function(req, res, next){
 		if(req.body) {
 			let param = req.body;
-			let sql = `INSERT INTO user (username, password,role, phone, store_id, sex) VALUES ('${param.username}', '123456','${param.role}','${param.phone}', '${param.store_id}', 0)`;
-			addOne(sql,res)
+			connection.query(`SELECT id from user WHERE phone = ${param.phone}`,function(err, rows){
+				if(err) {
+					res.json({
+						status: 1,
+						data: err
+					})
+				} else {
+					console.log(rows)
+					if(rows.length > 0) {
+						res.json({
+						status : 1,
+						data: '已经含有相同号码'
+						})
+					} else {
+						let sql = `INSERT INTO user (username, password,role, phone, store_id, sex) VALUES ('${param.username}', '123456','${param.role}','${param.phone}', '${param.store_id}', 0)`;
+						addOne(sql,res)
+					}
+				}
+			})
+		
 		}
 	})
-
-
-
-	/**
-	 * 删除列表个人信息
-	 */
-	app.post('/api/deleteSubordinate', isLoggedIn, function(req, res, next){
+  // 删除销售经理信息
+	app.post('/api/delManager', isLoggedIn, function(req, res, next){
 		if(req.body) {
 			let param = req.body;
-			let sql = `DELETE FROM　user WHERE id = ${param.id} `;
+			let sql = `DELETE FROM user WHERE id=${param.id}`;
 			deleteOne(sql,res)
 		}
 	})
-
-	/**
-	 * 修改个人信息
-	 */
-	app.post('/api/updateSubordinate', isLoggedIn, function(req,res,next){
+	//修改个人信息
+	app.post('/api/updateManager', isLoggedIn, function(req,res,next){
 		if(req.body) {
 			let param = req.body;
-			let sql = `UPDATE  user SET　username, password, phone,  subarea, role) VALUES ('${param.usename}', '${param.usename}','${param.phone}','${param.subarea}','${param.role}') `;
+			let sql = `UPDATE user SET store_id=${+param.subarea} WHERE id=${param.id}`;
 			addOne(sql,res)
 		}
 	})
-  
-	//根据权限获取列表
+	//获取销售经理列表
+	app.post('/api/getManagerList', isLoggedIn, function(req, res, next){
+		if(req.body) {
+			let param = req.body; //获取的参数
+			let sql = null;
+			if(param.page == -1) {
+				sql = "SELECT username, phone, role, birthday, time, sex FROM user where role = 1";
+				findAll(sql, res);
+			} else {
+				let page= parseInt(param.page || 1); //页码
+			  let end = parseInt(param.pageSize || 10); //页数
+				let start = (page - 1) * end
+				let search = {
+					name: param.search_idx,
+					value: param.search_value
+				};
+				//为了提高性能，就不放到一个sql语句了
+				let countSql =  "SELECT COUNT(*) FROM  user where role = 1 "
+				sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 1 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 1 ORDER BY add_time desc limit ${start}, ${end}` 
+				let allSql = {
+					count: countSql,
+					page: sql
+				}
+				pageNation(param, allSql, res)
+			}	
+		}
+	})
+	//根据获取销售人员列表
 	app.post('/api/getPersonList', isLoggedIn, function(req, res, next){
 		let id = req.session.passport.user || userInfo.id;
 		if(req.body) {
@@ -163,7 +188,7 @@ module.exports = function(app, passport) {
 			let sql = null;
 			let role = req.body.role || userInfo.role;		
 			if(param.page == -1) {
-				sql = role == 0 ? "SELECT username, phone, role, birthday, time, sex  FROM user" : "SELECT username, phone, role, birthday, time, sex FROM user where role = 2";
+				sql = role == 0 ? `SELECT *  FROM user where role = 2` : `SELECT * FROM user where role = 2 and store_id = ${userInfo.store_id}`;
 				findAll(sql, res);
 			} else {
 			  let page= parseInt(param.page || 1); //页码
@@ -174,11 +199,11 @@ module.exports = function(app, passport) {
 					value: param.search_value
 				};
 				//为了提高性能，就不放到一个sql语句了
-				let countSql = role == 1 ? "SELECT COUNT(*) FROM  user where role = 2 and pass" : "SELECT COUNT(*) FROM  user"
+				let countSql = role == 1 ? `SELECT COUNT(*) FROM  user where role = 2 ` : `SELECT COUNT(*) FROM  user role = 2 and store_id = ${userInfo.store_id}`
 				if(role == 1) {
-					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 ORDER BY aad_time desc limit ${start}, ${end}` 
+					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 ORDER BY add_time desc limit ${start}, ${end}` 
 				} else if(role == 0) {
-					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user ORDER BY add_time desc limit ${start}, ${end}`
+					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 ORDER BY add_time desc limit ${start}, ${end}`
 				}
 
 				let allSql = {
@@ -216,6 +241,38 @@ module.exports = function(app, passport) {
 			}
 		}
 	})
+	//添加汽车
+	app.post('/api/addCar', isLoggedIn, function(req, res, next){
+		if(req.body) {
+			let param = req.body;
+		  let sql =	`UPDATE car SET carname='${param.carname}', shape='${param.shape}', color='${param.shape}', price='${param.price}', status='${param.status}' WHERE car_id='${param.car_id}'`
+			addOne(sql,res)
+		}
+	})
+	app.post('/api/updateCar', isLoggedIn, function(req, res, next){
+		if(req.body) {
+			let param = req.body;
+			connection.query(`SELECT car_id from car WHERE car_id = '${param.car_id}'`,function(err, rows){
+				if(err) {
+					res.json({
+						status: 1,
+						data: err
+					})
+				} else {
+					console.log(rows)
+					if(rows.length > 0) {
+						res.json({
+						status : 1,
+						data: '车的编号重复'
+						})
+					} else {
+						let sql = `INSERT INTO car (car_id, carname, shape, color, price, status) VALUES ('${param.car_id}','${param.carname}','${param.shape}','${param.color}','${param.price}',${param.status})`;
+						addOne(sql,res)
+					}
+				}
+			})
+		}
+	})
 	//获取客户列表
 	app.post('/api/getCustomList', isLoggedIn, function(req, res, next){
 		if(req.body) {
@@ -243,13 +300,10 @@ module.exports = function(app, passport) {
 			}
 		}
 	})
-	/**
-	 * 登出
-	 */
+  //登出
 	app.get('/logout', function(req, res) {
 		req.logout();
-	});
-
+	})
 // 判断是否登录的中间件
 function isLoggedIn(req, res, next) {
 	// console.log('session', req.session)
@@ -374,5 +428,4 @@ function isLoggedIn(req, res, next) {
 			}
 		});
 	}
-
 }

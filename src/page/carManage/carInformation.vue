@@ -15,21 +15,27 @@
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-              <el-form-item label="编号" prop="id">
-                <el-input v-model="ruleForm.id" placeholder="请输入编号"></el-input>
+              <el-form-item label="编号" prop="car_id">
+                <el-input v-model="ruleForm.car_id" placeholder="请输入编号"></el-input>
               </el-form-item>
-              <el-form-item label="车名" prop="name">
-                <el-input v-model="ruleForm.name" placeholder="请输入车名"></el-input>
+              <el-form-item label="车名" prop="carname">
+                <el-input v-model="ruleForm.carname" placeholder="请输入车名"></el-input>
               </el-form-item>
-              <el-form-item label="车型" prop="type">
-                <el-select v-model="ruleForm.type" placeholder="请选择车型" class="carType">
+              <el-form-item label="车型" prop="shape">
+                <el-select v-model="ruleForm.shape" placeholder="请选择车型" class="carType">
                   <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="颜色" prop="color">
                 <el-input v-model="ruleForm.color" placeholder="请输入颜色"></el-input>
               </el-form-item>
-              <el-form-item label="上架日期" prop="shelftime">
+              <el-form-item label="是否上架" prop="status">
+                <el-radio-group v-model="ruleForm.status">
+                  <el-radio :label="0">上架</el-radio>
+                  <el-radio :label="1">下架</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <!-- <el-form-item label="上架日期" prop="shelftime">
                 <div class="block">
                   <el-date-picker v-model="ruleForm.shelftime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd">
                   </el-date-picker>
@@ -40,7 +46,7 @@
                   <el-date-picker v-model="ruleForm.droptime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd">
                   </el-date-picker>
                 </div>
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item label="价格(万元)" prop="price">
                   <el-input v-model="ruleForm.price" placeholder="请输入价格"></el-input>
                 </el-form-item>
@@ -84,29 +90,29 @@
     </el-dialog>
     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
       <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
-        <el-form-item label="车名" prop="color">
-          <el-input v-model="updateForm.name" placeholder="请输入车名"></el-input>
+        <el-form-item label="车名" prop="carname">
+          <el-input v-model="updateForm.carname" placeholder="请输入车名"></el-input>
         </el-form-item>
-        <el-form-item label="车型" prop="type">
-            <el-select v-model="updateForm.type" placeholder="请选择车型" class="carType">
+        <el-form-item label="车型" prop="carname">
+            <el-select v-model="updateForm.carname" placeholder="请选择车型" class="carType">
               <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
         <el-form-item label="颜色" prop="color">
           <el-input v-model="updateForm.color" placeholder="请输入颜色"></el-input>
         </el-form-item>
-        <el-form-item label="上架日期" prop="shelftime">
+        <!-- <el-form-item label="上架日期" prop="shelftime">
           <div class="block">
             <el-date-picker v-model="updateForm.shelftime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-        </el-form-item>
-        <el-form-item label="下架日期" prop="droptime">
+        </el-form-item> -->
+        <!-- <el-form-item label="下架日期" prop="droptime">
           <div class="block">
             <el-date-picker v-model="updateForm.droptime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="价格(万元)" prop="price">
           <el-input v-model="updateForm.price" placeholder="请输入价格"></el-input>
         </el-form-item>
@@ -118,6 +124,7 @@
 </template>
 
 <script>
+  import API from './../api.js'
   const checkPrice = (rule, value, callback) => {
     if (value) {
       let rgx = /^\d+(\.\d{1,3})?$/;
@@ -134,6 +141,9 @@
       return {
         searchName: 'username', //搜索的条件
         searchData: "", //搜索的名字
+        totalCount: 0,
+        page: 1, //页码
+        pageSize: 10, //一条默认页数
         multipleSelection: [],
         dialogDelete: false,
         dialogUpdate: false,
@@ -157,13 +167,14 @@
           { label: "雅阁", value: "雅阁" }
         ],
         ruleForm: {
-          id: "",
-          name: "",
-          type: "",
+          car_id: "",
+          carname: "",
+          shape: "",
           color: "",
-          shelftime: "",
-          droptime: "",
-          price: ""
+          // shelftime: "",
+          // droptime: "",
+          price: "",
+          status: 0
         },
         rules: {
           id: [
@@ -222,6 +233,9 @@
         tableTel: []
       };
     },
+    created() {
+      this.getCarList()
+    },
     methods: {
       // 全选
       toggleSelection(rows) {
@@ -232,6 +246,22 @@
         } else {
           this.$refs.multipleTable.clearSelection();
         }
+      },
+      getCarList(){
+        const params = {
+          page: this.page,
+          page_size: this.pageSize,
+          search_idx: this.searchName,
+          search_value: this.searchData
+        }
+        this.$http.post(API.GET_CARLIST, this.qs.stringify(params)).then((result) => {
+          if (result.data.status === 0) {
+            this.tableData = result.data.data;
+            this.totalCount = result.data.count;
+          } else {
+            this.$message.error("获取列表失败");
+          }
+        })
       },
       handleSelectionChange(val) {
         //val 为选中数据的集合
@@ -274,27 +304,17 @@
       },
       addConfirm: function (ruleForm) {
         const form = {
-          id: this.ruleForm.id,
-          name: this.ruleForm.name,
-          type: this.ruleForm.type,
-          color: this.ruleForm.color,
-          shelftime: this.ruleForm.shelftime,
-          droptime: this.ruleForm.droptime,
-          price: this.ruleForm.price
+          ...this.ruleForm
         };
         this.$refs[ruleForm].validate(valid => {
           if (valid) {
-            // this.$http.post("api/addCall", this.qs.stringify(form)).then(res => {
-            //   if (res.data.status === 0) {
-            //     this.tableData = res.data;
-            //     this.$refs[ruleForm].resetFields();
-            //     this.dialogAdd = false;
-            //     this.$message.success("添加成功");
-            //   } else {
-            //     this.$message.error("添加失败");
-            //   }
-            // });
-            this.tableData.push(form);
+            this.$http.post(API.ADD_CAR, this.qs.stringify(form)).then(res => {
+              if (res.data.status === 0) {
+                this.$message.success("添加成功");
+              } else {
+                this.$message.error("搜索失败");
+              }
+          });
           } else {
             return false;
           }
