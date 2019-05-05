@@ -180,7 +180,7 @@ module.exports = function(app, passport) {
 				};
 				//为了提高性能，就不放到一个sql语句了
 				let countSql =  "SELECT COUNT(*) FROM  user where role = 1 "
-				sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 1 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 1 ORDER BY add_time desc limit ${start}, ${end}` 
+				sql = search.value ? `SELECT * FROM user WHERE '%${search.name}%' LIKE '%${search.value}%' AND role = 1 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 1 ORDER BY add_time desc limit ${start}, ${end}` 
 				let allSql = {
 					count: countSql,
 					page: sql
@@ -197,7 +197,7 @@ module.exports = function(app, passport) {
 			let sql = null;
 			let role = req.body.role || userInfo.role;		
 			if(param.page == -1) {
-				sql = role == 0 ? `SELECT *  FROM user where role = 2` : `SELECT * FROM user where role = 2 and store_id = ${param.store_id}`;
+				sql = role == 0 ? `SELECT *  FROM user where role = 2` : `SELECT * FROM user where role=2 and store_id=${param.store_id}`;
 				findAll(sql, res);
 			} else {
 			  let page= parseInt(param.page || 1); //页码
@@ -208,14 +208,13 @@ module.exports = function(app, passport) {
 					value: param.search_value
 				};
 				//为了提高性能，就不放到一个sql语句了
-				sql = role == 0 ? `SELECT *  FROM user where role = 2` : `SELECT * FROM user where role = 2 and store_id = ${param.store_id}`;
-				let countSql = role == 1 ? `SELECT COUNT(*) FROM  user where role = 2 ` : `SELECT COUNT(*) FROM  user role = 2 and store_id = ${param.store_id}`
+				//sql = role == 0 ? `SELECT *  FROM user where role = 2` : `SELECT * FROM user where role=2 and store_id=${param.store_id}`;
+				let countSql = role == 1 ? `SELECT COUNT(*) FROM  user where role = 2 and store_id=${param.store_id}` : `SELECT COUNT(*) FROM  user WHERE role=2`
 				if(role == 1) {
-					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 and store_id = ${param.store_id} ORDER BY add_time desc limit ${start}, ${end}` 
+					sql = search.value ? `SELECT * FROM user WHERE '%${search.name}%' LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role=2 and store_id=${param.store_id} ORDER BY add_time desc limit ${start}, ${end}` 
 				} else if(role == 0) {
-					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 and store_id = ${param.store_id} ORDER BY add_time desc limit ${start}, ${end}`
+					sql = search.value ? `SELECT * FROM user WHERE '%${search.name}%' LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role=2 ORDER BY add_time desc limit ${start}, ${end}`
 				}
-
 				let allSql = {
 					count: countSql,
 					page: sql
@@ -290,6 +289,33 @@ module.exports = function(app, passport) {
 			let sql = null;
 			if(param.page == -1) {
 				sql = "SELECT *  FROM custom" ;
+				findAll(sql, res);
+			} else {
+			  let page= parseInt(param.page || 1); //页码
+			  let end = parseInt(param.pageSize || 10); //页数
+				let start = (page - 1) * end
+				let search = {
+					name: param.search_idx,
+					value: param.search_value
+				};
+				//为了提高性能，就不放到一个sql语句了
+				let countSql = "SELECT COUNT(*) FROM  custom" ;
+				sql = search.value ? `SELECT * FROM custom WHERE name LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM custom WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
+				let allSql = {
+					count: countSql,
+					page: sql
+				}
+				pageNation(param, allSql, res)
+			}
+		}
+	})
+	//获取公告
+	app.post('/api/getAnnouceList', isLoggedIn, function(req, res, next){
+		if(req.body) {
+			let param = req.body; //获取的参数
+			let sql = null;
+			if(param.page == -1) {
+				sql = "SELECT *  FROM annouce" ;
 				findAll(sql, res);
 			} else {
 			  let page= parseInt(param.page || 1); //页码

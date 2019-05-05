@@ -177,7 +177,8 @@ export default {
         page: this.page,
         page_size: this.pageSize,
         search_idx: this.searchName,
-        search_value: this.searchData
+        search_value: this.searchData,
+        store_id: sessionStorage.getItem("storeID")
       };
       this.$http
         .post(API.GET_PERSON_LIST, this.qs.stringify(params))
