@@ -103,12 +103,6 @@ module.exports = function(app, passport) {
 			}
     });
 	})
-
-	//新增个人信息
-	// app.post('/api/get', isLoggedIn, function(){
-	// 	let id = req.session.passport.user || userInfo.id;
-	// })
-
 	/**
 	 * 增加经理和人员
 	 */
@@ -134,7 +128,6 @@ module.exports = function(app, passport) {
 					}
 				}
 			})
-		
 		}
 	})
   // 删除销售经理信息
@@ -145,7 +138,23 @@ module.exports = function(app, passport) {
 			deleteOne(sql,res)
 		}
 	})
-	//修改个人信息
+	// 删除人员
+	app.post('/api/delPerson', isLoggedIn, function(req, res, next){
+		if(req.body) {
+			let param = req.body;
+			let sql = `DELETE FROM user WHERE id=${param.id}`;
+			deleteOne(sql,res)
+		}
+	})
+	//修改销售人员个人信息
+	app.post('/api/updatePerson', isLoggedIn, function(req,res,next){
+		if(req.body) {
+			let param = req.body;
+			let sql = `UPDATE user SET role=${param.role} and store_id=${+param.subarea} WHERE id=${param.id}`;
+			addOne(sql,res)
+		}
+	})
+	//修改销售经理个人信息
 	app.post('/api/updateManager', isLoggedIn, function(req,res,next){
 		if(req.body) {
 			let param = req.body;
@@ -188,7 +197,7 @@ module.exports = function(app, passport) {
 			let sql = null;
 			let role = req.body.role || userInfo.role;		
 			if(param.page == -1) {
-				sql = role == 0 ? `SELECT *  FROM user where role = 2` : `SELECT * FROM user where role = 2 and store_id = ${userInfo.store_id}`;
+				sql = role == 0 ? `SELECT *  FROM user where role = 2` : `SELECT * FROM user where role = 2 and store_id = ${param.store_id}`;
 				findAll(sql, res);
 			} else {
 			  let page= parseInt(param.page || 1); //页码
@@ -199,11 +208,12 @@ module.exports = function(app, passport) {
 					value: param.search_value
 				};
 				//为了提高性能，就不放到一个sql语句了
-				let countSql = role == 1 ? `SELECT COUNT(*) FROM  user where role = 2 ` : `SELECT COUNT(*) FROM  user role = 2 and store_id = ${userInfo.store_id}`
+				sql = role == 0 ? `SELECT *  FROM user where role = 2` : `SELECT * FROM user where role = 2 and store_id = ${param.store_id}`;
+				let countSql = role == 1 ? `SELECT COUNT(*) FROM  user where role = 2 ` : `SELECT COUNT(*) FROM  user role = 2 and store_id = ${param.store_id}`
 				if(role == 1) {
-					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 ORDER BY add_time desc limit ${start}, ${end}` 
+					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 and store_id = ${param.store_id} ORDER BY add_time desc limit ${start}, ${end}` 
 				} else if(role == 0) {
-					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 ORDER BY add_time desc limit ${start}, ${end}`
+					sql = search.value ? `SELECT * FROM user WHERE username LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 2 and store_id = ${param.store_id} ORDER BY add_time desc limit ${start}, ${end}`
 				}
 
 				let allSql = {
@@ -291,7 +301,7 @@ module.exports = function(app, passport) {
 				};
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = "SELECT COUNT(*) FROM  custom" ;
-				sql = search.value ? `SELECT * FROM car WHERE name LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM custom ORDER BY add_time desc limit ${start}, ${end}`
+				sql = search.value ? `SELECT * FROM custom WHERE name LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM custom WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
 				let allSql = {
 					count: countSql,
 					page: sql
