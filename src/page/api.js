@@ -60,4 +60,5 @@ export default {
    * @param label: 0来电 1来店 购车2
    */
   GET_CUSTOM: '/api/getCustomList'
+  
 }
