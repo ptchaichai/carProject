@@ -34,7 +34,8 @@ module.exports = function(app, passport) {
 							userInfo = {
 								id: user.id,
 								role: user.role,
-								store_id: user.store_id
+								store_id: user.store_id,
+								phone: user.phone
 							}
 							res.json({
 								status: 0,
@@ -208,7 +209,6 @@ module.exports = function(app, passport) {
 					value: param.search_value
 				};
 				//为了提高性能，就不放到一个sql语句了
-				//sql = role == 0 ? `SELECT *  FROM user where role = 2` : `SELECT * FROM user where role=2 and store_id=${param.store_id}`;
 				let countSql = role == 1 ? `SELECT COUNT(*) FROM  user where role = 2 and store_id=${param.store_id}` : `SELECT COUNT(*) FROM  user WHERE role=2`
 				if(role == 1) {
 					sql = search.value ? `SELECT * FROM user WHERE '%${search.name}%' LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role=2 and store_id=${param.store_id} ORDER BY add_time desc limit ${start}, ${end}` 
@@ -255,6 +255,14 @@ module.exports = function(app, passport) {
 		if(req.body) {
 			let param = req.body;
 		  let sql =	`UPDATE car SET carname='${param.carname}', shape='${param.shape}', color='${param.shape}', price='${param.price}', status='${param.status}' WHERE car_id='${param.car_id}'`
+			addOne(sql,res)
+		}
+	})
+	//添加公告
+	app.post('/api/addAnnouce', isLoggedIn, function(req, res, next){
+		if(req.body) {
+			let param = req.body;
+		  let sql =	`INSERT INTO announce (title, content, user_name, user_role, user_id) VALUES ('${param.title}', '${param.content}', '${param.username}', '${param.userrole}', '${param.userid}')`
 			addOne(sql,res)
 		}
 	})
@@ -326,8 +334,8 @@ module.exports = function(app, passport) {
 					value: param.search_value
 				};
 				//为了提高性能，就不放到一个sql语句了
-				let countSql = "SELECT COUNT(*) FROM  custom" ;
-				sql = search.value ? `SELECT * FROM custom WHERE name LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM custom WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
+				let countSql = "SELECT COUNT(*) FROM  annouce" ;
+				sql = search.value ? `SELECT * FROM annouce WHERE '%${search.name}%' LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM annouce WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
 				let allSql = {
 					count: countSql,
 					page: sql

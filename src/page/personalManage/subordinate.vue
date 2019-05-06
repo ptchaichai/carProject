@@ -218,14 +218,6 @@ export default {
         return "background-color: #409eff; color: #fff; font-weight: 500;";
       }
     },
-    // 输入密码判断
-    // changePasswordTip(isShow) {
-    //   if (isShow) {
-    //     this.isShowTip = true;
-    //   } else {
-    //     this.isShowTip = false;
-    //   }
-    // },
     // 搜索table
     search: function() {
       const val = this.searchData;

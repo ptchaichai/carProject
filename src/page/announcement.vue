@@ -207,12 +207,14 @@ export default {
       let form = {
         title: this.ruleForm.title,
         content: this.ruleForm.content,
-        author: "putian"
+        username: sessionStorage.getItem('name'),
+        userrole: sessionStorage.getItem('role'),
+        userid: sessionStorage.getItem('id')
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
           this.$http
-            .post("api/addAnnouncement", this.qs.stringify(form))
+            .post("/api/addAnnouce", this.qs.stringify(form))
             .then(res => {
               if (res.data.status === 0) {
                 this.tableData = res.data;
