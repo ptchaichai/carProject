@@ -161,19 +161,21 @@ export default {
       currentIndex: "",
       currentIndex: "",
       tableData: [
-      {
-          name:'孙吉',
-          phone:'13655698526',
-          email:'356255263@qq.com',
-          address:'深圳市福田区导立小区',
-          price:'20~30(万)',
-        },
+      // {
+      //     name:'孙吉',
+      //     phone:'13655698526',
+      //     email:'356255263@qq.com',
+      //     address:'深圳市福田区导立小区',
+      //     price:'20~30(万)',
+      //     addtime:'2019-3-22'
+      //   },
         {
           name:'王志东',
           phone:'1555697754',
           email:'256669875@qq.com',
           address:'深圳市龙华区美格小区',
           price:'20~30(万)',
+          addtime:'2019-2-14'
         },
         {
           name:'王丽丽',
@@ -181,6 +183,7 @@ export default {
           email:'15695662322@163.com',
           address:'深圳市南山区新梅小区',
           price:'10~20(万)',
+          addtime:'2019-2-4'
         },
       ],
       roles: [

@@ -54,6 +54,7 @@
       Bus.$on("add", () => {
         this.badgeShow = true;
       });
+      this.name = sessionStorage.getItem('name')
     }
   };
 </script>

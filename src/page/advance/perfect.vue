@@ -1,6 +1,6 @@
 <template>
   <div class="perfect-box">
-    <p>完善资料</p>
+    <p>修改资料</p>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
       <el-form-item label="电话" prop="phone">
         <el-input v-model="ruleForm.phone" placeholder="请输入电话"></el-input>

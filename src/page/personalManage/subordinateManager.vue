@@ -80,7 +80,7 @@
     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
       <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
         <el-form-item label="分区" prop="subarea" style="margin-bottom:5px">
-          <el-select v-model="updateForm.subarea" placeholder="请选择分区">
+          <el-select v-model="updateForm.subarea" placeholder="请选择分区" style="width:90%;margin-bottom: 20px">
             <el-option v-for="item in rolesArea" :label="item.label" :key="item.id" :value="item.value"></el-option>
           </el-select>
         </el-form-item>

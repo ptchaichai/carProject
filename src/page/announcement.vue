@@ -6,8 +6,8 @@
         <div class="search-input">
           <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
             <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
-              <el-option label="姓名" value="username"></el-option>
-              <el-option label="电话" value="phone"></el-option>
+              <el-option label="标题" value="username"></el-option>
+              <el-option label="发布人" value="phone"></el-option>
             </el-select>
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-input>
@@ -52,7 +52,7 @@
       <el-table-column prop="title" label="标题" min-width="30%" align="center"></el-table-column>
       <el-table-column prop="author" label="发布人" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="identity" label="身份" min-width="20%" align="center"></el-table-column>
-      <el-table-column prop="time" label="发布时间" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="add_time" label="发布时间" min-width="20%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="150" min-width="30%" align="center">
         <template slot-scope="scope">
           <el-button
@@ -110,30 +110,30 @@ export default {
       dialogDelete: false,
       addContentVal: "",
       tableData: [
-        {
-          title:'店庆通知',
-          author:'王宇庭',
-          identity:'销售经理',
-          time:'2019-1-22',
-        },
-        {
-          title:'业绩下滑，需开会',
-          author:'张旭',
-          identity:'总经理',
-          time:'2019-2-4',
-        },
-        {
-          title:'清明放假通知',
-          author:'张旭',
-          identity:'总经理',
-          time:'2019-3-28',
-        },
-        {
-          title:'客户信息记录有问题，需开会商讨',
-          author:'李平',
-          identity:'销售经理',
-          time:'2019-4-6',
-        },
+        // {
+        //   title:'店庆通知',
+        //   author:'王宇庭',
+        //   identity:'销售经理',
+        //   time:'2019-1-22',
+        // },
+        // {
+        //   title:'业绩下滑，需开会',
+        //   author:'张旭',
+        //   identity:'总经理',
+        //   time:'2019-2-4',
+        // },
+        // {
+        //   title:'清明放假通知',
+        //   author:'张旭',
+        //   identity:'总经理',
+        //   time:'2019-3-28',
+        // },
+        // {
+        //   title:'客户信息记录有问题，需开会商讨',
+        //   author:'李平',
+        //   identity:'销售经理',
+        //   time:'2019-4-6',
+        // },
         ],
       viewTitle: "",
       viewContent: "",
@@ -214,7 +214,6 @@ export default {
       }
     },
     open: function() {
-      console.log(vala);
       this.dialogAdd = true;
     },
     // 添加公告
@@ -222,12 +221,14 @@ export default {
       let form = {
         title: this.ruleForm.title,
         content: this.ruleForm.content,
-        author: "putian"
+        username: sessionStorage.getItem('name'),
+        userrole: sessionStorage.getItem('role'),
+        userid: sessionStorage.getItem('id')
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
           this.$http
-            .post("api/addAnnouncement", this.qs.stringify(form))
+            .post("/api/addAnnouce", this.qs.stringify(form))
             .then(res => {
               if (res.data.status === 0) {
                 this.tableData = res.data;

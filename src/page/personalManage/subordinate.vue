@@ -179,7 +179,8 @@ export default {
         page: this.page,
         page_size: this.pageSize,
         search_idx: this.searchName,
-        search_value: this.searchData
+        search_value: this.searchData,
+        store_id: sessionStorage.getItem("storeID")
       };
       this.$http
         .post(API.GET_PERSON_LIST, this.qs.stringify(params))
@@ -222,14 +223,6 @@ export default {
         return "background-color: #409eff; color: #fff; font-weight: 500;";
       }
     },
-    // 输入密码判断
-    // changePasswordTip(isShow) {
-    //   if (isShow) {
-    //     this.isShowTip = true;
-    //   } else {
-    //     this.isShowTip = false;
-    //   }
-    // },
     // 搜索table
     search: function() {
       const val = this.searchData;

@@ -59,6 +59,9 @@ export default {
    * 获取客户信息
    * @param label: 0来电 1来店 购车2
    */
-  GET_CUSTOM: '/api/getCustomList'
-  
+  GET_CUSTOM: '/api/getCustomList',
+  /**
+   * 添加公告
+   */
+  ADD_ANNOUCE: '/api/addAnnouce',
 }

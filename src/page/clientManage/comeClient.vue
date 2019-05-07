@@ -167,6 +167,7 @@ export default {
           email:'562398565@qq.com',
           address:'深圳市福田区导立小区',
           carType:'宾智',
+          addtime:'2019-4-4'
         },
         {
           name:'张冰冰',
@@ -174,6 +175,7 @@ export default {
           email:'1236589545@qq.com',
           address:'深圳市龙华区美格小区',
           carType:'雅阁',
+          addtime:'2019-3-14'
         },
         {
           name:'孙琪琪',
@@ -181,6 +183,7 @@ export default {
           email:'18959785985@163.com',
           address:'深圳市南山区新梅小区',
           carType:'凌派',
+          addtime:'2019-1-24'
         },
         {
           name:'余宁',
@@ -188,6 +191,7 @@ export default {
           email:'15699856265@163.com',
           address:'深圳市罗湖区美冠小区',
           carType:'奥德赛',
+          addtime:'2019-1-4'
         },
       ],
       roles: [
