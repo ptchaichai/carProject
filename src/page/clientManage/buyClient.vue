@@ -81,6 +81,7 @@
       <el-table-column prop="address" label="地址" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="carType" label="购买车型" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="carPrice" label="购买价格" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="user_name" label="处理人" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="addtime" label="添加时间" min-width="10%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="150" min-width="20%" align="center" v-if="showAdd">
         <template slot-scope="scope">
@@ -384,7 +385,8 @@ export default {
         email: this.ruleForm.email,
         address: this.ruleForm.address,
         carType: this.ruleForm.carType,
-        price: this.ruleForm.price
+        price: this.ruleForm.price,
+        user_name:sessionStorage.getItem('name'),
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {

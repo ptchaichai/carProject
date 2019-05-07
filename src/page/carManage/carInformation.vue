@@ -316,9 +316,10 @@
           if (valid) {
             this.$http.post(API.ADD_CAR, this.qs.stringify(form)).then(res => {
               if (res.data.status === 0) {
+                this.dialogAdd = false;
                 this.$message.success("添加成功");
               } else {
-                this.$message.error("搜索失败");
+                this.$message.error("添加失败");
               }
           });
           } else {

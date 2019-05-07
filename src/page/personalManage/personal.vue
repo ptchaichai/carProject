@@ -93,7 +93,6 @@ export default {
           this.personData.time = this.personData.time.substr(0,10);
           // this.personData.birthday = this.personData.birthday.substr(0,10);
           this.getRoleName(this.personData.role);
-          console.log(this.personData);
         } else {
           this.$message.error("请求失败");
         }
