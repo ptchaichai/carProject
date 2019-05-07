@@ -63,5 +63,9 @@ export default {
   /**
    * 添加公告
    */
-  ADD_ANNOUCE: '/api/addAnnouce',
+  ADD_ANNOUNCE: '/api/addAnnounce',
+  /**
+   * 获取公告列表
+   */
+  GET_ANNOUNCE: '/api/getAnnounceList',
 }

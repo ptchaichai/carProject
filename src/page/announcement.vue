@@ -50,8 +50,8 @@
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="title" label="标题" min-width="30%" align="center"></el-table-column>
-      <el-table-column prop="author" label="发布人" min-width="20%" align="center"></el-table-column>
-      <el-table-column prop="identity" label="身份" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="user_name" label="发布人" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="user_role" label="身份" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="add_time" label="发布时间" min-width="20%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="150" min-width="30%" align="center">
         <template slot-scope="scope">
@@ -93,7 +93,7 @@
 
 <script>
 import Bus from "../components/bus.js";
-
+import API from "./api.js";
 export default {
   name: "updatePwd",
   data() {
@@ -102,6 +102,8 @@ export default {
       searchName: 'username', //搜索的条件
       searchData: "", //搜索的名字
       multipleSelection: [],
+      page: 1, //页码
+      pageSize: 10, //一条默认页数
       show: false,
       showAnother: false,
       dialogAdd: false,
@@ -109,32 +111,7 @@ export default {
       dialogEdit: false,
       dialogDelete: false,
       addContentVal: "",
-      tableData: [
-        // {
-        //   title:'店庆通知',
-        //   author:'王宇庭',
-        //   identity:'销售经理',
-        //   time:'2019-1-22',
-        // },
-        // {
-        //   title:'业绩下滑，需开会',
-        //   author:'张旭',
-        //   identity:'总经理',
-        //   time:'2019-2-4',
-        // },
-        // {
-        //   title:'清明放假通知',
-        //   author:'张旭',
-        //   identity:'总经理',
-        //   time:'2019-3-28',
-        // },
-        // {
-        //   title:'客户信息记录有问题，需开会商讨',
-        //   author:'李平',
-        //   identity:'销售经理',
-        //   time:'2019-4-6',
-        // },
-        ],
+      tableData: [ ],
       viewTitle: "",
       viewContent: "",
       searchData: "",
@@ -160,6 +137,7 @@ export default {
     };
   },
   created() {
+    this.getAnnounce();
     let role = sessionStorage.getItem("role");
     if (+role === 0 || +role === 1) {
       this.showAdd = true;
@@ -196,6 +174,26 @@ export default {
         return "background-color: #409eff; color: #fff; font-weight: 500; border:none;";
       }
     },
+    getAnnounce: function() {
+        const params = {
+          role: sessionStorage.getItem('role'),
+          page: this.page,
+          page_size: this.pageSize,
+          search_idx: this.searchName,
+          search_value: this.searchData
+        }
+        this.$http.post(API.GET_ANNOUNCE, this.qs.stringify(params)).then((result) => {
+          if (result.data.status === 0) {
+            this.tableData = result.data.data.map((item) => {
+              item.add_time = item.add_time.substr(0, 10);
+              return item;
+            });
+            this.totalCount = result.data.count;
+          } else {
+            this.$message.error("获取列表失败");
+          }
+        })
+      },
     search: function() {
       const val = this.searchData;
       if (val !== "") {
@@ -221,14 +219,14 @@ export default {
       let form = {
         title: this.ruleForm.title,
         content: this.ruleForm.content,
-        username: sessionStorage.getItem('name'),
-        userrole: sessionStorage.getItem('role'),
-        userid: sessionStorage.getItem('id')
+        user_name: sessionStorage.getItem('name'),
+        user_role: sessionStorage.getItem('role'),
+        user_id: sessionStorage.getItem('id')
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
           this.$http
-            .post("/api/addAnnouce", this.qs.stringify(form))
+            .post("/api/addAnnounce", this.qs.stringify(form))
             .then(res => {
               if (res.data.status === 0) {
                 this.tableData = res.data;

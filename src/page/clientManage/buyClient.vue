@@ -111,9 +111,6 @@
     </el-dialog>
     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
       <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="updateForm.name" placeholder="请输入姓名"></el-input>
-        </el-form-item>
         <el-form-item label="电话" prop="phone">
           <el-input v-model="updateForm.phone" placeholder="请输入电话"></el-input>
         </el-form-item>
@@ -137,6 +134,12 @@
               :value="item.value"
             ></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="处理人" prop="username">
+          <el-input v-model="updateForm.username" placeholder="请填写姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="处理人电话" prop="userphone">
+          <el-input v-model="updateForm.userphone" placeholder="请输入电话"></el-input>
         </el-form-item>
       </el-form>
       <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
@@ -411,7 +414,6 @@ export default {
     },
     update: function(index) {
       const thisData = this.tableData[index].data;
-      this.updateForm.name = thisData.name;
       this.updateForm.phone = thisData.phone;
       this.updateForm.email = thisData.email;
       this.updateForm.address = thisData.address;
@@ -422,12 +424,13 @@ export default {
     },
     updateConfirm: function(updateForm) {
       const form = {
-        name: this.updateForm.name,
         phone: this.ruleForm.phone,
         email: this.updateForm.email,
         address: this.updateForm.address,
         carType: this.updateForm.carType,
-        price: this.updateForm.price
+        price: this.updateForm.price,
+        user_name: this.updateForm.username,
+        user_phone: this.updateForm.userphone,
       };
       this.$refs[updateForm].validate(valid => {
         if (valid) {

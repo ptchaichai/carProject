@@ -259,7 +259,7 @@ module.exports = function(app, passport) {
 		}
 	})
 	//添加公告
-	app.post('/api/addAnnouce', isLoggedIn, function(req, res, next){
+	app.post('/api/addAnnounce', isLoggedIn, function(req, res, next){
 		if(req.body) {
 			let param = req.body;
 		  let sql =	`INSERT INTO announce (title, content, user_name, user_role, user_id) VALUES ('${param.title}', '${param.content}', '${param.username}', '${param.userrole}', '${param.userid}')`
@@ -318,12 +318,12 @@ module.exports = function(app, passport) {
 		}
 	})
 	//获取公告
-	app.post('/api/getAnnouceList', isLoggedIn, function(req, res, next){
+	app.post('/api/getAnnounceList', isLoggedIn, function(req, res, next){
 		if(req.body) {
 			let param = req.body; //获取的参数
 			let sql = null;
 			if(param.page == -1) {
-				sql = "SELECT *  FROM annouce" ;
+				sql = "SELECT *  FROM announce" ;
 				findAll(sql, res);
 			} else {
 			  let page= parseInt(param.page || 1); //页码
@@ -334,8 +334,8 @@ module.exports = function(app, passport) {
 					value: param.search_value
 				};
 				//为了提高性能，就不放到一个sql语句了
-				let countSql = "SELECT COUNT(*) FROM  annouce" ;
-				sql = search.value ? `SELECT * FROM annouce WHERE '%${search.name}%' LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM annouce WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
+				let countSql = "SELECT COUNT(*) FROM  announce" ;
+				sql = search.value ? `SELECT * FROM announce WHERE '%${search.name}%' LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM announce WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
 				let allSql = {
 					count: countSql,
 					page: sql

@@ -162,7 +162,7 @@
       };
     },
     created() {
-      this.getPersionList()
+      this.getPersionList();
     },
     methods: {
       handleCommand(command) {
