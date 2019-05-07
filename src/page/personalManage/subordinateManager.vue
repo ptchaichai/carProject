@@ -65,10 +65,6 @@
       :current-page.sync="page" @size-change="getPersionList()" @current-change="getPersionList()"
       @prev-click="getPersionList()" @next-click="getPersionList()">
     </el-pagination>
-    <!-- <div style="margin-top: 20px">
-      <el-button @click="toggleSelection(tableData)">全选</el-button>
-      <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
-    </div> -->
     <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
       <i class="el-icon-warning"></i>
       <span>是否要删除本条信息？</span>

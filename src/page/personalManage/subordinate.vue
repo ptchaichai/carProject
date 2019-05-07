@@ -9,7 +9,7 @@
               <el-option label="姓名" value="username"></el-option>
               <el-option label="电话" value="phone"></el-option>
             </el-select>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
           </el-input>
         </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
@@ -21,12 +21,6 @@
               <el-form-item label="电话" prop="phone">
                 <el-input v-model="ruleForm.phone" placeholder="请输入电话"></el-input>
               </el-form-item>
-              <!-- <el-form-item label="分区" prop="subarea">
-                <el-select v-model="ruleForm.subarea" placeholder="请选择分区" class="role-select">
-                  <el-option v-for="item in rolesArea" :label="item.label" :key="item.id" :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item> -->
               <el-button round type="primary" class="addInformation" @click="addInformation('ruleForm')">确定</el-button>
               <el-button round type="info" class="addCancel" @click="addCancel('ruleForm')">取消</el-button>
             </el-form>
@@ -70,7 +64,7 @@
     </div>
     <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
       <i class="el-icon-warning"></i>
-      <span>请确认该员工是否离职，删除后，相关的客户将由你重新分配？</span>
+      <span>请确认该员工已离职，并且客户已经转交给其他人,否则客户将丢失，严重影响到业绩？</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="removeConfirm()" round>确 定</el-button>
         <el-button @click="dialogDelete = false" round>取 消</el-button>
@@ -112,6 +106,7 @@
       return {
         showUp: false,
         showDel: false,
+        showAdd: false,
         page: 1, //页码
         pageSize: 10, //一条默认页数
         searchName: "username", //搜索的条件
@@ -155,6 +150,7 @@
         this.showUp = true;
       } else if (+role === 1) {
         this.showDel= true;
+        this.showAdd = true;
       }
     },
 
@@ -213,23 +209,11 @@
           });
       },
       // 搜索table
-      // search: function () {
-      //   const val = this.searchData;
-      //   if (val !== "") {
-      //     const form = {
-      //       searchVal: val
-      //     };
-      //     this.$http
-      //       .post("api/searchSubordinate", this.qs.stringify(form))
-      //       .then(res => {
-      //         if (res.data.status === 0) {
-      //           this.tableData = res.data;
-      //         } else {
-      //           this.$message.error("搜索失败");
-      //         }
-      //       });
-      //   }
-      // },
+      search: function () {
+        this.page = 1;
+        this.pageSize = 10;
+        this.getPersionList();
+       },
       // 获取分区名
       getStoreName(id) {
         if (id >= 0) {
@@ -265,7 +249,7 @@
                   this.pageSize = 10;
                   this.getPersionList();
                 } else {
-                  this.$message.error("添加失败");
+                  this.$message.error(res.data);
                 }
               });
           } else {
@@ -327,7 +311,7 @@
             this.getPersionList();
             this.$message.success("删除成功");
           } else {
-            this.$message.error("删除失败");
+            this.$message.error(result.data.data);
           }
           this.dialogDelete = false;
         })
