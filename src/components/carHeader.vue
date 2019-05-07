@@ -10,16 +10,16 @@
           <el-button round @click="go" val="true">公告</el-button>
         </div>
       </div>
-        <div class="loginIn">
-          <el-dropdown @command="back">
-            <span class="el-dropdown-link">张旭<i class="el-icon-arrow-down el-icon--right"></i></span>
-            <el-dropdown-menu slot="dropdown" @click="back">
-              <el-dropdown-item>退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
+      <div class="loginIn">
+        <el-dropdown @command="back">
+          <span class="el-dropdown-link">{{username}}<i class="el-icon-arrow-down el-icon--right"></i></span>
+          <el-dropdown-menu slot="dropdown" @click="back">
+            <el-dropdown-item>退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -30,9 +30,17 @@
       return {
         val: true,
         badgeShow: false,
+        username: "",
       };
     },
+    created() {
+      this.username = sessionStorage.getItem("name");
+    },
     methods: {
+      // getName() {
+      //   this.username = sessionStorage.getItem("name");
+      //   console.log(this.username);
+      // },
       back: function (command) {
         this.$router.push({ path: "/login" });
         this.$message.success("退出成功");

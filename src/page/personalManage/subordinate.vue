@@ -49,6 +49,7 @@
       <el-table-column prop="belong" label="所属经理" min-width="15%" align="center"></el-table-column>
       <!-- <el-table-column prop="pwd" label="密码" min-width="20%" align="center"></el-table-column> -->
       <el-table-column prop="role" label="角色" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="add_time" label="加入时间" min-width="15%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="25%" align="center" >
         <template slot-scope="scope" v-show="showAdd">
           <el-button
@@ -184,7 +185,10 @@ export default {
         .post(API.GET_PERSON_LIST, this.qs.stringify(params))
         .then(result => {
           if (result.data.status === 0) {
-            this.tableData = result.data.data;
+            this.tableData = result.data.data.map((item) => {
+              item.add_time = item.add_time.substr(0, 10);
+              return item;
+            });
           } else {
             this.$message.error("登录失败");
           }

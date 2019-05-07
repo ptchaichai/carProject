@@ -91,7 +91,7 @@ export default {
         if (result.data.status === 0) {
           this.personData = result.data.data;
           this.personData.time = this.personData.time.substr(0,10);
-          this.personData.birthday = this.personData.birthday.substr(0,10);
+          // this.personData.birthday = this.personData.birthday.substr(0,10);
           this.getRoleName(this.personData.role);
           console.log(this.personData);
         } else {

@@ -46,12 +46,12 @@
           {{getStoreName(scop1.row.store_id)}}
         </template>
       </el-table-column>
-      <el-table-column prop="add_time" label="加入时间" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="role" label="角色" min-width="15%" align="center">
         <template slot-scope="scop">
           销售经理
         </template>
       </el-table-column>
+      <el-table-column prop="add_time" label="加入时间" min-width="15%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="25%" align="center">
         <template slot-scope="scope">
           <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">

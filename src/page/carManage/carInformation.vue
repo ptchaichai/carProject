@@ -68,11 +68,10 @@
       <el-table-column prop="color" label="颜色" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="shelftiem" label="上架时间" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="droptiem" label="下架时间" min-width="15%" align="center"></el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="20%" align="center">
+      <el-table-column fixed="right" label="操作" min-width="20%" align="center" v-if="showAdd">
         <template slot-scope="scope">
           <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改
           </el-button>
-          <el-button @click="deleteRow(scope.$index)" type="info" size="small" round>删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -139,6 +138,7 @@
     name: "callClient",
     data() {
       return {
+        showAdd:"",
         searchName: 'username', //搜索的条件
         searchData: "", //搜索的名字
         totalCount: 0,
@@ -234,8 +234,14 @@
       };
     },
     created() {
-      this.getCarList()
-    },
+      this.getCarList();
+    let role = sessionStorage.getItem("role");
+    if (+role === 0 || +role === 1) {
+      this.showAdd = false;
+    } else if (+role === 2) {
+      this.showAdd = true;
+    }
+  },
     methods: {
       // 全选
       toggleSelection(rows) {
