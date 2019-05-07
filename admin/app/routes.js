@@ -117,7 +117,6 @@ module.exports = function(app, passport) {
 						data: err
 					})
 				} else {
-					console.log(rows)
 					if(rows.length > 0) {
 						res.json({
 						status : 1,
@@ -143,8 +142,25 @@ module.exports = function(app, passport) {
 	app.post('/api/delPerson', isLoggedIn, function(req, res, next){
 		if(req.body) {
 			let param = req.body;
-			let sql = `DELETE FROM user WHERE id=${param.id}`;
-			deleteOne(sql,res)
+			connection.query(`select * from custom where user_id=${param.id} `, function(err, rows){
+				if(err) {
+					res.json({
+						status: 1,
+						data: err
+					})
+					return
+				} else {
+					if(rows.length > 0) {
+						res.json({
+							status: 1,
+							data: '该销售人员的客户还没有转交给其他销售人员，请尽快通知该人员，否则通知管理员进行操作。'
+						})
+					} else {
+						let sql = `DELETE FROM user WHERE id=${param.id}`;
+						deleteOne(sql,res)
+					}
+				}
+			});
 		}
 	})
 	//修改销售人员个人信息
@@ -379,6 +395,7 @@ function isLoggedIn(req, res, next) {
 			}
 		});
 	}
+
   /**
 	 * 分页函数封装
 	 * @param 

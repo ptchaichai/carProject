@@ -190,62 +190,7 @@ export default {
       rowVal: "",
       currentIndex: "",
       currentIndex: "",
-      tableData: [
-        // {
-        //   name:'张康',
-        //   phone:'15489568758',
-        //   email:'356255263@qq.com',
-        //   address:'深圳市南山区菱格小区',
-        //   carType:'宾智',
-        //   carPrice:'19.8',
-        //   addtime:'2019-4-12'
-        // },
-        // {
-        //   name:'王志东',
-        //   phone:'1555697754',
-        //   email:'256669875@qq.com',
-        //   address:'深圳市龙华区美格小区',
-        //   carType:'飞度',
-        //   carPrice:'20.22',
-        //   addtime:'2019-3-12'
-        // },
-        // {
-        //   name:'赵斗淳',
-        //   phone:'19568556855',
-        //   email:'256625488@qq.com',
-        //   address:'深圳市南山区新梅小区',
-        //   carType:'宾智',
-        //   carPrice:'17.8',
-        //   addtime:'2019-2-15'
-        // },
-        // {
-        //   name:'赵鑫鑫',
-        //   phone:'19568658652',
-        //   email:'236555895@qq.com',
-        //   address:'深圳市光明新区',
-        //   carType:'奥德赛',
-        //   carPrice:'23.5',
-        //   addtime:'2019-1-28'
-        // },
-        // {
-        //   name:'张磊',
-        //   phone:'18977645652',
-        //   email:'233345895@qq.com',
-        //   address:'深圳市光明新区',
-        //   carType:'宾智',
-        //   carPrice:'22.5',
-        //   addtime:'2019-1-12'
-        // },
-        // {
-        //   name:'孙琪琪',
-        //   phone:'15444798344',
-        //   email:'33345233445@qq.com',
-        //   address:'深圳市光明新区',
-        //   carType:'宾智',
-        //   carPrice:'19.5',
-        //   addtime:'2019-1-1'
-        // }
-      ],
+      tableData: [],
       roles: [
         { label: "奥德赛", value: "奥德赛" },
         { label: "宾智", value: "宾智" },
