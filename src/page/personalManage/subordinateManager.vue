@@ -62,8 +62,8 @@
       </el-table-column>
     </el-table>
     <el-pagination layout="prev, pager, next" :total="totalCount" :page-count="page" :page-size.sync="pageSize"
-      :current-page.sync="page" @size-change="getPerssionList()" @current-change="getPerssionList()"
-      @prev-click="getPerssionList()" @next-click="getPerssionList()">
+      :current-page.sync="page" @size-change="getPersionList()" @current-change="getPersionList()"
+      @prev-click="getPersionList()" @next-click="getPersionList()">
     </el-pagination>
     <!-- <div style="margin-top: 20px">
       <el-button @click="toggleSelection(tableData)">全选</el-button>
@@ -80,7 +80,7 @@
     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
       <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
         <el-form-item label="分区" prop="subarea" style="margin-bottom:5px">
-          <el-select v-model="updateForm.subarea" placeholder="请选择分区" style="width:90%;margin-bottom: 20px">
+          <el-select v-model="updateForm.subarea" placeholder="请选择分区" class="role-select">
             <el-option v-for="item in rolesArea" :label="item.label" :key="item.id" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -95,6 +95,7 @@
   import API from './../api.js'
   import { isvalidPhone } from "./../valid";
   import { isvalidEmail } from "./../valid";
+  import { AREA } from '../area'
   const validPhone = (rule, value, callback) => {
     if (!value) {
       callback(new Error("请输入电话号码"));
@@ -139,14 +140,7 @@
           { label: "销售经理", id: 1, value: "销售经理" },
           { label: "销售人员", id: 2, value: "销售人员" }
         ],
-        rolesArea: [
-          { label: "福田区总店", value: 0 },
-          { label: "南山区分店1号", value: 1 },
-          { label: "罗湖区分店2号", value: 2 },
-          { label: "龙华区", value: 3 },
-          { label: "龙岗区", value: 4 },
-          { label: "宝安区", value: 5 },
-        ],
+        rolesArea: AREA,
         updateForm: {
           subarea: ""
         },
@@ -168,14 +162,14 @@
       };
     },
     created() {
-      this.getPerssionList()
+      this.getPersionList()
     },
     methods: {
       handleCommand(command) {
         this.$refs.dropLink.innerText = command;
       },
       //获取列表
-      getPerssionList() {
+      getPersionList() {
         const params = {
           role: sessionStorage.getItem('role'),
           page: this.page,
@@ -238,7 +232,7 @@
       search: function () {
         this.page = 1;
         this.pageSize = 10;
-        this.getPerssionList();
+        this.getPersionList();
       },
       add: function () {
         this.dialogAdd = true;
@@ -262,7 +256,7 @@
                   this.$message.success("添加成功");
                   this.page = 1;
                   this.pageSize = 10;
-                  this.getPerssionList();
+                  this.getPersionList();
                 } else {
                   this.dialogAdd = false;
                   this.$message.error("添加失败");
@@ -281,8 +275,7 @@
       //修改
       update: function (index) {
         this.currentIndex = index;
-        this.updateForm.subarea = this.tableData[index].store_id
-        console.log(this.updateForm.subarea)
+        this.updateForm.subarea = this.tableData[index].store_id;
         this.dialogUpdate = true;
       },
       //修改经理信息
@@ -294,7 +287,7 @@
         this.$http.post(API.UPDATE_MANAGER, this.qs.stringify(params)).then((result) => {
           if (result.data.status === 0) {
             this.$message.success("修改成功");
-            this.getPerssionList()
+            this.getPersionList()
             this.currentIndex = null;
             this.dialogUpdate = false;
           } else {
@@ -321,7 +314,7 @@
             if (this.tableData.length === 1 && this.page > 1) {
               this.page = 1;
             }
-            this.getPerssionList();
+            this.getPersionList();
             this.$message.success("删除成功");
           } else {
             this.$message.error("删除失败");
