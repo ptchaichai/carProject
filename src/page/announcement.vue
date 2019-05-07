@@ -51,7 +51,11 @@
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="title" label="标题" min-width="30%" align="center"></el-table-column>
       <el-table-column prop="user_name" label="发布人" min-width="20%" align="center"></el-table-column>
-      <el-table-column prop="user_role" label="身份" min-width="20%" align="center"></el-table-column>
+      <el-table-column prop="user_role" label="身份" min-width="20%" align="center">
+        <template slot-scope="scop">
+          {{scop.row.user_role == 0 ? '总经理': (scop.row.user_role == 1 ? '经理' : '销售人员')}}
+        </template>
+      </el-table-column>
       <el-table-column prop="add_time" label="发布时间" min-width="20%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="150" min-width="30%" align="center">
         <template slot-scope="scope">

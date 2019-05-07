@@ -351,7 +351,7 @@ module.exports = function(app, passport) {
 				};
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = "SELECT COUNT(*) FROM  announce" ;
-				sql = search.value ? `SELECT * FROM announce WHERE '%${search.name}%' LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM announce WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
+				sql = search.value ? `SELECT * FROM announce WHERE '%${search.name}%' LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}`: `SELECT * FROM announce ORDER BY add_time desc limit ${start}, ${end}`
 				let allSql = {
 					count: countSql,
 					page: sql
