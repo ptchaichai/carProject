@@ -110,7 +110,7 @@ module.exports = function (app, passport) {
 	app.post('/api/addEmployee', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			connection.query(`SELECT id from user WHERE phone = ${param.phone}`, function (err, rows) {
+			connection.query(`SELECT id from user WHERE phone = '${param.phone}'`, function (err, rows) {
 				if (err) {
 					res.json({
 						status: 1,
@@ -167,7 +167,7 @@ module.exports = function (app, passport) {
 	app.post('/api/updatePerson', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			let sql = `UPDATE user SET role=${param.role} and store_id=${+param.subarea} WHERE id=${param.id}`;
+			let sql = `UPDATE user SET store_id=${+param.subarea} WHERE id=${param.id}`;
 			addOne(sql, res)
 		}
 	})
@@ -183,7 +183,7 @@ module.exports = function (app, passport) {
 	app.post('/api/updateCar', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			let sql = `UPDATE car SET price=${param.price} and color='${param.color}' WHERE id = ${param.id}`;
+			let sql = `UPDATE car SET price=${param.price},color='${param.color}' WHERE id = ${param.id}`;
 			addOne(sql, res);
 		}
 	})
@@ -287,7 +287,6 @@ module.exports = function (app, passport) {
 		if (req.body) {
 			let param = req.body;
 			let sql = `INSERT INTO car (car_id,shape,price,color,status) VALUES ('${param.car_id}','${param.shape}','${param.price}','${param.color}','${param.status}')`
-			// let sql =	`UPDATE car SET carname='${param.carname}', shape='${param.shape}', color='${param.shape}', price='${param.price}', status='${param.status}' WHERE car_id='${param.car_id}'`
 			addOne(sql, res)
 		}
 	})
@@ -348,6 +347,62 @@ module.exports = function (app, passport) {
 				}
 				pageNation(param, allSql, res)
 			}
+		}
+	})
+	//添加客户
+	app.post('/api/addCustom', isLoggedIn, function (req, res, next) {
+		if (req.body) {
+			let param = req.body;
+			connection.query(`SELECT t1.phone,t2.phone from custom as t1,user as t2 WHERE t1.phone = '${param.phone}' and t2.phone = '${param.phone}'`, function (err, rows) {
+				if (err) {
+					res.json({
+						status: 1,
+						data: err
+					})
+				} else {
+					if (rows.length > 0) {
+						res.json({
+							status: 1,
+							data: '已经含有相同号码'
+						})
+					} else {
+						let sql = `INSERT INTO custom (name,phone,email,address,label,home_price,sale_price,shape,user_name,user_id,user_phone) VALUES ('${param.name}','${param.phone}','${param.email}','${param.address}','${param.label}','${param.home_price}','${param.sale_price}','${param.shape}','${param.user_name}','${param.user_id}','${param.user_phone}')`
+						addOne(sql, res)
+					}
+				}
+			})
+		}
+	})
+	// 修改来电客户信息
+	app.post('/api/updateCustom', isLoggedIn, function (req, res, next) {
+		if (req.body) {
+			let param = req.body;
+			connection.query(`SELECT t1.phone,t2.phone from custom as t1,user as t2 WHERE t1.phone = '${param.phone}' and t2.phone = '${param.phone}'`, function (err, rows) {
+				if (err) {
+					res.json({
+						status: 1,
+						data: err
+					})
+				} else {
+					if (rows.length > 0) {
+						res.json({
+							status: 1,
+							data: '已经含有相同号码'
+						})
+					} else {
+						let sql = `UPDATE custom SET phone='${param.phone}',email='${param.email}',address='${param.address}',hope_price='${param.hope_price}',sale_price='${param.sale_price}',shape='${param.shape}' WHERE id=${param.id}`;
+						addOne(sql, res)
+					}
+				}
+			})
+		}
+	})
+	// 删除客户信息
+	app.post('/api/delCustom', isLoggedIn, function (req, res, next) {
+		if (req.body) {
+			let param = req.body;
+			let sql = `DELETE FROM custom WHERE id=${param.id}`;
+			deleteOne(sql, res)
 		}
 	})
 	//获取公告

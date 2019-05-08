@@ -276,7 +276,7 @@
           if (valid) {
             this.$http
               .post(API.UPDATE_PERSON, this.qs.stringify(params))
-              .then(res => {
+              .then(result => {
                 if (result.data.status === 0) {
                   this.$message.success("修改成功");
                   this.getPersionList()
