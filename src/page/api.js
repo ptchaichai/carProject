@@ -61,6 +61,21 @@ export default {
    */
   GET_CUSTOM: '/api/getCustomList',
   /**
+   * 添加客户信息
+   * @param label: 0来电 1来店 购车2
+   */
+  ADD_CUSTOM: '/api/addCustom',
+  /**
+   * 修改客户信息
+   * 
+   */
+  UPDATE_CUSTOM:'/api/updateCustom',
+  /**
+   * 删除客户信息
+   * 
+   */
+  DEL_CUSTOM:'/api/delCustom',
+  /**
    * 添加公告
    */
   ADD_ANNOUNCE: '/api/addAnnounce',
