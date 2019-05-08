@@ -53,14 +53,11 @@
       <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="email" label="邮箱" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="address" label="地址" min-width="20%" align="center"></el-table-column>
-      </el-table-column>
       <el-table-column prop="hope_price" label="价格意愿" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="user_name" label="处理人" min-width="23%" align="center">
         <template slot-scope="scop">
           <span>{{scop.row.user_name}}</span>(<span>{{scop.row.user_phone}}</span>)
         </template>
-      </el-table-column>
-      </el-table-column>
       </el-table-column>
       <el-table-column prop="add_time" label="添加时间" min-width="20%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="47%" align="center" v-if="showAdd">
@@ -97,7 +94,7 @@
             <el-input v-model="shiftForm.phone" placeholder="请输入电话"></el-input>
           </el-form-item>
         </el-form>
-        <el-button type="primary" @click="shiftConfirm()" round>确 定</el-button>
+        <el-button type="primary" @click="shiftConfirm('shiftForm')" round>确 定</el-button>
         <el-button @click="shiftConcel()" round>取 消</el-button>
     </el-dialog>
     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
@@ -311,6 +308,7 @@
           user_name: sessionStorage.getItem("name"),
           user_id: sessionStorage.getItem("id"),
           user_phone: sessionStorage.getItem("phone"),
+
         };
         this.$refs[ruleForm].validate(valid => {
           if (valid) {
@@ -392,15 +390,17 @@
       shift: function (row) {
         this.delID = row.id;
         this.dialogShift = true;
+        console.log(this.delID)
       },
-      shiftConfirm: function () {
+      shiftConfirm: function (shiftForm) {
         const form = {
-          
+          phone: this.shiftForm.phone,
+          id: this.delID
         };
         this.$refs[shiftForm].validate(valid => {
           if (valid) {
             this.$http
-              .post(API, this.qs.stringify(form))
+              .post('/api/transformCustom', this.qs.stringify(form))
               .then(res => {
                 if (res.data.status === 0) {
                   this.dialogShift = false;

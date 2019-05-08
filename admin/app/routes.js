@@ -367,18 +367,44 @@ module.exports = function (app, passport) {
 						data: err
 					})
 				} else {
+					console.log(rows)
 					if (rows.length > 0) {
 						res.json({
 							status: 1,
 							data: '已经含有相同号码'
 						})
 					} else {
-						let sql = `INSERT INTO custom (name,phone,email,address,label,home_price,sale_price,shape,user_name,user_id,user_phone) VALUES ('${param.name}','${param.phone}','${param.email}','${param.address}','${param.label}','${param.home_price}','${param.sale_price}','${param.shape}','${param.user_name}','${param.user_id}','${param.user_phone}')`
+						let sql = `INSERT INTO custom (name,phone,email,address,label,hope_price,sale_price,shape,user_name,user_id,user_phone) VALUES ('${param.name}','${param.phone}','${param.email}','${param.address}','${param.label}','${param.hope_price}','${param.sale_price}','${param.shape}','${param.user_name}','${param.user_id}','${param.user_phone}')`
 						addOne(sql, res)
 					}
 				}
 			})
 		}
+	})
+	//转移客户
+	app.post('/api/transformCustom', isLoggedIn, function(req, res, next){
+		if(req.body) {
+			let param = req.body;
+			connection.query(`select * from user where phone='${param.phone}'`, function(err, rows) {
+				if(err) {
+					res.json({
+						data: err,
+						status: 1
+					})
+				} else {
+					if(rows.length > 0) {
+						let sql = `UPDATE custom SET phone='${rows[0].phone}',user_id='${rows[0].id}',user_name='${rows[0].username}' WHERE id=${param.id}`
+						addOne(sql,res)
+					} else {
+						res.json({
+							data: '没有该人员',
+							status: 1
+						})
+					}
+				}
+			})
+		}
+		
 	})
 	// 修改来电客户信息
 	app.post('/api/updateCustom', isLoggedIn, function (req, res, next) {
