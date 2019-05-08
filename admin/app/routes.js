@@ -432,6 +432,22 @@ module.exports = function (app, passport) {
 			}
 		}
 	})
+	// 修改公告
+	app.post('/api/updateAnnounce', isLoggedIn, function (req, res, next) {
+		if (req.body) {
+			let param = req.body;
+			let sql = `UPDATE announce SET title='${param.title}', content='${param.content}' WHERE id=${param.id}`;
+			addOne(sql, res)
+		}
+	})
+	// 删除公告
+	app.post('/api/delAnnounce', isLoggedIn, function (req, res, next) {
+		if (req.body) {
+			let param = req.body;
+			let sql = `DELETE FROM announce WHERE id=${param.id}`;
+			deleteOne(sql, res)
+		}
+	})
 	//登出
 	app.get('/logout', function (req, res) {
 		req.logout();

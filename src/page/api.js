@@ -80,6 +80,14 @@ export default {
    */
   ADD_ANNOUNCE: '/api/addAnnounce',
   /**
+   * 修改公告
+   */
+  UPDATE_ANNOUNCE: '/api/updateAnnounce',
+  /**
+   * 删除公告
+   */
+  DEL_ANNOUNCE: '/api/delAnnounce',
+  /**
    * 获取公告列表
    */
   GET_ANNOUNCE: '/api/getAnnounceList',

@@ -43,10 +43,9 @@
       <el-table-column prop="add_time" label="发布时间" min-width="20%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="250" min-width="30%" align="center">
         <template slot-scope="scope">
-          <el-button slot="reference" type="primary" size="small" round class="update" @click="view(scope.row)">查看
-          </el-button>
+          <el-button slot="reference" size="small" round  @click="view(scope.row)">查看</el-button>
           <el-button @click="update(scope.row)" type="primary" size="small" round v-show="(scope.row.user_id == nowId ? true :false)">修改</el-button>
-          <el-button @click="deleteRow(scope.$index)" type="info" size="small" round v-show="(scope.row.user_id == nowId ? true :false)">删除</el-button>
+          <el-button @click="deleteRow(scope.row)" type="info" size="small" round v-show="(scope.row.user_id == nowId ? true :false)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -72,8 +71,8 @@
           <el-form-item label="公告内容" prop="content">
             <el-input v-model="updateForm.content" placeholder="请输入公告内容（10-100字）" type="textarea"></el-input>
           </el-form-item>
-          <el-button round type="primary" @click="updateConfirm">确定</el-button>
-          <el-button round type="primary" @click="updateCancel">取消</el-button>
+          <el-button round type="primary" @click="updateConfirm('updateForm')">确定</el-button>
+          <el-button round type="info" @click="updateCancel('updateForm')">取消</el-button>
         </el-form>
       </div>
     </el-dialog>
@@ -92,7 +91,7 @@
   import Bus from "../components/bus.js";
   import API from "./api.js";
   export default {
-    name: "updatePwd",
+    name: "announcement",
     data() {
       return {
         showAdd: false,
@@ -112,6 +111,7 @@
         viewTitle: "",
         viewContent: "",
         searchData: "",
+        rowID:"",
         nowId:"",
         ruleForm: {
           title: "",
@@ -251,7 +251,6 @@
               .post(API.ADD_ANNOUNCE, this.qs.stringify(form))
               .then(res => {
                 if (res.data.status === 0) {
-                  this.tableData = res.data;
                   this.$refs[ruleForm].resetFields();
                   this.dialogAdd = false;
                   this.$message.success("添加成功");
@@ -276,12 +275,14 @@
         this.dialogView = true;
       },
       update: function (rowVal) {
+        this.rowID = rowVal.id;
         this.updateForm.title = rowVal.title;
         this.updateForm.content = rowVal.content;
         this.dialogEdit = true;
       },
-      updateConfirm: function (rowVal) {
+      updateConfirm: function (updateForm) {
         let form = {
+          id: this.rowID,
           title: this.updateForm.title,
           content: this.updateForm.content,
         };
@@ -291,7 +292,6 @@
               .post(API.UPDATE_ANNOUNCE, this.qs.stringify(form))
               .then(res => {
                 if (res.data.status === 0) {
-                  this.tableData = res.data;
                   this.$refs[updateForm].resetFields();
                   this.dialogEdit = false;
                   this.$message.success("修改成功");
@@ -305,26 +305,25 @@
           }
         });
       },
-      updateCancel: function (rowVal) {
-        this.$refs[ruleForm].resetFields();
+      updateCancel: function (updateForm) {
+        this.$refs[updateForm].resetFields();
         this.dialogEdit = false;
       },
-      deleteRow: function (index) {
+      deleteRow: function (row) {
         this.dialogDelete = true;
-        this.currentIndex = index;
+        this.rowID = row.id;
       },
       removeConfirm: function () {
         let form = {
-          id: this.id
+          id: this.rowID
         };
         this.$http
-          .post("api/deleteAnnouncement", this.qs.stringify(form))
+          .post(API.DEL_ANNOUNCE, this.qs.stringify(form))
           .then(res => {
             if (res.data.status === 0) {
-              const i = this.currentIndex;
-              this.tableData.splice(i, 1);
               this.dialogDelete = false;
               this.$message.success("删除成功");
+              this.getAnnounce();
             } else {
               this.$message.error("删除失败");
             }
