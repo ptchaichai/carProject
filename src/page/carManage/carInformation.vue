@@ -49,8 +49,8 @@
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="car_id" label="编号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="shape" label="型号" min-width="10%" align="center"></el-table-column>
-      <el-table-column prop="color" label="颜色" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="price" label="价格" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="color" label="颜色" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="add_time" label="添加时间" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="status" label="状态" min-width="15%" align="center">
         <template slot-scope="scop">
@@ -63,10 +63,10 @@
           <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.row)"
             v-show="scope.row.status == 0 ? true:false">修改
           </el-button>
-          <el-button slot="reference" type="info" size="small" round class="drop" @click="drop(scope.row)"
+          <el-button slot="reference" type="danger" size="small" round class="drop" @click="drop(scope.row)"
             v-show="scope.row.status == 0 ? true:false">下架
           </el-button>
-          <el-button slot="reference" type="info" size="small" round class="drop" @click="shelf(scope.row)"
+          <el-button slot="reference" type="success" size="small" round class="drop" @click="shelf(scope.row)"
             v-show="scope.row.status == 1 ? true:false">上架
           </el-button>
         </template>
@@ -94,11 +94,11 @@
     </el-dialog>
     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
       <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
-        <el-form-item label="颜色" prop="color">
-          <el-input v-model="updateForm.color" placeholder="请输入颜色"></el-input>
-        </el-form-item>
         <el-form-item label="价格(万元)" prop="price">
           <el-input v-model="updateForm.price" placeholder="请输入价格"></el-input>
+        </el-form-item>
+        <el-form-item label="颜色" prop="color">
+          <el-input v-model="updateForm.color" placeholder="请输入颜色"></el-input>
         </el-form-item>
       </el-form>
       <el-button type="primary" @click="updateConfirm('updateForm')" round>确 定</el-button>
@@ -109,14 +109,14 @@
 
 <script>
   import API from './../api.js'
+  import { isvalidPrice } from "./../valid";
   const checkPrice = (rule, value, callback) => {
-    if (value) {
-      let rgx = /^\d+(\.\d{1,3})?$/;
-      if (value.match(rgx) == null) {
-        return callback(new Error("输入不能为空，且最多三位小数"));
-      } else {
-        callback();
-      }
+    if (!value) {
+      callback(new Error("请输入价格"));
+    } else if (!isvalidPrice(value)) {
+      return callback(new Error("输入不能为空，且最多三位小数"));
+    } else {
+      callback();
     }
   };
   export default {
@@ -162,23 +162,16 @@
           status: 0
         },
         rules: {
-          id: [
+          car_id: [
             { required: true, message: "请输入编号", trigger: "blur" },
-            { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
+            { min: 2, max: 10, message: "请输入 2 到 10 个字符", trigger: "blur" }
           ],
-          type: [{ required: true, trigger: "blur", message: "请选择车型" }],
+          shape: [{ required: true, trigger: "blur", message: "请选择车型" }],
           color: [
             { required: true, message: "请输入颜色", trigger: "blur" },
-            { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
+            { min: 1, max: 10, message: "请输入 1 到 10 个字符", trigger: "blur" }
           ],
-          price: [
-            {
-              required: true,
-              message: "输入不能为空，且最多三位小数",
-              trigger: "change"
-            },
-            { validator: checkPrice, trigger: "change" }
-          ]
+          price: [{ required: true, trigger: "blur", validator: checkPrice }]
         },
         updateForm: {
           color: "",
@@ -187,16 +180,9 @@
         rulesUpdate: {
           color: [
             { required: true, message: "请输入颜色", trigger: "blur" },
-            { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
+            { min: 1, max: 10, message: "请输入 1 到 10 个字符", trigger: "blur" }
           ],
-          price: [
-            {
-              required: true,
-              message: "输入不能为空，且最多三位小数",
-              trigger: "change"
-            },
-            { validator: checkPrice, trigger: "change" }
-          ]
+          price: [{ required: true, trigger: "blur", validator: checkPrice }]
         },
         tableTel: []
       };
@@ -338,6 +324,7 @@
           if (valid) {
             this.$http.post(API.ADD_CAR, this.qs.stringify(form)).then(res => {
               if (res.data.status === 0) {
+                this.$refs[ruleForm].resetFields();
                 this.dialogAdd = false;
                 this.$message.success("添加成功");
                 this.getCarList();
@@ -363,8 +350,8 @@
       updateConfirm: function (updateForm) {
         const form = {
           id: this.rowVal,
+          price: this.updateForm.price,
           color: this.updateForm.color,
-          price: this.updateForm.price
         };
         this.$refs[updateForm].validate(valid => {
           if (valid) {

@@ -183,7 +183,7 @@ module.exports = function (app, passport) {
 	app.post('/api/updateCar', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			let sql = `UPDATE car SET color=${param.color} and price=${param.price} WHERE id = ${param.id}`;
+			let sql = `UPDATE car SET price=${param.price} and color='${param.color}' WHERE id = ${param.id}`;
 			addOne(sql, res);
 		}
 	})
