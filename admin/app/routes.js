@@ -183,7 +183,7 @@ module.exports = function (app, passport) {
 	app.post('/api/updateCar', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			let sql = `UPDATE car SET price=${param.price} and color='${param.color}' WHERE id = ${param.id}`;
+			let sql = `UPDATE car SET price=${param.price} , color='${param.color}' WHERE id = ${param.id}`;
 			addOne(sql, res);
 		}
 	})
@@ -193,6 +193,13 @@ module.exports = function (app, passport) {
 			let param = req.body;
 			let sql = `UPDATE user SET store_id=${+param.subarea} WHERE id=${param.id}`;
 			addOne(sql, res)
+		}
+	})
+	//修改、完善资料
+	app.post('/api/updateInformation', isLoggedIn, function(req, res, next) {
+		if(req.body) {
+			let param = req.body;
+			//let sql =  `UPDATE`
 		}
 	})
 	//获取销售经理列表

@@ -69,11 +69,11 @@ export default {
       dateValue: "",
       value: "",
       roles: [
-        { label: "男", id: 1, value: "男" },
-        { label: "女", id: 2, value: "女" }
+        { label: "男", id: 1, value: "0" },
+        { label: "女", id: 2, value: "1" }
       ],
       ruleForm: {
-        phome:"",
+        phone:"",
         email: "",
         address: "",
         idcard:"",
@@ -125,6 +125,19 @@ export default {
           console.log(form.age);
         } else {
           return false;
+        }
+      });
+    },
+    //先获取
+    getPersonalInfo() {
+      this.$http.post(API.GET_PERSON, this.qs.stringify({})).then(result => {
+        if (result.data.status === 0) {
+          this.personData = result.data.data;
+          this.personData.time = this.personData.time.substr(0,10);
+          // this.personData.birthday = this.personData.birthday.substr(0,10);
+          this.getRoleName(this.personData.role);
+        } else {
+          this.$message.error("请求失败");
         }
       });
     },
