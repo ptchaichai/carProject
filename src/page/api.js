@@ -68,4 +68,8 @@ export default {
    * 获取公告列表
    */
   GET_ANNOUNCE: '/api/getAnnounceList',
+  /**
+   * 修改汽车状态
+   */
+  UPDATE_STATUS:'/api/updateStatus',
 }

@@ -40,7 +40,7 @@
             </el-form>
           </div>
         </el-dialog>
-        <el-button type="primary" size="small" round class="add" @click="add">添加</el-button>
+        <el-button type="primary" size="small" round class="add" @click="add" v-show="showAdd">添加</el-button>
       </div>
     </div>
     <el-table :data="tableData" ref="multipleTable" border :row-style="tableRowStyle"
@@ -50,17 +50,24 @@
       <el-table-column prop="car_id" label="编号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="shape" label="型号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="color" label="颜色" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="price" label="价格" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="add_time" label="添加时间" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="status" label="状态" min-width="15%" align="center">
         <template slot-scope="scop">
-          <span style="color:#67C23A">{{scop.row.status == 0 ? '上架': 下架}}</span>
+          <span style="color:#67c23a" v-show="scop.row.status == 0">上架</span>
+          <span style="color:#f56c6c" v-show="scop.row.status == 1">下架</span>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" min-width="20%" align="center" v-if="showAdd">
         <template slot-scope="scope">
-          <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改
+          <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.row)"
+            v-show="scope.row.status == 0 ? true:false">修改
           </el-button>
-          <el-button slot="reference" type="info" size="small" round class="drop" @click="update(scope.$index)">下架
+          <el-button slot="reference" type="info" size="small" round class="drop" @click="drop(scope.row)"
+            v-show="scope.row.status == 0 ? true:false">下架
+          </el-button>
+          <el-button slot="reference" type="info" size="small" round class="drop" @click="shelf(scope.row)"
+            v-show="scope.row.status == 1 ? true:false">上架
           </el-button>
         </template>
       </el-table-column>
@@ -69,21 +76,24 @@
       <el-button @click="toggleSelection(tableData)">全选</el-button>
       <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
     </div>
-    <el-dialog title="警告！" :visible.sync="dialogDelete" width="30%">
+    <el-dialog title="警告！" :visible.sync="dialogDrop" width="30%">
       <i class="el-icon-warning"></i>
-      <span>是否要删除本条信息？</span>
+      <span>是否要将该车下架，下架之后不能进行操作？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="removeConfirm()" round>确 定</el-button>
-        <el-button @click="dialogDelete = false" round>取 消</el-button>
+        <el-button type="primary" @click="dropConfirm()" round>确 定</el-button>
+        <el-button @click="dialogDrop = false" round>取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="提示！" :visible.sync="dialogShelf" width="30%">
+      <i class="el-icon-warning"></i>
+      <span>是否要将该车上架？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="shelfConfirm()" round>确 定</el-button>
+        <el-button @click="dialogShelf = false" round>取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
       <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
-        <el-form-item label="车型" prop="carname">
-          <el-select v-model="updateForm.carname" placeholder="请选择车型" class="carType">
-            <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="颜色" prop="color">
           <el-input v-model="updateForm.color" placeholder="请输入颜色"></el-input>
         </el-form-item>
@@ -114,15 +124,14 @@
     data() {
       return {
         showAdd: "",
-        // shelfShow:true,
-        // dropShow:false,
         searchName: 'username', //搜索的条件
         searchData: "", //搜索的名字
         totalCount: 0,
         page: 1, //页码
         pageSize: 10, //一条默认页数
         multipleSelection: [],
-        dialogDelete: false,
+        dialogDrop: false,
+        dialogShelf: false,
         dialogUpdate: false,
         dialogAdd: false,
         checked: false,
@@ -135,6 +144,8 @@
         currentIndex: "",
         tableData: [],
         reasonText: "",
+        dropID: "",
+        shelfID: "",
         roles: [
           { label: "奥德赛", value: "奥德赛" },
           { label: "宾智", value: "宾智" },
@@ -170,12 +181,10 @@
           ]
         },
         updateForm: {
-          type: "",
           color: "",
           price: "",
         },
         rulesUpdate: {
-          type: [{ required: true, trigger: "blur", message: "请选择车型" }],
           color: [
             { required: true, message: "请输入颜色", trigger: "blur" },
             { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
@@ -195,22 +204,13 @@
     created() {
       this.getCarList();
       let role = sessionStorage.getItem("role");
-      if (+role === 0 || +role === 1) {
-        this.showAdd = false;
-      } else if (+role === 2) {
+      if (+role === 0) {
         this.showAdd = true;
+      } else if (+role === 2 || +role === 1) {
+        this.showAdd = false;
       }
     },
     methods: {
-      // shelf(){
-      //   this.shelfShow = true;
-      //   this.dropShow = false;
-      // },
-      // drop(){
-      //   this.shelfShow = false;
-      //   this.dropShow = true;
-      // },
-      // // 全选
       toggleSelection(rows) {
         if (rows) {
           rows.forEach(row => {
@@ -229,7 +229,10 @@
         }
         this.$http.post(API.GET_CARLIST, this.qs.stringify(params)).then((result) => {
           if (result.data.status === 0) {
-            this.tableData = result.data.data;
+            this.tableData = result.data.data.map((item) => {
+              item.add_time = item.add_time.substr(0, 10);
+              return item;
+            });
             this.totalCount = result.data.count;
           } else {
             this.$message.error("获取列表失败");
@@ -272,6 +275,58 @@
           });
         }
       },
+      drop: function (row) {
+        this.dialogDrop = true;
+        this.dropID = row.id;
+      },
+      dropConfirm: function () {
+        // const date = new Date();
+        // const year = date.getFullYear();
+        // const month = date.getMonth() + 1;
+        // const day = date.getDate();
+        // const nowDate = year + '-' +month +'-'+ day;
+        const form = {
+          id: this.dropID,
+          status: 1,
+          // shelftime: 0,
+          // droptime: nowDate,
+        }
+        this.$http.post(API.UPDATE_STATUS, this.qs.stringify(form)).then(res => {
+          if (res.data.status === 0) {
+            this.dialogDrop = false;
+            this.$message.success("修改成功");
+            this.getCarList();
+          } else {
+            this.$message.error("修改失败");
+          }
+        });
+      },
+      shelf: function (row) {
+        this.dialogShelf = true;
+        this.shelfID = row.id;
+      },
+      shelfConfirm: function () {
+        // const date = new Date();
+        // const year = date.getFullYear();
+        // const month = date.getMonth() + 1;
+        // const day = date.getDate();
+        // const nowDate = year + '-' +month +'-'+ day;
+        const form = {
+          id: this.shelfID,
+          status: 0,
+          // droptime: 0,
+          // shelftime: nowDate,
+        }
+        this.$http.post(API.UPDATE_STATUS, this.qs.stringify(form)).then(res => {
+          if (res.data.status === 0) {
+            this.dialogShelf = false;
+            this.$message.success("修改成功");
+            this.getCarList();
+          } else {
+            this.$message.error("修改失败");
+          }
+        });
+      },
       add: function () {
         this.dialogAdd = true;
       },
@@ -299,33 +354,27 @@
         this.$refs[ruleForm].resetFields();
         this.dialogAdd = false;
       },
-      update: function (index) {
-        const thisData = this.tableData[index].data;
-        this.updateForm.name = thisData.name;
-        this.updateForm.date = thisData.date;
-        this.updateForm.price = thisData.price;
-        this.updateForm.shelftime = thisData.shelftime;
-        this.updateForm.droptime = thisData.droptime;
+      update: function (row) {
+        this.rowVal = row.id;
+        this.updateForm.color = row.color
+        this.updateForm.price = row.price;
         this.dialogUpdate = true;
-        this.currentIndex = index;
       },
       updateConfirm: function (updateForm) {
         const form = {
-          name: this.updateForm.name,
+          id: this.rowVal,
           color: this.updateForm.color,
-          shelftime: this.updateForm.shelftime,
-          droptime: this.updateForm.droptime,
           price: this.updateForm.price
         };
         this.$refs[updateForm].validate(valid => {
           if (valid) {
             this.$http
-              .post("api/updateCall", this.qs.stringify(form))
+              .post(API.UPDATE_CAR, this.qs.stringify(form))
               .then(res => {
                 if (res.data.status === 0) {
-                  this.tableData[currentIndex] = res.data;
                   this.dialogUpdate = false;
-                  this.$message.success("添加成功");
+                  this.$message.success("修改成功");
+                  this.getCarList();
                 } else {
                   this.$message.error("修改失败");
                 }
