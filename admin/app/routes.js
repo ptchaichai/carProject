@@ -195,6 +195,13 @@ module.exports = function (app, passport) {
 			addOne(sql, res)
 		}
 	})
+	//修改、完善资料
+	app.post('/api/updateInformation', isLoggedIn, function(req, res, next) {
+		if(req.body) {
+			let param = req.body;
+			//let sql =  `UPDATE`
+		}
+	})
 	//获取销售经理列表
 	app.post('/api/getManagerList', isLoggedIn, function (req, res, next) {
 		if (req.body) {
