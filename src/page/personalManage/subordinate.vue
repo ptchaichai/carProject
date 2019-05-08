@@ -16,7 +16,7 @@
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
               <el-form-item label="姓名" prop="name">
-                <el-input v-model="ruleForm.name" placeholder="请输入账号"></el-input>
+                <el-input v-model="ruleForm.name" placeholder="请输入姓名"></el-input>
               </el-form-item>
               <el-form-item label="电话" prop="phone">
                 <el-input v-model="ruleForm.phone" placeholder="请输入电话"></el-input>
@@ -253,6 +253,7 @@
                 }
               });
           } else {
+            this.$message.error("添加失败，电话号码已存在！");
             return false;
           }
         });

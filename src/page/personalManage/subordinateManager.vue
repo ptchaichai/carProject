@@ -255,7 +255,7 @@
                   this.getPersionList();
                 } else {
                   this.dialogAdd = false;
-                  this.$message.error("添加失败");
+                  this.$message.error("添加失败，电话号码已存在！");
                 }
               });
           } else {

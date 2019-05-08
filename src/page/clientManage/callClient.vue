@@ -71,7 +71,7 @@
       <el-table-column prop="address" label="地址" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="price" label="价格意愿" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="user_name" label="处理人" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="addtime" label="添加时间" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="addtime" label="添加时间" min-width="15%" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="250px" min-width="25%" align="center" v-if="showAdd">
         <template slot-scope="scope">
           <el-button

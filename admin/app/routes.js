@@ -270,7 +270,8 @@ module.exports = function(app, passport) {
 	app.post('/api/addCar', isLoggedIn, function(req, res, next){
 		if(req.body) {
 			let param = req.body;
-		  let sql =	`UPDATE car SET carname='${param.carname}', shape='${param.shape}', color='${param.shape}', price='${param.price}', status='${param.status}' WHERE car_id='${param.car_id}'`
+			let sql = `INSERT INTO car (car_id,carname,shape,price,color,status,shelftime,droptime) VALUES ('${param.car_id}','${param.carname}','${param.shape}','${param.price}','${param.color}','${param.status}','${param.shelftime}','${param.droptime}')`
+		  // let sql =	`UPDATE car SET carname='${param.carname}', shape='${param.shape}', color='${param.shape}', price='${param.price}', status='${param.status}' WHERE car_id='${param.car_id}'`
 			addOne(sql,res)
 		}
 	})

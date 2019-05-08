@@ -4,22 +4,19 @@
     <div class="search-add">
       <div class="box">
         <div class="search-input" style="width:400px">
-        <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
-          <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
-            <el-option label="姓名" value="username"></el-option>
-            <el-option label="电话" value="phone"></el-option>
-          </el-select>
-          <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-input>
+          <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
+            <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
+              <el-option label="姓名" value="username"></el-option>
+              <el-option label="电话" value="phone"></el-option>
+            </el-select>
+            <el-button slot="append" icon="el-icon-search"></el-button>
+          </el-input>
         </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
           <div class="dialog-box">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
               <el-form-item label="编号" prop="car_id">
                 <el-input v-model="ruleForm.car_id" placeholder="请输入编号"></el-input>
-              </el-form-item>
-              <el-form-item label="车名" prop="carname">
-                <el-input v-model="ruleForm.carname" placeholder="请输入车名"></el-input>
               </el-form-item>
               <el-form-item label="车型" prop="shape">
                 <el-select v-model="ruleForm.shape" placeholder="请选择车型" class="carType">
@@ -35,21 +32,9 @@
                   <el-radio :label="1">下架</el-radio>
                 </el-radio-group>
               </el-form-item>
-              <!-- <el-form-item label="上架日期" prop="shelftime">
-                <div class="block">
-                  <el-date-picker v-model="ruleForm.shelftime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd">
-                  </el-date-picker>
-                </div>
-              </el-form-item>
-              <el-form-item label="下架日期" prop="droptime">
-                <div class="block">
-                  <el-date-picker v-model="ruleForm.droptime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd">
-                  </el-date-picker>
-                </div>
-              </el-form-item> -->
               <el-form-item label="价格(万元)" prop="price">
-                  <el-input v-model="ruleForm.price" placeholder="请输入价格"></el-input>
-                </el-form-item>
+                <el-input v-model="ruleForm.price" placeholder="请输入价格"></el-input>
+              </el-form-item>
               <el-button round type="primary" class="addInformation" @click="addConfirm('ruleForm')">确定</el-button>
               <el-button round type="info" class="cancelInformation" @click="addCancel('ruleForm')">取消</el-button>
             </el-form>
@@ -62,15 +47,20 @@
       :header-cell-style="tableHeaderColor" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center"></el-table-column>
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
-      <el-table-column prop="id" label="编号" min-width="10%" align="center"></el-table-column>
-      <el-table-column prop="name" label="车名" min-width="10%" align="center"></el-table-column>
-      <el-table-column prop="type" label="型号" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="car_id" label="编号" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="shape" label="型号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="color" label="颜色" min-width="10%" align="center"></el-table-column>
-      <el-table-column prop="shelftiem" label="上架时间" min-width="15%" align="center"></el-table-column>
-      <el-table-column prop="droptiem" label="下架时间" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="add_time" label="添加时间" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="status" label="状态" min-width="15%" align="center">
+        <template slot-scope="scop">
+          <span style="color:#67C23A">{{scop.row.status == 0 ? '上架': 下架}}</span>
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" min-width="20%" align="center" v-if="showAdd">
         <template slot-scope="scope">
           <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.$index)">修改
+          </el-button>
+          <el-button slot="reference" type="info" size="small" round class="drop" @click="update(scope.$index)">下架
           </el-button>
         </template>
       </el-table-column>
@@ -89,29 +79,14 @@
     </el-dialog>
     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
       <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
-        <el-form-item label="车名" prop="carname">
-          <el-input v-model="updateForm.carname" placeholder="请输入车名"></el-input>
-        </el-form-item>
         <el-form-item label="车型" prop="carname">
-            <el-select v-model="updateForm.carname" placeholder="请选择车型" class="carType">
-              <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value"></el-option>
-            </el-select>
-          </el-form-item>
+          <el-select v-model="updateForm.carname" placeholder="请选择车型" class="carType">
+            <el-option v-for="item in roles" :label="item.label" :key="item.id" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="颜色" prop="color">
           <el-input v-model="updateForm.color" placeholder="请输入颜色"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="上架日期" prop="shelftime">
-          <div class="block">
-            <el-date-picker v-model="updateForm.shelftime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd">
-            </el-date-picker>
-          </div>
-        </el-form-item> -->
-        <!-- <el-form-item label="下架日期" prop="droptime">
-          <div class="block">
-            <el-date-picker v-model="updateForm.droptime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd">
-            </el-date-picker>
-          </div>
-        </el-form-item> -->
         <el-form-item label="价格(万元)" prop="price">
           <el-input v-model="updateForm.price" placeholder="请输入价格"></el-input>
         </el-form-item>
@@ -138,7 +113,9 @@
     name: "callClient",
     data() {
       return {
-        showAdd:"",
+        showAdd: "",
+        // shelfShow:true,
+        // dropShow:false,
         searchName: 'username', //搜索的条件
         searchData: "", //搜索的名字
         totalCount: 0,
@@ -168,11 +145,8 @@
         ],
         ruleForm: {
           car_id: "",
-          carname: "",
           shape: "",
           color: "",
-          // shelftime: "",
-          // droptime: "",
           price: "",
           status: 0
         },
@@ -181,17 +155,11 @@
             { required: true, message: "请输入编号", trigger: "blur" },
             { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
           ],
-          name:[
-            { required: true, message: "请输入车名", trigger: "blur" },
-            { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
-          ],
           type: [{ required: true, trigger: "blur", message: "请选择车型" }],
           color: [
             { required: true, message: "请输入颜色", trigger: "blur" },
             { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
           ],
-          shelftime: [{ required: true, message: "请选择上架日期", trigger: "blur" }],
-          droptime: [{ required: true, message: "请选择下架日期", trigger: "blur" }],
           price: [
             {
               required: true,
@@ -202,25 +170,16 @@
           ]
         },
         updateForm: {
-          name: "",
-          type:"",
+          type: "",
           color: "",
-          shelftime: "",
-          droptime: "",
           price: "",
         },
         rulesUpdate: {
-          name:[
-            { required: true, message: "请输入车名", trigger: "blur" },
-            { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
-          ],
           type: [{ required: true, trigger: "blur", message: "请选择车型" }],
           color: [
             { required: true, message: "请输入颜色", trigger: "blur" },
             { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
           ],
-          shelftime: [{ required: true, message: "请选择上架日期", trigger: "blur" }],
-          droptime: [{ required: true, message: "请选择下架日期", trigger: "blur" }],
           price: [
             {
               required: true,
@@ -235,15 +194,23 @@
     },
     created() {
       this.getCarList();
-    let role = sessionStorage.getItem("role");
-    if (+role === 0 || +role === 1) {
-      this.showAdd = false;
-    } else if (+role === 2) {
-      this.showAdd = true;
-    }
-  },
+      let role = sessionStorage.getItem("role");
+      if (+role === 0 || +role === 1) {
+        this.showAdd = false;
+      } else if (+role === 2) {
+        this.showAdd = true;
+      }
+    },
     methods: {
-      // 全选
+      // shelf(){
+      //   this.shelfShow = true;
+      //   this.dropShow = false;
+      // },
+      // drop(){
+      //   this.shelfShow = false;
+      //   this.dropShow = true;
+      // },
+      // // 全选
       toggleSelection(rows) {
         if (rows) {
           rows.forEach(row => {
@@ -253,7 +220,7 @@
           this.$refs.multipleTable.clearSelection();
         }
       },
-      getCarList(){
+      getCarList() {
         const params = {
           page: this.page,
           page_size: this.pageSize,
@@ -318,10 +285,11 @@
               if (res.data.status === 0) {
                 this.dialogAdd = false;
                 this.$message.success("添加成功");
+                this.getCarList();
               } else {
                 this.$message.error("添加失败");
               }
-          });
+            });
           } else {
             return false;
           }
