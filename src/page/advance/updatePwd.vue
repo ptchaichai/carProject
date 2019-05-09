@@ -66,10 +66,10 @@ export default {
             this.$http
               .post("api/updatePassword", this.qs.stringify(form))
               .then(res => {
-                if (res.data.status === 0) {
-                  this.$message.success("修改成功");
+                if (res.data.status === 2) {
+                  this.$message.success('修改成功,请重新登录');
                 } else {
-                  this.$message.error("修改失败");
+                  this.$message.error(res.data.data);
                 }
               });
           }

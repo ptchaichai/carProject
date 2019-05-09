@@ -115,7 +115,8 @@ export default {
         address: this.ruleForm.address,
         phone: this.ruleForm.phone,
         idcard: this.ruleForm.idcard,
-        role: sessionStorage.getItem('role')
+        role: sessionStorage.getItem('role'),
+        id: sessionStorage.getItem('id')
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
@@ -125,7 +126,7 @@ export default {
               //bus.$emit("perfectSend", this.perfectArr);
               sessionStorage.setItem('phone', this.ruleForm.phone)
               this.$message.success("提交成功");
-              this.$refs[ruleForm].resetFields();
+              //this.$refs[ruleForm].resetFields();
             } else {
               this.$message.error("提交失败");
             }
@@ -141,12 +142,12 @@ export default {
       this.$http.post(API.GET_PERSON, this.qs.stringify({})).then(result => {
         if (result.data.status === 0) {
           this.ruleForm = {
-            sex: result.data.sex,
-            age: result.data.birthday ? result.data.birthday.substr(0,10) : null,
-            email: result.data.email,
-            address: result.data.address,
-            phone: result.data.phone,
-            idcard: result.data.idcard,
+            sex: result.data.data.sex.toString(),
+            age: result.data.data.birthday ? result.data.data.birthday.substr(0,10) : null,
+            email: result.data.data.email,
+            address: result.data.data.address,
+            phone: result.data.data.phone,
+            idcard: result.data.data.idcard,
             role: sessionStorage.getItem('role')
           }
           console.log(this.ruleForm)
@@ -156,7 +157,8 @@ export default {
       });
     },
     perfectCancel: function(ruleForm) {
-      this.$refs[ruleForm].resetFields();
+      //this.$refs[ruleForm].resetFields();
+      this.$router.push({ path: "/manage/personalManage/personal" });
     }
   }
 };

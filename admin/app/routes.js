@@ -201,7 +201,7 @@ module.exports = function (app, passport) {
 			let param = req.body;
 			let sql =  `UPDATE user SET phone='${param.phone}', idcard='${param.idcard}', birthday='${param.age}',sex='${param.sex}',email='${param.email}',address='${param.address}' WHERE id=${param.id}`
 			updateeOne(sql, res, function(){
-				updateeOne(`UPDATE custom SET　user_phone='${param.phone}'`, res, function(){
+				updateeOne(`UPDATE custom SET user_phone='${param.phone}' WHERE user_id='${param.id}'`, res, function(){
 					res.json({
 						status: 0,
 						data: '修改成功'
@@ -214,22 +214,24 @@ module.exports = function (app, passport) {
 	app.post('/api/updatePassword', isLoggedIn, function(req, res, next) {
 		if(req.body) {
 			let param = req.body;
-			connection.query(`SELECT * from WHERE id=${param.id} AND password='${param.old_password}'`, function(err, rows){
-				if(err) {
-					res.json({
-						data: err,
-						status: 1
-					})
-				} else {
-					let sql =  `UPDATE user SET password='${param.new_password}',WHERE id=${param.id}`
+			findOne(`SELECT * from user WHERE id=${param.id} AND password='${param.old_password}'`, res, function(data){
+				if(data.length> 0) {
+					console.log(data[0])
+					let sql =  `UPDATE user SET password='${param.new_password}' WHERE id=${param.id}`
 					updateeOne(sql, res, function(){
 						res.json({
 							status: 2,
-							data: '修改成功，请重新登录'
+							data: ''
 						})
+						req.logout()
+					})
+				} else {
+					res.json({
+						status: 1,
+						data: '请确认您的旧密码是否正确'
 					})
 				}
-			});
+			})
 		}
 	})
 	//获取销售经理列表
@@ -603,7 +605,7 @@ module.exports = function (app, passport) {
 		});
 	}
 	//查找函数
-	function findOne(sql, res, next) {
+	function findOne(sql, res, callback) {
 		connection.query(sql, function(err, rows) {
 			if (err) {
 				res.json({
@@ -612,7 +614,7 @@ module.exports = function (app, passport) {
 				})
 				return
 			} else {
-				next(rows)
+				callback(rows)
 			}
 		});
 	}
