@@ -44,6 +44,7 @@
 <script>
 import { isvalidEmail } from "./../valid";
 import { isvalidPhone } from "./../valid";
+import API from "./../api.js";
 const validEmail = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入邮箱"));
@@ -98,6 +99,9 @@ export default {
       perfectArr: []
     };
   },
+  created(){
+    this.getPersonalInfo()
+  },
   methods: {
     // 获取时间
     // getTime(val) {
@@ -108,20 +112,24 @@ export default {
         sex: this.ruleForm.sex,
         age: this.ruleForm.age,
         email: this.ruleForm.email,
-        address: this.ruleForm.address
+        address: this.ruleForm.address,
+        phone: this.ruleForm.phone,
+        idcard: this.ruleForm.idcard,
+        role: sessionStorage.getItem('role')
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
           this.perfectArr = [form.sex, form.age, form.email, form.address];
-          // this.$http.post("api/perfect", this.qs.stringify(form)).then(res => {
-          //   if (res.data.status === 0) {
-          //     bus.$emit("perfectSend", this.perfectArr);
-          //     this.$message.success("提交成功");
-          //     this.$refs[ruleForm].resetFields();
-          //   } else {
-          //     this.$message.error("提交失败");
-          //   }
-          // });
+          this.$http.post("/api/updateInformation", this.qs.stringify(form)).then(res => {
+            if (res.data.status === 0) {
+              //bus.$emit("perfectSend", this.perfectArr);
+              sessionStorage.setItem('phone', this.ruleForm.phone)
+              this.$message.success("提交成功");
+              this.$refs[ruleForm].resetFields();
+            } else {
+              this.$message.error("提交失败");
+            }
+          });
           console.log(form.age);
         } else {
           return false;
@@ -132,10 +140,16 @@ export default {
     getPersonalInfo() {
       this.$http.post(API.GET_PERSON, this.qs.stringify({})).then(result => {
         if (result.data.status === 0) {
-          this.personData = result.data.data;
-          this.personData.time = this.personData.time.substr(0,10);
-          // this.personData.birthday = this.personData.birthday.substr(0,10);
-          this.getRoleName(this.personData.role);
+          this.ruleForm = {
+            sex: result.data.sex,
+            age: result.data.birthday ? result.data.birthday.substr(0,10) : null,
+            email: result.data.email,
+            address: result.data.address,
+            phone: result.data.phone,
+            idcard: result.data.idcard,
+            role: sessionStorage.getItem('role')
+          }
+          console.log(this.ruleForm)
         } else {
           this.$message.error("请求失败");
         }

@@ -199,7 +199,37 @@ module.exports = function (app, passport) {
 	app.post('/api/updateInformation', isLoggedIn, function(req, res, next) {
 		if(req.body) {
 			let param = req.body;
-			//let sql =  `UPDATE`
+			let sql =  `UPDATE user SET phone='${param.phone}', idcard='${param.idcard}', birthday='${param.age}',sex='${param.sex}',email='${param.email}',address='${param.address}' WHERE id=${param.id}`
+			updateeOne(sql, res, function(){
+				updateeOne(`UPDATE custom SET　user_phone='${param.phone}'`, res, function(){
+					res.json({
+						status: 0,
+						data: '修改成功'
+					})
+				})
+			})
+		}
+	})
+	//修改密码
+	app.post('/api/updatePassword', isLoggedIn, function(req, res, next) {
+		if(req.body) {
+			let param = req.body;
+			connection.query(`SELECT * from WHERE id=${param.id} AND password='${param.old_password}'`, function(err, rows){
+				if(err) {
+					res.json({
+						data: err,
+						status: 1
+					})
+				} else {
+					let sql =  `UPDATE user SET password='${param.new_password}',WHERE id=${param.id}`
+					updateeOne(sql, res, function(){
+						res.json({
+							status: 2,
+							data: '修改成功，请重新登录'
+						})
+					})
+				}
+			});
 		}
 	})
 	//获取销售经理列表
@@ -572,10 +602,24 @@ module.exports = function (app, passport) {
 			}
 		});
 	}
+	//查找函数
+	function findOne(sql, res, next) {
+		connection.query(sql, function(err, rows) {
+			if (err) {
+				res.json({
+					status: 1,
+					data: err
+				})
+				return
+			} else {
+				next(rows)
+			}
+		});
+	}
 	/**
 	 * 修改函数封装
 	 */
-	function updateeOne(sql, res) {
+	function updateeOne(sql, res, next) {
 		connection.query(sql, function (err, rows) {
 			if (err) {
 				res.json({
@@ -584,10 +628,7 @@ module.exports = function (app, passport) {
 				})
 				return
 			} else {
-				res.json({
-					status: 0,
-					data: '修改成功'
-				})
+				next()
 			}
 		});
 	}

@@ -54,9 +54,9 @@ export default {
   methods: {
     onSubmit: function(ruleForm) {
       const form = {
-        old: this.ruleForm.oldPwd,
-        new: this.ruleForm.newPwd,
-        newTwo: this.ruleForm.newPwdTwo
+        id: sessionStorage.getItem('id'),
+        old_password: this.ruleForm.oldPwd,
+        new_password: this.ruleForm.newPwdTwo
       };
       this.$refs[ruleForm].validate(valid => {
         if (valid) {
@@ -64,7 +64,7 @@ export default {
             this.$message.error("确认密码必须与新密码一致");
           } else {
             this.$http
-              .post("api/updatePwd", this.qs.stringify(form))
+              .post("api/updatePassword", this.qs.stringify(form))
               .then(res => {
                 if (res.data.status === 0) {
                   this.$message.success("修改成功");
