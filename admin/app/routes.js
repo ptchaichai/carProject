@@ -196,12 +196,12 @@ module.exports = function (app, passport) {
 		}
 	})
 	//修改、完善资料
-	app.post('/api/updateInformation', isLoggedIn, function(req, res, next) {
-		if(req.body) {
+	app.post('/api/updateInformation', isLoggedIn, function (req, res, next) {
+		if (req.body) {
 			let param = req.body;
-			let sql =  `UPDATE user SET phone='${param.phone}', idcard='${param.idcard}', birthday='${param.age}',sex='${param.sex}',email='${param.email}',address='${param.address}' WHERE id=${param.id}`
-			updateeOne(sql, res, function(){
-				updateeOne(`UPDATE custom SET　user_phone='${param.phone}'`, res, function(){
+			let sql = `UPDATE user SET phone='${param.phone}', idcard='${param.idcard}', birthday='${param.age}',sex='${param.sex}',email='${param.email}',address='${param.address}' WHERE id=${param.id}`
+			updateeOne(sql, res, function () {
+				updateeOne(`UPDATE custom SET user_phone='${param.phone}'`, res, function () {
 					res.json({
 						status: 0,
 						data: '修改成功'
@@ -211,18 +211,18 @@ module.exports = function (app, passport) {
 		}
 	})
 	//修改密码
-	app.post('/api/updatePassword', isLoggedIn, function(req, res, next) {
-		if(req.body) {
+	app.post('/api/updatePassword', isLoggedIn, function (req, res, next) {
+		if (req.body) {
 			let param = req.body;
-			connection.query(`SELECT * from WHERE id=${param.id} AND password='${param.old_password}'`, function(err, rows){
-				if(err) {
+			connection.query(`SELECT id, password from user WHERE id=${param.id} AND password='${param.old_password}'`, function (err, rows) {
+				if (err) {
 					res.json({
 						data: err,
 						status: 1
 					})
 				} else {
-					let sql =  `UPDATE user SET password='${param.new_password}',WHERE id=${param.id}`
-					updateeOne(sql, res, function(){
+					let sql = `UPDATE user SET password='${param.new_password}' WHERE id=${param.id}`
+					updateeOne(sql, res, function () {
 						res.json({
 							status: 2,
 							data: '修改成功，请重新登录'
@@ -323,21 +323,6 @@ module.exports = function (app, passport) {
 	app.post('/api/addCar', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			let sql = `INSERT INTO car (car_id,shape,price,color,status) VALUES ('${param.car_id}','${param.shape}','${param.price}','${param.color}','${param.status}')`
-			addOne(sql, res)
-		}
-	})
-	//添加公告
-	app.post('/api/addAnnounce', isLoggedIn, function (req, res, next) {
-		if (req.body) {
-			let param = req.body;
-			let sql = `INSERT INTO announce (title, content, user_name, user_role, user_id) VALUES ('${param.title}', '${param.content}', '${param.username}', '${param.userrole}', '${param.userid}')`
-			addOne(sql, res)
-		}
-	})
-	app.post('/api/updateCar', isLoggedIn, function (req, res, next) {
-		if (req.body) {
-			let param = req.body;
 			connection.query(`SELECT car_id from car WHERE car_id = '${param.car_id}'`, function (err, rows) {
 				if (err) {
 					res.json({
@@ -352,13 +337,23 @@ module.exports = function (app, passport) {
 							data: '车的编号重复'
 						})
 					} else {
-						let sql = `INSERT INTO car (car_id, carname, shape, color, price, status) VALUES ('${param.car_id}','${param.carname}','${param.shape}','${param.color}','${param.price}',${param.status})`;
+						let sql = `INSERT INTO car (car_id,shape,price,color,status) VALUES ('${param.car_id}','${param.shape}','${param.price}','${param.color}','${param.status}')`
 						addOne(sql, res)
 					}
 				}
 			})
+
 		}
 	})
+	//添加公告
+	app.post('/api/addAnnounce', isLoggedIn, function (req, res, next) {
+		if (req.body) {
+			let param = req.body;
+			let sql = `INSERT INTO announce (title, content, user_name, user_role, user_id) VALUES ('${param.title}', '${param.content}', '${param.username}', '${param.userrole}', '${param.userid}')`
+			addOne(sql, res)
+		}
+	})
+
 	//获取客户列表
 	app.post('/api/getCustomList', isLoggedIn, function (req, res, next) {
 		if (req.body) {
@@ -397,7 +392,6 @@ module.exports = function (app, passport) {
 						data: err
 					})
 				} else {
-					console.log(rows)
 					if (rows.length > 0) {
 						res.json({
 							status: 1,
@@ -412,19 +406,19 @@ module.exports = function (app, passport) {
 		}
 	})
 	//转移客户
-	app.post('/api/transformCustom', isLoggedIn, function(req, res, next){
-		if(req.body) {
+	app.post('/api/transformCustom', isLoggedIn, function (req, res, next) {
+		if (req.body) {
 			let param = req.body;
-			connection.query(`select * from user where phone='${param.phone}'`, function(err, rows) {
-				if(err) {
+			connection.query(`select * from user where phone='${param.phone}'`, function (err, rows) {
+				if (err) {
 					res.json({
 						data: err,
 						status: 1
 					})
 				} else {
-					if(rows.length > 0) {
-						let sql = `UPDATE custom SET phone='${rows[0].phone}',user_id='${rows[0].id}',user_name='${rows[0].username}' WHERE id=${param.id}`
-						addOne(sql,res)
+					if (rows.length > 0) {
+						let sql = `UPDATE custom SET user_phone='${rows[0].phone}',user_id='${rows[0].id}',user_name='${rows[0].username}' WHERE id=${param.id}`
+						addOne(sql, res)
 					} else {
 						res.json({
 							data: '没有该人员',
@@ -434,7 +428,14 @@ module.exports = function (app, passport) {
 				}
 			})
 		}
-		
+	})
+	// 转换客户类型
+	app.post('/api/changeCustom', isLoggedIn, function (req, res, next) {
+		if (req.body) {
+			let param = req.body;
+			let sql = `UPDATE custom SET shape=${+param.shape}, sale_price=${param.sale_price}, WHERE id=${param.id}`;
+			addOne(sql, res)
+		}
 	})
 	// 修改来电客户信息
 	app.post('/api/updateCustom', isLoggedIn, function (req, res, next) {
@@ -547,10 +548,10 @@ module.exports = function (app, passport) {
 		});
 	}
 
-  /**
-	 * 分页函数封装
-	 * @param 
-	 */
+	/**
+	   * 分页函数封装
+	   * @param 
+	   */
 	function pageNation(param, sql, res) {
 		let page = parseInt(param.page || 1); //页码
 		let pageSize = parseInt(param.pageSize || 10); //页数
@@ -604,7 +605,7 @@ module.exports = function (app, passport) {
 	}
 	//查找函数
 	function findOne(sql, res, next) {
-		connection.query(sql, function(err, rows) {
+		connection.query(sql, function (err, rows) {
 			if (err) {
 				res.json({
 					status: 1,

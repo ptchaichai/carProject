@@ -49,26 +49,37 @@
           {{scop.row.label == 0 ? '来电客户': (scop.row.label == 1 ? '来店客户' : '购车客户')}}
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="姓名" min-width="10%" align="center"></el-table-column>
-      <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
+      <el-table-column prop="phone" label="电话" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="email" label="邮箱" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="address" label="地址" min-width="20%" align="center"></el-table-column>
       </el-table-column>
-      <el-table-column prop="shape" label="关注车型" min-width="25%" align="center"></el-table-column>
+      <el-table-column prop="shape" label="关注车型" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="user_name" label="处理人" min-width="23%" align="center">
         <template slot-scope="scop">
           <span>{{scop.row.user_name}}</span>(<span>{{scop.row.user_phone}}</span>)
         </template>
       </el-table-column>
       <el-table-column prop="add_time" label="添加时间" min-width="20%" align="center"></el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="35%" align="center" v-if="showAdd">
+      <el-table-column fixed="right" label="操作" min-width="45%" align="center" v-if="showAdd">
         <template slot-scope="scope">
           <el-button slot="reference" type="primary" size="small" round class="update" @click="update(scope.row)" v-show="(scope.row.user_id == nowId ? true :false)">修改
           </el-button>
           <el-button @click="deleteRow(scope.row)" type="info" size="small" round v-show="(scope.row.user_id == nowId ? true :false)">删除</el-button>
-          <span v-show="(scope.row.user_id == nowId ? false:true)">暂无权限</span>
-        </template>
-      </el-table-column>
+          <span @click="shift(scope.row)" style="color:#f56c6c; margin-left: 10px;font-size: 14px;cursor: pointer;"
+          v-show="(scope.row.user_id == nowId ? true :false)">转移!
+        </span>
+        <span v-show="(scope.row.user_id == nowId ? false:true)">暂无权限</span>
+      </template>
+    </el-table-column>
+    <el-table-column fixed="right" label="类型操作" min-width="25%" align="center" v-if="showAdd">
+      <template slot-scope="scope">
+        <span slot="reference" style="color:#f56c6c; margin-left: 10px;font-size: 14px;cursor: pointer;" @click="change(scope.row)"
+          v-show="(scope.row.user_id == nowId ? true :false)">类型转换
+      </span>
+        <span v-show="(scope.row.user_id == nowId ? false:true)">暂无权限</span>
+      </template>
+    </el-table-column>
     </el-table>
     <div style="margin-top: 20px">
       <el-button @click="toggleSelection(tableData)">全选</el-button>
@@ -81,6 +92,17 @@
         <el-button type="primary" @click="removeConfirm()" round>确 定</el-button>
         <el-button @click="dialogDelete = false" round>取 消</el-button>
       </span>
+    </el-dialog>
+    <el-dialog title="警告！" :visible.sync="dialogShift" width="35%">
+      <i class="el-icon-warning"></i>
+      <span>是否要要将此客户转移到其他人员名下，转移后不可更改？</span>
+      <el-form :model="shiftForm" :rules="rulesShift" ref="shiftForm">
+        <el-form-item label="接受客户的销售人员电话" prop="phone">
+          <el-input v-model="shiftForm.phone" placeholder="请输入电话"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-button type="primary" @click="shiftConfirm('shiftForm')" round>确 定</el-button>
+      <el-button @click="shiftCancel('shiftForm')" round>取 消</el-button>
     </el-dialog>
     <el-dialog title="修改信息" :visible.sync="dialogUpdate" width="50%">
       <el-form :model="updateForm" :rules="rulesUpdate" ref="updateForm">
@@ -108,6 +130,7 @@
 <script>
   import { isvalidPhone } from "./../valid";
   import { isvalidEmail } from "./../valid";
+  import { isvalidPrice } from "./../valid";
   import API from "./../api.js";
   const validPhone = (rule, value, callback) => {
     if (!value) {
@@ -127,6 +150,15 @@
       callback();
     }
   };
+  const checkPrice = (rule, value, callback) => {
+    if (!value) {
+      callback(new Error("请输入价格"));
+    } else if (!isvalidPrice(value)) {
+      return callback(new Error("输入不能为空，且最多三位小数"));
+    } else {
+      callback();
+    }
+  };
   export default {
     name: "callClient",
     data() {
@@ -139,10 +171,14 @@
         dialogDelete: false,
         dialogUpdate: false,
         dialogAdd: false,
+        dialogChange: false,
+        dialogShift: false,
         inputName: "",
         rowVal: "",
         nowId:"",
-        delID:"",
+        changeID:"",
+        delID: "",
+        shiftID: "",
         currentIndex: "",
         currentIndex: "",
         tableData: [],
@@ -160,7 +196,7 @@
           phone: "",
           email: "",
           address: "",
-          carType: ""
+          shape: ""
         },
         rules: {
           name: [
@@ -173,16 +209,30 @@
           ],
           phone: [{ required: true, trigger: "blur", validator: validPhone }],
           email: [{ required: true, trigger: "blur", validator: validEmail }],
-          carType: [
+          shape: [
             { required: true, message: "请选择价格意愿", trigger: "blur" }
           ]
+        },
+        shiftForm: {
+          phone: "",
+        },
+        changeForm: {
+          shape: "",
+          sale_price: "",
+        },
+        rulesShift: {
+          phone: [{ required: true, trigger: "blur", validator: validPhone }],
+        },
+        rulesChange: {
+          shape: [{ required: true, trigger: "blur", message: "请选择车型" }],
+          sale_price: [{ required: true, trigger: "blur", validator: checkPrice }],
         },
         updateForm: {
           name: "",
           phone: "",
           email: "",
           address: "",
-          carType: ""
+          shape: ""
         },
         rulesUpdate: {
           name: [
@@ -195,7 +245,7 @@
           ],
           phone: [{ required: true, trigger: "blur", validator: validPhone }],
           email: [{ required: true, trigger: "blur", validator: validEmail }],
-          carType: [
+          shape: [
             { required: true, message: "请选择价格意愿", trigger: "blur" }
           ]
         },
@@ -368,7 +418,71 @@
             this.$message.error("删除失败");
           }
         });
-      }
+      },
+      shift: function (row) {
+        this.shiftID = row.id;
+        this.dialogShift = true;
+      },
+      shiftConfirm: function (shiftForm) {
+        const form = {
+          phone: this.shiftForm.phone,
+          id: this.shiftID
+        };
+        this.$refs[shiftForm].validate(valid => {
+          if (valid) {
+            this.$http
+              .post(API.SHIFT_CUSTOM, this.qs.stringify(form))
+              .then(res => {
+                if (res.data.status === 0) {
+                  this.dialogShift = false;
+                  this.$message.success("转移成功");
+                  this.getCustomList()
+                } else {
+                  this.$message.error("转移失败，人员不存在！");
+                }
+              });
+          } else {
+            return false;
+          }
+        });
+      },
+      shiftCancel: function (shiftForm) {
+        this.$refs[shiftForm].resetFields();
+        this.dialogShift = false;
+      },
+      change: function (row) {
+        this.changeID = row.id;
+        this.dialogChange = true;
+      },
+      changeConfirm: function (changeForm) {
+        const form = {
+          shape: this.changeForm.shape,
+          sale_price: this.changeForm.sale_price,
+          id: this.changeID,
+          label:2,
+        };
+        this.$refs[changeForm].validate(valid => {
+          if (valid) {
+            this.$http
+              .post(API.CHANGE_CUSTOM, this.qs.stringify(form))
+              .then(res => {
+                if (res.data.status === 0) {
+                  this.dialogChange = false;
+                  this.$message.success("转换成功");
+                  this.getCustomList()
+                } else {
+                  this.$message.error("转换失败");
+                }
+              });
+          } else {
+            return false;
+          }
+        });
+      },
+      changeCancel: function (changeForm) {
+        this.$refs[changeForm].resetFields();
+        this.dialogChange = false;
+      },
     }
   };
 </script>

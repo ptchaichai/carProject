@@ -76,6 +76,16 @@ export default {
    */
   DEL_CUSTOM:'/api/delCustom',
   /**
+   * 修改客户类型
+   * 
+   */
+  CHANGE_CUSTOM:'/api/changeCustom',
+  /**
+   * 转移客户
+   * 
+   */
+  SHIFT_CUSTOM:'/api/shiftCustom',
+  /**
    * 添加公告
    */
   ADD_ANNOUNCE: '/api/addAnnounce',

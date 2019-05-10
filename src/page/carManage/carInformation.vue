@@ -49,13 +49,13 @@
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="car_id" label="编号" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="shape" label="型号" min-width="10%" align="center"></el-table-column>
-      <el-table-column prop="price" label="价格" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="price" label="价格(万元)" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="color" label="颜色" min-width="10%" align="center"></el-table-column>
       <el-table-column prop="add_time" label="添加时间" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="status" label="状态" min-width="15%" align="center">
         <template slot-scope="scop">
-          <span style="color:#67c23a" v-show="scop.row.status == 0">上架</span>
-          <span style="color:#f56c6c" v-show="scop.row.status == 1">下架</span>
+          <span style="color:#67c23a" v-show="scop.row.status == 0">已上架</span>
+          <span style="color:#f56c6c" v-show="scop.row.status == 1">已下架</span>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" min-width="20%" align="center" v-if="showAdd">
@@ -329,7 +329,7 @@
                 this.$message.success("添加成功");
                 this.getCarList();
               } else {
-                this.$message.error("添加失败");
+                this.$message.error("添加失败,汽车编号不能重复！");
               }
             });
           } else {
