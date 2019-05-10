@@ -151,7 +151,7 @@
         });
       },
       perfectCancel: function (ruleForm) {
-        this.$refs[ruleForm].resetFields();
+        this.$router.push({ path: "/manage/personalManage/personal" });
       }
     }
   };

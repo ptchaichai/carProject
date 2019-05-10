@@ -78,7 +78,15 @@
                 });
             }
           } else {
-            return false;
+            this.$http
+              .post("api/updatePassword", this.qs.stringify(form))
+              .then(res => {
+                if (res.data.status === 2) {
+                  this.$message.success('修改成功,请重新登录');
+                } else {
+                  this.$message.error(res.data.data);
+                }
+              });
           }
         });
       },
