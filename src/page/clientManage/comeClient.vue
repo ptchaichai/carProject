@@ -96,7 +96,7 @@
     <el-dialog title="警告！" :visible.sync="dialogShift" width="35%">
       <i class="el-icon-warning"></i>
       <span>是否要要将此客户转移到其他人员名下，转移后不可更改？</span>
-      <el-form :model="shiftForm" :rules="rulesShift" ref="shiftForm">
+      <el-form :model="shiftForm" :rules="rulesShift" ref="shiftForm" style="width: 86%;margin: 0 auto;">
         <el-form-item label="接受客户的销售人员电话" prop="phone">
           <el-input v-model="shiftForm.phone" placeholder="请输入电话"></el-input>
         </el-form-item>

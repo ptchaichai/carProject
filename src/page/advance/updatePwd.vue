@@ -14,8 +14,13 @@
         <verify-pass-word-tip :password="ruleForm.newPwd" :isShowTip='isShowTip'></verify-pass-word-tip>
       </div>
       <el-form-item label="确认新密码:" prop="newPwdTwo">
-        <el-input v-model="ruleForm.newPwdTwo" type="password" placeholder="请确认新密码"></el-input>
+        <el-input v-model="ruleForm.newPwdTwo" @focus.capture.native='changePasswordTip(true)'
+          @blur.capture.native='changePasswordTip(false)' auto-complete="new-password" type="password"
+          placeholder="请确认新密码"></el-input>
       </el-form-item>
+      <div style="position: absolute">
+        <verify-pass-word-tip :password="ruleForm.newPwdTwo" :isShowTip='isShowTip'></verify-pass-word-tip>
+      </div>
       <el-form-item>
         <el-button type="primary" @click="onSubmit('ruleForm')">确定修改</el-button>
         <el-button type="info" @click="reset('ruleForm')">重置</el-button>
@@ -66,17 +71,18 @@
               this.$message.error("新密码不能与旧密码相同");
             } else if (this.ruleForm.newPwd.trim() !== this.ruleForm.newPwdTwo.trim()) {
               this.$message.error("确认密码必须与新密码一致");
-            } else {
-              this.$http
-                .post("api/updatePassword", this.qs.stringify(form))
-                .then(res => {
-                  if (res.data.status === 0) {
-                    this.$message.success("修改成功");
-                  } else {
-                    this.$message.error("修改失败");
-                  }
-                });
             }
+            //  else {
+            //   this.$http
+            //     .post("api/updatePassword", this.qs.stringify(form))
+            //     .then(res => {
+            //       if (res.data.status === 0) {
+            //         this.$message.success("修改成功");
+            //       } else {
+            //         this.$message.error("修改失败");
+            //       }
+            //     });
+            // }
           } else {
             this.$http
               .post("api/updatePassword", this.qs.stringify(form))
