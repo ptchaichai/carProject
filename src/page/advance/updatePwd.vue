@@ -70,7 +70,7 @@
               this.$http
                 .post("api/updatePassword", this.qs.stringify(form))
                 .then(res => {
-                  if (res.data.status === 0) {
+                  if (res.data.status === 2) {
                     this.$message.success("修改成功");
                   } else {
                     this.$message.error("修改失败");

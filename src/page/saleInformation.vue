@@ -3,10 +3,10 @@
   <div class="saleInformation">
     <p>销售信息统计量</p>
     <div class="div-flex" style="text-align:center">
-      <div class="chart-tab" id="chart-tab0" @click="Day($event)" ref="Day">当日</div>
-      <div class="chart-tab activecss" id="chart-tab1" @click="Month($event)" ref="Month">当月</div>
-      <div class="chart-tab" id="chart-tab2" @click="Quarter($event)" ref="Quarter">当季度</div>
-      <div class="chart-tab" id="chart-tab3" @click="Year($event)" ref="Year">当年</div>
+      <div class="chart-tab" id="chart-tab0" @click="Day($event, 0)" ref="Day">当日</div>
+      <div class="chart-tab activecss" id="chart-tab1" @click="Month($event,1)" ref="Month">当月</div>
+      <div class="chart-tab" id="chart-tab2" @click="Quarter($event, 2)" ref="Quarter">当季度</div>
+      <div class="chart-tab" id="chart-tab3" @click="Year($event, 3)" ref="Year">当年</div>
     </div>
     <div class="chart">
       <div
@@ -53,20 +53,33 @@ export default {
       monthShow: false,
       quarterShow: false,
       yearShow: false,
-      dayData: [23,12,6],
-      monthData: [56,34,27],
-      quarterData: [102,98,69],
-      yearData: [195,134,103],
+      data: []
     };
   },
   mounted() {
-    this.$refs.Day.style.background = "#f56c6c";
-    this.$refs.Day.style.color = "#fff";
-    this.drawDay();
+    console.log(this.$refs)
+    this.$refs['Day'].style.background = "#f56c6c";
+    this.$refs['Day'].style.color = "#fff";
+  },
+  created(){
+    this.getCount(0, '#f56c6c', 'myChartDay');
   },
   methods: {
-    drawDay() {
-      const myChartDay = echarts.init(this.$refs.myChartDay);
+    getCount(data, currentColor, charyDay){
+      const param = {
+        type: data
+      }
+      this.$http.post("/api/staticsSale", this.qs.stringify(param)).then(res => {
+        if (res.data.status === 0) {
+         this.data = res.data.data.count;
+         this.drawDay(this.data, currentColor, charyDay);
+        } else {
+          this.$message.error("获取失败");
+        }
+      });
+    },
+    drawDay(row, currentColor, charyDay) {
+      const myChartDay = echarts.init(this.$refs[charyDay]);
       myChartDay.setOption({
         grid: {
           left: "3%",
@@ -91,17 +104,17 @@ export default {
           {
             name: "销量",
             type: "bar",
-            data: this.dayData,
+            data: row,
             itemStyle: {
               normal: {
-                color: "#f56c6c"
+                color:currentColor
               }
             }
           }
         ]
       });
     },
-    Day: function(e) {
+    Day: function(e, type) {
       this.$refs.Month.style.background = "#fff";
       this.$refs.Month.style.color = "#000";
       this.$refs.Quarter.style.background = "#fff";
@@ -114,9 +127,9 @@ export default {
       this.quarterShow = false;
       this.yearShow = false;
       this.monthShow = false;
-      this.drawDay();
+      this.getCount(type, '#f56c6c', 'myChartDay');
     },
-    Month: function(e) {
+    Month: function(e, type) {
       this.$refs.Day.style.background = "#fff";
       this.$refs.Day.style.color = "#000";
       this.$refs.Quarter.style.background = "#fff";
@@ -130,41 +143,9 @@ export default {
       this.yearShow = false;
       this.monthShow = true;
       const myChartMonth = echarts.init(this.$refs.myChartMonth);
-      myChartMonth.setOption({
-        grid: {
-          left: "3%",
-          right: "20%", //距离右侧边距
-          bottom: "9%",
-          show: true,
-          containLabel: true
-        },
-        tooltip: {},
-        xAxis: {
-          name: "类型",
-          data: ["来电客户量", "来店客户量", "购车客户量"],
-          axisLabel: {
-            interval: 0,
-            rotate: -30
-          }
-        },
-        yAxis: {
-          name: "统计数量"
-        },
-        series: [
-          {
-            name: "销量",
-            type: "bar",
-            data: this.monthData,
-            itemStyle: {
-              normal: {
-                color: "#e6a23c"
-              }
-            }
-          }
-        ]
-      });
+      this.getCount(type, '#e6a23c', 'myChartMonth');
     },
-    Quarter: function(e) {
+    Quarter: function(e, type) {
       this.$refs.Day.style.background = "#fff";
       this.$refs.Day.style.color = "#000";
       this.$refs.Month.style.background = "#fff";
@@ -178,41 +159,9 @@ export default {
       this.yeardayShow = false;
       this.monthShow = false;
       const myChartQuarter = echarts.init(this.$refs.myChartQuarter);
-      myChartQuarter.setOption({
-        grid: {
-          left: "3%",
-          right: "20%", //距离右侧边距
-          bottom: "9%",
-          show: true,
-          containLabel: true
-        },
-        tooltip: {},
-        xAxis: {
-          name: "类型",
-          data: ["来电客户量", "来店客户量", "购车客户量"],
-          axisLabel: {
-            interval: 0,
-            rotate: -30
-          }
-        },
-        yAxis: {
-          name: "统计数量"
-        },
-        series: [
-          {
-            name: "销量",
-            type: "bar",
-            data: this.quarterData,
-            itemStyle: {
-              normal: {
-                color: "#67c23a"
-              }
-            }
-          }
-        ]
-      });
+      this.getCount(type, '#67c23a', 'myChartQuarter');
     },
-    Year: function(e) {
+    Year: function(e, type) {
       this.$refs.Day.style.background = "#fff";
       this.$refs.Day.style.color = "#000";
       this.$refs.Month.style.background = "#fff";
@@ -226,39 +175,7 @@ export default {
       this.yearShow = true;
       this.monthShow = false;
       const myChartYear = echarts.init(this.$refs.myChartYear);
-      myChartYear.setOption({
-        grid: {
-          left: "3%",
-          right: "20%", //距离右侧边距
-          bottom: "9%",
-          show: true,
-          containLabel: true
-        },
-        tooltip: {},
-        xAxis: {
-          name: "类型",
-          data: ["来电客户量", "来店客户量", "购车客户量"],
-          axisLabel: {
-            interval: 0,
-            rotate: -30
-          }
-        },
-        yAxis: {
-          name: "统计数量"
-        },
-        series: [
-          {
-            name: "销量",
-            type: "bar",
-            data: this.yearData,
-            itemStyle: {
-              normal: {
-                color: "#409eef"
-              }
-            }
-          }
-        ]
-      });
+      this.getCount(type, '#409eef', 'myChartYear');
     }
   }
 };

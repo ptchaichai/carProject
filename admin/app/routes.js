@@ -234,6 +234,75 @@ module.exports = function (app, passport) {
 			})
 		}
 	})
+	//销售信息统计
+	app.post('/api/staticsSale', isLoggedIn, function(req, res, next) {
+		console.log('请求销售数据')
+		if(req.body) {
+			let param = req.body;
+			var sql = ''
+			if(param.type == 0) { //当日
+				sql='select COUNT(*) from custom  where TO_DAYS(add_time)=TO_DAYS(NOW())';
+			} else if(param.type == 1) { //当月
+				sql="SELECT COUNT(*) FROM custom WHERE DATE_FORMAT(add_time,'%Y%m')= DATE_FORMAT(CURDATE(),'%Y%m')";
+			} else if(param.type == 2) { //当季
+				sql='select COUNT(*) from custom where QUARTER(add_time)=QUARTER(NOW())'
+			} else if(param.type == 3) { //当年
+				sql='select  COUNT(*) from custom where YEAR(add_time)=YEAR(NOW())'
+			}
+		findOne( `${sql} AND label=0`, res, function(data){ //来电客户
+			let callCount = JSON.parse(JSON.stringify(data[0]));
+			console.log(callCount)
+			findOne(sql+'AND label=1',res, function(store){ //来店客户
+				let storeCount = JSON.parse(JSON.stringify(store[0]));
+				findOne(sql+'AND label=2', res, function(car) { //购车客户
+					let carCount = JSON.parse(JSON.stringify(car[0]));
+					res.json({
+						status: 0,						
+						data: {
+							count: [callCount['COUNT(*)'],storeCount['COUNT(*)'],carCount['COUNT(*)']]
+						}
+					})
+				})
+			})
+		})
+	}	
+	})
+	//汽车销售信息统计
+	app.post('/api/staticsCar', isLoggedIn, function(req, res, next) {
+		if(req.body) {
+			let param = req.body;
+			var sql = ''
+			if(param.type == 1) { //当月
+				sql="SELECT * FROM custom WHERE DATE_FORMAT(add_time,'%Y%m')= DATE_FORMAT(CURDATE(),'%Y%m') AND label=2";
+			} else if(param.type == 3) { //当年
+				sql='select  * from custom where YEAR(add_time)=YEAR(NOW()) AND label=2'
+			}
+			let carType = [{ label: "奥德赛", number: 0 },
+							{ label: "宾智", number: 0 },
+							{ label: "飞度", number: 0 },
+							{ label: "锋范", number: 0 },
+							{ label: "凌派", number: 0 },
+							{ label: "雅阁", number: 0 }
+						  ]
+			console.log(sql)			  
+			findOne(sql, res, function(data){ 
+				console.log(data)
+				if(data instanceof Array) {
+					data.map((item) => {
+						carType.map((ele) => {
+							if(ele.label === item.shape) {
+								ele.number++;
+							}
+						})
+					})
+				}
+				res.json({
+					data: carType,
+					status: 0
+				})
+		})
+	}	
+	})
 	//获取销售经理列表
 	app.post('/api/getManagerList', isLoggedIn, function (req, res, next) {
 		if (req.body) {
@@ -312,7 +381,7 @@ module.exports = function (app, passport) {
 				};
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = "SELECT COUNT(*) FROM  car";
-				sql = search.value ? `SELECT * FROM car WHERE carname LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM car ORDER BY add_time desc limit ${start}, ${end}`
+				sql = search.value ? `SELECT * FROM car WHERE '%${search.name}%' LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM car ORDER BY add_time desc limit ${start}, ${end}`
 				let allSql = {
 					count: countSql,
 					page: sql
@@ -374,7 +443,7 @@ module.exports = function (app, passport) {
 				};
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = "SELECT COUNT(*) FROM  custom";
-				sql = search.value ? `SELECT * FROM custom WHERE name LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM custom WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
+				sql = search.value ? `SELECT * FROM custom WHERE '%${search.name}%' LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM custom WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
 				let allSql = {
 					count: countSql,
 					page: sql
@@ -520,8 +589,6 @@ module.exports = function (app, passport) {
 	})
 	// 判断是否登录的中间件
 	function isLoggedIn(req, res, next) {
-		// console.log('session', req.session)
-		// console.log('isAuthenticated', req.isAuthenticated())
 		if (req.isAuthenticated()) return next();
 		res.json({
 			status: 2,

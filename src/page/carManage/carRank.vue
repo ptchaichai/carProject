@@ -84,7 +84,23 @@
         this.drawMonth();
       }
     },
+    created(){
+      this.getCount(1);
+    },
     methods: {
+      getCount(type){
+        const param = {
+          type: type
+        }
+       this.$http.post("/api/staticsCar", this.qs.stringify(param)).then(res => {
+         if (res.data.status === 0) {
+          console.log(res.data.data)
+          
+         } else {
+           this.$message.error("获取失败");
+         }
+       });
+      },
       drawMonth() {
         const myChartMonth = echarts.init(this.$refs.myChartMonth);
         myChartMonth.setOption({
