@@ -122,7 +122,7 @@
             menuIndex: '5',
             menuSubLink: [
               {
-                menuName: '修改资料',
+                menuName: '修改/完善资料',
                 menuUrl: '/manage/advance/perfect',
                 menuIndex: '5-1',
                 show: true

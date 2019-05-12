@@ -5,7 +5,7 @@
       <div class="box">
         <div class="search-input" style="width:400px">
           <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
-            <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
+            <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 110px;">
               <el-option label="姓名" value="username"></el-option>
               <el-option label="电话" value="phone"></el-option>
             </el-select>
@@ -31,7 +31,7 @@
     </div>
     <el-table :data="tableData" ref="multipleTable" border :row-style="tableRowStyle"
       :header-cell-style="tableHeaderColor" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="50" align="center"></el-table-column>
+      <!-- <el-table-column type="selection" width="50" align="center"></el-table-column> -->
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="username" label="姓名" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
@@ -58,7 +58,7 @@
       :current-page.sync="page" @size-change="getPersionList()" @current-change="getPersionList()"
       @prev-click="getPersionList()" @next-click="getPersionList()">
     </el-pagination>
-    <div style="margin-top: 20px">
+    <div style="margin-top: 20px" v-show="false">
       <el-button @click="toggleSelection(tableData)">全选</el-button>
       <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
     </div>
@@ -109,7 +109,7 @@
         showAdd: false,
         page: 1, //页码
         pageSize: 10, //一条默认页数
-        searchName: "username", //搜索的条件
+        searchName: "搜索", //搜索的条件
         searchData: "", //搜索的名字
         tableData: [], //数据
         password: "",
@@ -171,7 +171,7 @@
       },
       // 修改table tr行的背景色
       tableRowStyle({ row, rowIndex }) {
-        if (rowIndex / 2 === 0) {
+        if (rowIndex % 2 === 0) {
           return "background-color: #fff";
         } else {
           return "background-color: #f9f9f9";

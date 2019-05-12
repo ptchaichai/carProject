@@ -47,7 +47,7 @@ module.exports = function (app, passport) {
 								store_id: user.store_id
 							}
 						})
-						console.log('此时的session', req.session)
+						// console.log('此时的session', req.session)
 					}
 				})
 			}
@@ -216,7 +216,7 @@ module.exports = function (app, passport) {
 			let param = req.body;
 			findOne(`SELECT * from user WHERE id=${param.id} AND password='${param.old_password}'`, res, function(data){
 				if(data.length> 0) {
-					console.log(data[0])
+					// console.log(data[0])
 					let sql =  `UPDATE user SET password='${param.new_password}' WHERE id=${param.id}`
 					updateeOne(sql, res, function(){
 						res.json({
@@ -233,6 +233,72 @@ module.exports = function (app, passport) {
 				}
 			})
 		}
+	})
+	//销售信息统计
+	app.post('/api/staticsSale', isLoggedIn, function(req, res, next) {
+		if(req.body) {
+			let param = req.body;
+			var sql = ''
+			if(param.type == 0) { //当日
+				sql='SELECT COUNT(*) FROM custom  where TO_DAYS(add_time)=TO_DAYS(NOW())';
+			} else if(param.type == 1) { //当月
+				sql="SELECT COUNT(*) FROM custom WHERE DATE_FORMAT(add_time,'%Y%m')= DATE_FORMAT(CURDATE(),'%Y%m')";
+			} else if(param.type == 2) { //当季
+				sql='SELECT COUNT(*) FROM custom where QUARTER(add_time)=QUARTER(NOW())'
+			} else if(param.type == 3) { //当年
+				sql='SELECT  COUNT(*) FROM custom where YEAR(add_time)=YEAR(NOW())'
+			}
+		findOne( sql+'AND label=0', res, function(data){ //来电客户
+			let callCount = JSON.parse(JSON.stringify(data[0]));
+			findOne(sql+'AND label=1',res, function(store){ //来店客户
+				let storeCount = JSON.parse(JSON.stringify(store[0]));
+				findOne(sql+'AND label=2', res, function(car) { //购车客户
+					console.log(car);
+					let carCount = JSON.parse(JSON.stringify(car[0]));
+					res.json({
+						status: 0,						
+						data: {
+							count: [callCount['COUNT(*)'],storeCount['COUNT(*)'],carCount['COUNT(*)']]
+						}
+					})
+				})
+			})
+		})
+	}	
+	})
+	//汽车销售信息统计
+	app.post('/api/staticsCar', isLoggedIn, function(req, res, next) {
+		if(req.body) {
+			let param = req.body;
+			var sql = ''
+			if(param.type == 1) { //当月
+				sql="SELECT * FROM custom WHERE DATE_FORMAT(add_time,'%Y%m')= DATE_FORMAT(CURDATE(),'%Y%m') AND label=2";
+			} else if(param.type == 3) { //当年
+				sql='SELECT  * FROM custom where YEAR(add_time)=YEAR(NOW()) AND label=2'
+			}
+			let carType = [{ label: "奥德赛", number: 0 },
+							{ label: "宾智", number: 0 },
+							{ label: "飞度", number: 0 },
+							{ label: "锋范", number: 0 },
+							{ label: "凌派", number: 0 },
+							{ label: "雅阁", number: 0 }
+						  ]			  
+			findOne(sql, res, function(data){ 
+				if(data instanceof Array) {
+					data.map((item) => {
+						carType.map((ele) => {
+							if(ele.label === item.shape) {
+								ele.number++;
+							}
+						})
+					})
+				}
+				res.json({
+					data: carType,
+					status: 0
+				})
+		})
+	}	
 	})
 	//获取销售经理列表
 	app.post('/api/getManagerList', isLoggedIn, function (req, res, next) {
@@ -252,7 +318,7 @@ module.exports = function (app, passport) {
 				};
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = "SELECT COUNT(*) FROM  user where role = 1 "
-				sql = search.value ? `SELECT * FROM user WHERE '%${search.name}%' LIKE '%${search.value}%' AND role = 1 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 1 ORDER BY add_time desc limit ${start}, ${end}`
+				sql = search.value ? `SELECT * FROM user WHERE ${search.name} LIKE '%${search.value}%' AND role = 1 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role = 1 ORDER BY add_time desc limit ${start}, ${end}`
 				let allSql = {
 					count: countSql,
 					page: sql
@@ -282,9 +348,9 @@ module.exports = function (app, passport) {
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = role == 1 ? `SELECT COUNT(*) FROM  user where role = 2 and store_id=${param.store_id}` : `SELECT COUNT(*) FROM  user WHERE role=2`
 				if (role == 1) {
-					sql = search.value ? `SELECT * FROM user WHERE '%${search.name}%' LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role=2 and store_id=${param.store_id} ORDER BY add_time desc limit ${start}, ${end}`
+					sql = search.value ? `SELECT * FROM user WHERE ${search.name} LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role=2 and store_id=${param.store_id} ORDER BY add_time desc limit ${start}, ${end}`
 				} else if (role == 0) {
-					sql = search.value ? `SELECT * FROM user WHERE '%${search.name}%' LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role=2 ORDER BY add_time desc limit ${start}, ${end}`
+					sql = search.value ? `SELECT * FROM user WHERE ${search.name} LIKE '%${search.value}%' AND role = 2 ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM user WHERE role=2 ORDER BY add_time desc limit ${start}, ${end}`
 				}
 				let allSql = {
 					count: countSql,
@@ -312,7 +378,7 @@ module.exports = function (app, passport) {
 				};
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = "SELECT COUNT(*) FROM  car";
-				sql = search.value ? `SELECT * FROM car WHERE carname LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM car ORDER BY add_time desc limit ${start}, ${end}`
+				sql = search.value ? `SELECT * FROM car WHERE ${search.name} LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM car ORDER BY add_time desc limit ${start}, ${end}`
 				let allSql = {
 					count: countSql,
 					page: sql
@@ -332,7 +398,6 @@ module.exports = function (app, passport) {
 						data: err
 					})
 				} else {
-					console.log(rows)
 					if (rows.length > 0) {
 						res.json({
 							status: 1,
@@ -374,7 +439,7 @@ module.exports = function (app, passport) {
 				};
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = "SELECT COUNT(*) FROM  custom";
-				sql = search.value ? `SELECT * FROM custom WHERE name LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM custom WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
+				sql = search.value ? `SELECT * FROM custom WHERE ${search.name} LIKE '%${search.value}%' AND label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM custom WHERE label = ${param.label} ORDER BY add_time desc limit ${start}, ${end}`
 				let allSql = {
 					count: countSql,
 					page: sql
@@ -411,7 +476,7 @@ module.exports = function (app, passport) {
 	app.post('/api/transformCustom', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			connection.query(`select * from user where phone='${param.phone}'`, function (err, rows) {
+			connection.query(`select * from user where phone='${param.phone}' and role='${param.role}'`, function (err, rows) {
 				if (err) {
 					res.json({
 						data: err,
@@ -435,7 +500,7 @@ module.exports = function (app, passport) {
 	app.post('/api/changeCustom', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			let sql = `UPDATE custom SET shape=${+param.shape}, sale_price=${param.sale_price}, WHERE id=${param.id}`;
+			let sql = `UPDATE custom SET label='${param.label}', shape='${param.shape}', sale_price=${param.sale_price}, add_time='${param.add_time}' WHERE id=${param.id}`;
 			addOne(sql, res)
 		}
 	})
@@ -489,7 +554,7 @@ module.exports = function (app, passport) {
 				};
 				//为了提高性能，就不放到一个sql语句了
 				let countSql = "SELECT COUNT(*) FROM  announce";
-				sql = search.value ? `SELECT * FROM announce WHERE '%${search.name}%' LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM announce ORDER BY add_time desc limit ${start}, ${end}`
+				sql = search.value ? `SELECT * FROM announce WHERE ${search.name} LIKE '%${search.value}%' ORDER BY add_time desc limit ${start}, ${end}` : `SELECT * FROM announce ORDER BY add_time desc limit ${start}, ${end}`
 				let allSql = {
 					count: countSql,
 					page: sql
@@ -520,8 +585,6 @@ module.exports = function (app, passport) {
 	})
 	// 判断是否登录的中间件
 	function isLoggedIn(req, res, next) {
-		// console.log('session', req.session)
-		// console.log('isAuthenticated', req.isAuthenticated())
 		if (req.isAuthenticated()) return next();
 		res.json({
 			status: 2,

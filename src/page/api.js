@@ -84,7 +84,7 @@ export default {
    * 转移客户
    * 
    */
-  SHIFT_CUSTOM:'/api/shiftCustom',
+  SHIFT_CUSTOM:'/api/transformCustom',
   /**
    * 添加公告
    */
@@ -105,4 +105,12 @@ export default {
    * 修改汽车状态
    */
   UPDATE_STATUS:'/api/updateStatus',
+  /**
+   * 销售信息统计
+   */
+  STATICS_SALE:'/api/staticsSale',
+  /**
+   * 销售信息统计
+   */
+  STATICS_CAR:'/api/staticsCar',
 }

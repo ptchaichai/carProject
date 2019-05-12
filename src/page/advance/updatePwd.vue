@@ -71,6 +71,16 @@
               this.$message.error("新密码不能与旧密码相同");
             } else if (this.ruleForm.newPwd.trim() !== this.ruleForm.newPwdTwo.trim()) {
               this.$message.error("确认密码必须与新密码一致");
+            } else {
+              this.$http
+                .post("api/updatePassword", this.qs.stringify(form))
+                .then(res => {
+                  if (res.data.status === 2) {
+                    this.$message.success("修改成功");
+                  } else {
+                    this.$message.error("修改失败");
+                  }
+                });
             }
             //  else {
             //   this.$http

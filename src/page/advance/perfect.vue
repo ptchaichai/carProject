@@ -80,7 +80,7 @@
             { min: 2, max: 20, message: "请输入 2 到 20 个字符", trigger: "blur" }
           ],
           idcard: [
-            { required: true, message: "请输入地址", trigger: "blur" },
+            { required: true, message: "请输入身份证号", trigger: "blur" },
             { min: 18, max: 18, message: "请输入正确的身份证号", trigger: "blur" }
           ],
           email: [{ required: true, trigger: "blur", validator: validEmail }],

@@ -5,11 +5,11 @@
       <div class="box">
         <div class="search-input" style="width:400px">
           <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
-            <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
-              <el-option label="姓名" value="username"></el-option>
+            <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 110px;">
+              <el-option label="姓名" value="name"></el-option>
               <el-option label="电话" value="phone"></el-option>
             </el-select>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
           </el-input>
         </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
@@ -45,7 +45,7 @@
     </div>
     <el-table :data="tableData" ref="multipleTable" border :row-style="tableRowStyle"
       :header-cell-style="tableHeaderColor" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="50" align="center"></el-table-column>
+      <!-- <el-table-column type="selection" width="50" align="center"></el-table-column> -->
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="label" label="类型" min-width="18%" align="center">
         <template slot-scope="scop">
@@ -78,7 +78,11 @@
         </template>
       </el-table-column>
     </el-table>
-    <div style="margin-top: 20px">
+    <el-pagination layout="prev, pager, next" :total="totalCount" :page-count="page" :page-size.sync="pageSize"
+      :current-page.sync="page" @size-change="getCustomList()" @current-change="getCustomList()"
+      @prev-click="getCustomList()" @next-click="getCustomList()">
+    </el-pagination>
+    <div style="margin-top: 20px" v-show="false">
       <el-button @click="toggleSelection(tableData)">全选</el-button>
       <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
     </div>
@@ -158,7 +162,7 @@
         showAdd: false,
         page: 1, //页码
         pageSize: 10, //一条默认页数
-        searchName: 'username', //搜索的条件，
+        searchName: '选择', //搜索的条件，
         totalCount: 0,
         searchData: "", //搜索的名字
         tableData: [],
@@ -282,7 +286,7 @@
       },
       // 修改table tr行的背景色
       tableRowStyle({ row, rowIndex }) {
-        if (rowIndex / 2 === 0) {
+        if (rowIndex % 2 === 0) {
           return "background-color: #fff";
         } else {
           return "background-color: #f9f9f9";
@@ -295,19 +299,9 @@
         }
       },
       search: function () {
-        const val = this.searchData;
-        if (val !== "") {
-          const form = {
-            searchVal: val
-          };
-          this.$http.post("api/searchCall", this.qs.stringify(form)).then(res => {
-            if (res.data.status === 0) {
-              this.tableData = res.data;
-            } else {
-              this.$message.error("搜索失败");
-            }
-          });
-        }
+        this.page = 1;
+        this.pageSize = 10;
+        this.getCustomList();
       },
       add: function () {
         this.dialogAdd = true;

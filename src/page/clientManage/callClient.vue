@@ -5,11 +5,12 @@
       <div class="box">
         <div class="search-input" style="width:400px">
           <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
-            <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 80px;">
-              <el-option label="姓名" value="username"></el-option>
+            <el-select v-model="searchName" slot="prepend" placeholder="类型" style="width: 110px;"
+              @keyup.enter.native='search()'>
+              <el-option label="姓名" value="name"></el-option>
               <el-option label="电话" value="phone"></el-option>
             </el-select>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
           </el-input>
         </div>
         <el-dialog title="添加信息" :visible.sync="dialogAdd" width="50%">
@@ -42,14 +43,14 @@
     </div>
     <el-table :data="tableData" ref="multipleTable" border :row-style="tableRowStyle"
       :header-cell-style="tableHeaderColor" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="50" align="center"></el-table-column>
+      <!-- <el-table-column type="selection" width="50" align="center"></el-table-column> -->
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="label" label="类型" min-width="15%" align="center">
         <template slot-scope="scop">
           {{scop.row.label == 0 ? '来电客户': (scop.row.label == 1 ? '来店客户' : '购车客户')}}
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="姓名" min-width="10%" align="center"></el-table-column>
+      <el-table-column prop="name" label="姓名" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="email" label="邮箱" min-width="20%" align="center"></el-table-column>
       <el-table-column prop="address" label="地址" min-width="20%" align="center"></el-table-column>
@@ -73,16 +74,20 @@
           <span v-show="(scope.row.user_id == nowId ? false:true)">暂无权限</span>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="类型操作" min-width="25%" align="center" v-if="showAdd">
+      <el-table-column fixed="right" label="类型操作" min-width="23%" align="center" v-if="showAdd">
         <template slot-scope="scope">
-          <span slot="reference" style="color:#f56c6c; margin-left: 10px;font-size: 14px;cursor: pointer;" @click="change(scope.row)"
-            v-show="(scope.row.user_id == nowId ? true :false)">类型转换
-        </span>
+          <span slot="reference" style="color:#f56c6c; margin-left: 10px;font-size: 14px;cursor: pointer;"
+            @click="change(scope.row)" v-show="(scope.row.user_id == nowId ? true :false)">类型转换
+          </span>
           <span v-show="(scope.row.user_id == nowId ? false:true)">暂无权限</span>
         </template>
       </el-table-column>
     </el-table>
-    <div style="margin-top: 20px">
+    <el-pagination layout="prev, pager, next" :total="totalCount" :page-count="page" :page-size.sync="pageSize"
+      :current-page.sync="page" @size-change="getCustomList()" @current-change="getCustomList()"
+      @prev-click="getCustomList()" @next-click="getCustomList()">
+    </el-pagination>
+    <div style="margin-top: 20px" v-show="false">
       <el-button @click="toggleSelection(tableData)">全选</el-button>
       <el-button @click="toggleSelection()" :disabled="multipleSelection.length == 0">取消选择</el-button>
     </div>
@@ -105,8 +110,8 @@
           <el-input v-model="changeForm.sale_price" placeholder="请输入购买价格"></el-input>
         </el-form-item>
       </el-form>
-        <el-button type="primary" @click="changeConfirm('changeForm')" round>确 定</el-button>
-        <el-button @click="changeCancel('changeForm')" round>取 消</el-button>
+      <el-button type="primary" @click="changeConfirm('changeForm')" round>确 定</el-button>
+      <el-button @click="changeCancel('changeForm')" round>取 消</el-button>
     </el-dialog>
     <el-dialog title="警告！" :visible.sync="dialogShift" width="35%">
       <i class="el-icon-warning"></i>
@@ -179,10 +184,12 @@
     data() {
       return {
         showAdd: false,
-        searchName: 'username', //搜索的条件
+        searchName: '选择', //搜索的条件
         searchData: "", //搜索的名字
         multipleSelection: [],
         searchData: "",
+        page: 1, //页码
+        pageSize: 10, //一条默认页数
         dialogDelete: false,
         dialogUpdate: false,
         dialogAdd: false,
@@ -191,9 +198,10 @@
         inputName: "",
         rowVal: "",
         nowId: "",
-        changeID:"",
+        changeID: "",
         delID: "",
         shiftID: "",
+        changeTime:"",
         currentIndex: "",
         currentIndex: "",
         tableData: [],
@@ -318,7 +326,7 @@
       },
       // 修改table tr行的背景色
       tableRowStyle({ row, rowIndex }) {
-        if (rowIndex / 2 === 0) {
+        if (rowIndex % 2 === 0) {
           return "background-color: #fff";
         } else {
           return "background-color: #f9f9f9";
@@ -331,19 +339,9 @@
         }
       },
       search: function () {
-        const val = this.searchData;
-        if (val !== "") {
-          const form = {
-            searchVal: val
-          };
-          this.$http.post("api/searchCall", this.qs.stringify(form)).then(res => {
-            if (res.data.status === 0) {
-              this.tableData = res.data;
-            } else {
-              this.$message.error("搜索失败");
-            }
-          });
-        }
+        this.page = 1;
+        this.pageSize = 10;
+        this.getCustomList();
       },
       add: function () {
         this.dialogAdd = true;
@@ -445,7 +443,8 @@
       shiftConfirm: function (shiftForm) {
         const form = {
           phone: this.shiftForm.phone,
-          id: this.shiftID
+          id: this.shiftID,
+          role: 2,
         };
         this.$refs[shiftForm].validate(valid => {
           if (valid) {
@@ -457,7 +456,7 @@
                   this.$message.success("转移成功");
                   this.getCustomList()
                 } else {
-                  this.$message.error("转移失败，人员不存在！");
+                  this.$message.error("转移失败，该销售人员不存在！");
                 }
               });
           } else {
@@ -472,13 +471,22 @@
       change: function (row) {
         this.changeID = row.id;
         this.dialogChange = true;
+        const date = new Date();
+        const Y = date.getFullYear() + '-';
+        const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+        const D = date.getDate() + ' ';
+        const h = date.getHours() + ':';
+        const m = date.getMinutes() + ':';
+        const s = date.getSeconds();
+        this.changeTime = Y + M + D + h + m + s;
       },
       changeConfirm: function (changeForm) {
         const form = {
           shape: this.changeForm.shape,
           sale_price: this.changeForm.sale_price,
           id: this.changeID,
-          label:2,
+          label: 2,
+          add_time:this.changeTime,
         };
         this.$refs[changeForm].validate(valid => {
           if (valid) {

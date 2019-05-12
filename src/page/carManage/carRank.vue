@@ -2,8 +2,8 @@
   <div class="carInformation">
     <p>汽车销售统计量</p>
     <div class="div-flex" style="text-align:center">
-      <div class="chart-tab activecss" id="chart-tab1" @click="Month($event)" ref="Month">当月</div>
-      <div class="chart-tab" id="chart-tab2" @click="Year($event)" ref="Year">当年</div>
+      <div class="chart-tab activecss" id="chart-tab1" @click="Month($event,1)" ref="Month">当月</div>
+      <div class="chart-tab" id="chart-tab2" @click="Year($event,3)" ref="Year">当年</div>
     </div>
     <div id="myChartMonth" ref="myChartMonth" :style="{width: '350px', height: '350px'}" v-show="monthShow"></div>
     <div id="myChartYear" ref="myChartYear" :style="{width: '350px', height: '350px'}" v-show="yearShow"></div>
@@ -14,7 +14,7 @@
           <li v-for="(num,index) in nums" :key="index">{{num.n}}</li>
         </ul>
         <ul class="car-ul">
-          <li v-for="(car,i) in cars" :key="i">{{car.type}}</li>
+          <li v-for="(car,i) in sortCars" :key="i">{{car.label}}</li>
         </ul>
       </div>
     </div>
@@ -25,7 +25,7 @@
           <li v-for="(num,index) in nums" :key="index">{{num.n}}</li>
         </ul>
         <ul class="car-ul">
-          <li v-for="(car,i) in carsYear" :key="i">{{car.type}}</li>
+          <li v-for="(car,i) in sortCars" :key="i">{{car.label}}</li>
         </ul>
       </div>
     </div>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+  import API from "./../api.js";
   // 引入基本模板
   let echarts = require("echarts/lib/echarts");
   // 引入柱状图组件
@@ -40,6 +41,13 @@
   // 引入提示框和title组件
   require("echarts/lib/component/tooltip");
   require("echarts/lib/component/title");
+  function sortByKey(array, key) {
+    return array.sort(function (a, b) {
+      var x = a[key];
+      var y = b[key];
+      return y-x;
+    })
+  }
   export default {
     data() {
       return {
@@ -47,46 +55,53 @@
         yearShow: false,
         monthRank: true,
         yearRank: false,
-        monthCarData: [12, 23, 25, 18, 19, 29],
-        yearCarData: [45, 36, 58, 62, 49, 73],
-        cars: [],
-        carsYear: [{ type: "雅阁" }, { type: "锋范" }, { type: "飞度" }, { type: "凌派" }, { type: "奥德赛" }, { type: "宾智" },],
+        // cars: [],
+        // carsYear: [{ type: "雅阁" }, { type: "锋范" }, { type: "飞度" }, { type: "凌派" }, { type: "奥德赛" }, { type: "宾智" },],
         nums: [{ n: 1 }, { n: 2 }, { n: 3 }, { n: 4 }, { n: 5 }, { n: 6 }],
-        monthState: [],
-        arr: [
-          { type: "雅阁" },
-          { type: "飞度" },
-          { type: "宾智" },
-          { type: "凌派" },
-          { type: "锋范" },
-          { type: "奥德赛" },
+        cars: [
+          // { label: "雅阁",number: 2},
+          // { label: "飞度" ,number:1},
+          // { label: "宾智" ,number:3},
+          // { label: "凌派" ,number:1},
+          // { label: "锋范" ,number:1},
+          // { label: "奥德赛" ,number:2},
 
         ]
       };
     },
-    computed: {},
     mounted() {
-      // this.monthCarData.splice(0, 6);
-      // for (let i = 0; i < this.$store.state.monthCarData.length; i += 1) {
-      //   this.monthCarData.push(this.$store.state.monthCarData[i]);
-      // }
-      // this.yearCarData.splice(0, 6);
-      // for (let i = 0; i < this.$store.state.yearCarData.length; i += 1) {
-      //   this.yearCarData.push(this.$store.state.yearCarData[i]);
-      // }
       this.$refs.Month.style.background = "#f56c6c";
       this.$refs.Month.style.color = "#fff";
-      this.drawMonth();
-      this.cars = this.arr;
     },
-    watch: {
-      monthCarData() {
-        this.drawMonth();
+    created() {
+      this.getCount(1, '#f56c6c', 'myChartMonth');
+    },
+    computed: {
+      sortCars: function () {
+        return sortByKey(this.cars, 'number')
       }
     },
     methods: {
-      drawMonth() {
-        const myChartMonth = echarts.init(this.$refs.myChartMonth);
+      getCount(data, currentColor, charyMonth) {
+        const param = {
+          type: data,
+        }
+        this.$http.post(API.STATICS_CAR, this.qs.stringify(param)).then(res => {
+          if (res.data.status === 0) {
+            this.data = res.data.data;
+            this.cars = this.data;
+            const arr = [];
+            for (let i = 0; i < this.data.length; i += 1) {
+              arr.push(this.data[i].number);
+            }
+            this.drawMonth(arr, currentColor, charyMonth);
+          } else {
+            this.$message.error("获取失败");
+          }
+        });
+      },
+      drawMonth(row, currentColor, charyMonth) {
+        const myChartMonth = echarts.init(this.$refs[charyMonth]);
         myChartMonth.setOption({
           grid: {
             left: "3%",
@@ -111,17 +126,17 @@
             {
               name: "销量",
               type: "bar",
-              data: this.monthCarData,
+              data: row,
               itemStyle: {
                 normal: {
-                  color: "#f56c6c"
+                  color: currentColor,
                 }
               }
             }
           ]
         });
       },
-      Month: function (e) {
+      Month: function (e, type) {
         this.$refs.Year.style.background = "#fff";
         this.$refs.Year.style.color = "#000";
         this.$refs.Month.style.background = "#f56c6c";
@@ -130,9 +145,10 @@
         this.monthShow = true;
         this.monthRank = true;
         this.yearRank = false;
-        this.drawMonth();
+        const myChartMonth = echarts.init(this.$refs.myChartMonth);
+        this.getCount(type, '#f56c6c', 'myChartMonth');
       },
-      Year: function (e) {
+      Year: function (e, type) {
         this.$refs.Month.style.background = "#fff";
         this.$refs.Month.style.color = "#000";
         this.$refs.Year.style.background = "#409eef";
@@ -142,42 +158,11 @@
         this.yearRank = true;
         this.monthRank = false;
         const myChartYear = echarts.init(this.$refs.myChartYear);
-        myChartYear.setOption({
-          grid: {
-            left: "3%",
-            right: "20%", //距离右侧边距
-            bottom: "9%",
-            show: true,
-            containLabel: true
-          },
-          tooltip: {},
-          xAxis: {
-            name: "车型",
-            data: ["奥德赛", "宾智", "飞度", "锋范", "凌派", "雅阁"],
-            axisLabel: {
-              interval: 0,
-              rotate: -30
-            }
-          },
-          yAxis: {
-            name: "汽车销量"
-          },
-          series: [
-            {
-              name: "销量",
-              type: "bar",
-              data: this.yearCarData,
-              itemStyle: {
-                normal: {
-                  color: "#409eef"
-                }
-              }
-            }
-          ]
-        });
+        this.getCount(type, '#409eef', 'myChartYear');
       }
     }
   };
+
 </script>
 
 <style scoped>

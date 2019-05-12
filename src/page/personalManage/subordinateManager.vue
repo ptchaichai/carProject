@@ -37,7 +37,7 @@
     </div>
     <el-table :data="tableData" ref="multipleTable" border :row-style="tableRowStyle"
       :header-cell-style="tableHeaderColor" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="50" align="center"></el-table-column>
+      <!-- <el-table-column type="selection" width="50" align="center"></el-table-column> -->
       <el-table-column label="序号" type="index" show-overflow-tooltip width="50" align="center"></el-table-column>
       <el-table-column prop="username" label="姓名" min-width="15%" align="center"></el-table-column>
       <el-table-column prop="phone" label="电话" min-width="15%" align="center"></el-table-column>
@@ -212,7 +212,7 @@
       },
       // 修改table tr行的背景色
       tableRowStyle({ row, rowIndex }) {
-        if (rowIndex / 2 === 0) {
+        if (rowIndex % 2 === 0) {
           return "background-color: #fff";
         } else {
           return "background-color: #f9f9f9";
