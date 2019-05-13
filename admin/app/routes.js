@@ -2,6 +2,7 @@ const mysql = require('mysql');
 const dbconfig = require('../config/database');
 const connection = mysql.createConnection(dbconfig.connection);
 const bcrypt = require('bcrypt-nodejs');
+const crypto = require('crypto');
 connection.query('USE ' + dbconfig.database);
 var userInfo = {
 	role: '',
@@ -63,7 +64,8 @@ module.exports = function (app, passport) {
 			//debugger
 			console.log(array)
 				for(let i = 0; i<ele.length; i++) {
-					findOne(`UPDATE user SET password='${bcrypt.hashSync(array[i].password, null, null)}' WHERE id=${array[i].id}`, res, function(result){
+					var md5 = crypto.createHash('md5');
+					findOne(`UPDATE user SET password='${md5.update(array[i].password).digest('hex')}' WHERE id=${array[i].id}`, res, function(result){
 						console.log(result)
 					})
 				}
@@ -118,7 +120,7 @@ module.exports = function (app, passport) {
 							data: '已经含有相同号码'
 						})
 					} else {
-						let sql = `INSERT INTO user (username, password,role, phone, store_id, sex) VALUES ('${param.username}', '${bcrypt.hashSync('123456', null, null)}','${param.role}','${param.phone}', '${param.store_id}', 0)`;
+						let sql = `INSERT INTO user (username, password,role, phone, store_id, sex) VALUES ('${param.username}', '${md5.update('123456').digest('hex')}','${param.role}','${param.phone}', '${param.store_id}', 0)`;
 						addOne(sql, res)
 					}
 				}

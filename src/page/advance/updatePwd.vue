@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import bcrypt from 'bcrypt-nodejs' 
+  import crypto from 'crypto'
   import verifyPassWordTip from "./../verifyPassWordTip";
   export default {
     name: "updatePwd",

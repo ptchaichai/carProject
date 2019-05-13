@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "crypto": "^1.0.1",
     "echarts": "^4.2.1",
     "element-ui": "^2.6.1",
     "save": "^2.3.3",
