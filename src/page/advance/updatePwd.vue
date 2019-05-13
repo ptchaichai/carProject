@@ -30,6 +30,7 @@
 </template>
 
 <script>
+  import bcrypt from 'bcrypt-nodejs' 
   import verifyPassWordTip from "./../verifyPassWordTip";
   export default {
     name: "updatePwd",
@@ -62,8 +63,8 @@
       onSubmit: function (ruleForm) {
         const form = {
           id: sessionStorage.getItem('id'),
-          old_password: this.ruleForm.oldPwd,
-          new_password: this.ruleForm.newPwdTwo
+          old_password: bcrypt.hashSync(this.ruleForm.oldPwd,null, null),
+          new_password: bcrypt.hashSync(this.ruleForm.newPwdTwo, null, null)
         };
         this.$refs[ruleForm].validate(valid => {
           if (valid) {

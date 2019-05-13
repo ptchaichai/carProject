@@ -25,6 +25,7 @@
 
 <script>
   import API from "./api.js";
+  import bcrypt from 'bcrypt-nodejs'
   const validatevCode = (rule, value, callback) => {
     // 将用户输入数字转成字符串，同时转换成大写
     value = value + "";
@@ -134,7 +135,7 @@
           console.log(codestatus);
           let param = {
             phone: this.rulesForm.account,
-            password: this.rulesForm.pwd
+            password: bcrypt.hashSync(this.rulesForm.pwd, null, null)
           };
           this.$http
             .post(API.LOGIN, this.qs.stringify(param))
