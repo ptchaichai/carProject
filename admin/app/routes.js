@@ -197,19 +197,19 @@ module.exports = function (app, passport) {
 	app.post('/api/updateInformation', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			connection.query(`SELECT phone,email FROM user WHERE phone = '${param.phone}' OR email='${param.email}'`, function (err, rows) {
+			connection.query(`SELECT phone,email FROM user WHERE phone = '${param.phone}' OR email='${param.email} '`, function (err, rows) {
 				if (err) {
 					res.json({
 						status: 1,
 						data: err
 					})
 				} else {
-					if (rows.length > 0) {
+					if (rows.length > 1) {
 						res.json({
 							status: 1,
 							data: '已经含有相同号码'
 						})
-					} else {
+					} else if (rows.length === 0 ||(rows.length === 1 && rows[0].id === param.id)){
 						let sql = `UPDATE user SET phone='${param.phone}', idcard='${param.idcard}', birthday='${param.age}',sex='${param.sex}',email='${param.email}',address='${param.address}' WHERE id=${param.id}`
 						updateeOne(sql, res, function () {
 							updateeOne(`UPDATE custom SET user_phone='${param.phone}' WHERE user_id='${param.id}'`, res, function () {
@@ -219,7 +219,7 @@ module.exports = function (app, passport) {
 								})
 							})
 						})
-					}
+					} 
 				}
 			})
 		}
