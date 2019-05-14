@@ -368,7 +368,7 @@
                 this.$message.success("添加成功");
                 this.getCustomList()
               } else {
-                this.$message.error("添加失败，号码已存在！");
+                this.$message.error("添加失败，电话或邮箱已存在！");
               }
             });
           } else {
@@ -403,10 +403,10 @@
               .then(res => {
                 if (res.data.status === 0) {
                   this.dialogUpdate = false;
-                  this.$message.success("添加成功");
+                  this.$message.success("修改成功");
                   this.getCustomList()
                 } else {
-                  this.$message.error("修改失败，号码已存在！");
+                  this.$message.error("修改失败，电话或邮箱已存在！");
                 }
               });
           } else {

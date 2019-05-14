@@ -199,14 +199,30 @@ module.exports = function (app, passport) {
 	app.post('/api/updateInformation', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			let sql =  `UPDATE user SET phone='${param.phone}', idcard='${param.idcard}', birthday='${param.age}',sex='${param.sex}',email='${param.email}',address='${param.address}' WHERE id=${param.id}`
-			updateeOne(sql, res, function(){
-				updateeOne(`UPDATE custom SET user_phone='${param.phone}' WHERE user_id='${param.id}'`, res, function(){
+			connection.query(`SELECT phone,email FROM user WHERE phone = '${param.phone}' OR email='${param.email}'`, function (err, rows) {
+				if (err) {
 					res.json({
-						status: 0,
-						data: '修改成功'
+						status: 1,
+						data: err
 					})
-				})
+				} else {
+					if (rows.length > 0) {
+						res.json({
+							status: 1,
+							data: '已经含有相同号码'
+						})
+					} else {
+						let sql = `UPDATE user SET phone='${param.phone}', idcard='${param.idcard}', birthday='${param.age}',sex='${param.sex}',email='${param.email}',address='${param.address}' WHERE id=${param.id}`
+						updateeOne(sql, res, function () {
+							updateeOne(`UPDATE custom SET user_phone='${param.phone}' WHERE user_id='${param.id}'`, res, function () {
+								res.json({
+									status: 0,
+									data: '修改成功'
+								})
+							})
+						})
+					}
+				}
 			})
 		}
 	})
@@ -214,11 +230,11 @@ module.exports = function (app, passport) {
 	app.post('/api/updatePassword', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			findOne(`SELECT * from user WHERE id=${param.id} AND password='${param.old_password}'`, res, function(data){
-				if(data.length> 0) {
+			findOne(`SELECT * from user WHERE id=${param.id} AND password='${param.old_password}'`, res, function (data) {
+				if (data.length > 0) {
 					// console.log(data[0])
-					let sql =  `UPDATE user SET password='${param.new_password}' WHERE id=${param.id}`
-					updateeOne(sql, res, function(){
+					let sql = `UPDATE user SET password='${param.new_password}' WHERE id=${param.id}`
+					updateeOne(sql, res, function () {
 						res.json({
 							status: 2,
 							data: ''
@@ -235,59 +251,59 @@ module.exports = function (app, passport) {
 		}
 	})
 	//销售信息统计
-	app.post('/api/staticsSale', isLoggedIn, function(req, res, next) {
-		if(req.body) {
+	app.post('/api/staticsSale', isLoggedIn, function (req, res, next) {
+		if (req.body) {
 			let param = req.body;
 			var sql = ''
-			if(param.type == 0) { //当日
-				sql='SELECT COUNT(*) FROM custom  where TO_DAYS(add_time)=TO_DAYS(NOW())';
-			} else if(param.type == 1) { //当月
-				sql="SELECT COUNT(*) FROM custom WHERE DATE_FORMAT(add_time,'%Y%m')= DATE_FORMAT(CURDATE(),'%Y%m')";
-			} else if(param.type == 2) { //当季
-				sql='SELECT COUNT(*) FROM custom where QUARTER(add_time)=QUARTER(NOW())'
-			} else if(param.type == 3) { //当年
-				sql='SELECT  COUNT(*) FROM custom where YEAR(add_time)=YEAR(NOW())'
+			if (param.type == 0) { //当日
+				sql = 'SELECT COUNT(*) FROM custom  where TO_DAYS(add_time)=TO_DAYS(NOW())';
+			} else if (param.type == 1) { //当月
+				sql = "SELECT COUNT(*) FROM custom WHERE DATE_FORMAT(add_time,'%Y%m')= DATE_FORMAT(CURDATE(),'%Y%m')";
+			} else if (param.type == 2) { //当季
+				sql = 'SELECT COUNT(*) FROM custom where QUARTER(add_time)=QUARTER(NOW())'
+			} else if (param.type == 3) { //当年
+				sql = 'SELECT  COUNT(*) FROM custom where YEAR(add_time)=YEAR(NOW())'
 			}
-		findOne( sql+'AND label=0', res, function(data){ //来电客户
-			let callCount = JSON.parse(JSON.stringify(data[0]));
-			findOne(sql+'AND label=1',res, function(store){ //来店客户
-				let storeCount = JSON.parse(JSON.stringify(store[0]));
-				findOne(sql+'AND label=2', res, function(car) { //购车客户
-					console.log(car);
-					let carCount = JSON.parse(JSON.stringify(car[0]));
-					res.json({
-						status: 0,						
-						data: {
-							count: [callCount['COUNT(*)'],storeCount['COUNT(*)'],carCount['COUNT(*)']]
-						}
+			findOne(sql + 'AND label=0', res, function (data) { //来电客户
+				let callCount = JSON.parse(JSON.stringify(data[0]));
+				findOne(sql + 'AND label=1', res, function (store) { //来店客户
+					let storeCount = JSON.parse(JSON.stringify(store[0]));
+					findOne(sql + 'AND label=2', res, function (car) { //购车客户
+						console.log(car);
+						let carCount = JSON.parse(JSON.stringify(car[0]));
+						res.json({
+							status: 0,
+							data: {
+								count: [callCount['COUNT(*)'], storeCount['COUNT(*)'], carCount['COUNT(*)']]
+							}
+						})
 					})
 				})
 			})
-		})
-	}	
+		}
 	})
 	//汽车销售信息统计
-	app.post('/api/staticsCar', isLoggedIn, function(req, res, next) {
-		if(req.body) {
+	app.post('/api/staticsCar', isLoggedIn, function (req, res, next) {
+		if (req.body) {
 			let param = req.body;
 			var sql = ''
-			if(param.type == 1) { //当月
-				sql="SELECT * FROM custom WHERE DATE_FORMAT(add_time,'%Y%m')= DATE_FORMAT(CURDATE(),'%Y%m') AND label=2";
-			} else if(param.type == 3) { //当年
-				sql='SELECT  * FROM custom where YEAR(add_time)=YEAR(NOW()) AND label=2'
+			if (param.type == 1) { //当月
+				sql = "SELECT * FROM custom WHERE DATE_FORMAT(add_time,'%Y%m')= DATE_FORMAT(CURDATE(),'%Y%m') AND label=2";
+			} else if (param.type == 3) { //当年
+				sql = 'SELECT  * FROM custom where YEAR(add_time)=YEAR(NOW()) AND label=2'
 			}
 			let carType = [{ label: "奥德赛", number: 0 },
-							{ label: "宾智", number: 0 },
-							{ label: "飞度", number: 0 },
-							{ label: "锋范", number: 0 },
-							{ label: "凌派", number: 0 },
-							{ label: "雅阁", number: 0 }
-						  ]			  
-			findOne(sql, res, function(data){ 
-				if(data instanceof Array) {
+			{ label: "宾智", number: 0 },
+			{ label: "飞度", number: 0 },
+			{ label: "锋范", number: 0 },
+			{ label: "凌派", number: 0 },
+			{ label: "雅阁", number: 0 }
+			]
+			findOne(sql, res, function (data) {
+				if (data instanceof Array) {
 					data.map((item) => {
 						carType.map((ele) => {
-							if(ele.label === item.shape) {
+							if (ele.label === item.shape) {
 								ele.number++;
 							}
 						})
@@ -297,8 +313,8 @@ module.exports = function (app, passport) {
 					data: carType,
 					status: 0
 				})
-		})
-	}	
+			})
+		}
 	})
 	//获取销售经理列表
 	app.post('/api/getManagerList', isLoggedIn, function (req, res, next) {
@@ -452,7 +468,7 @@ module.exports = function (app, passport) {
 	app.post('/api/addCustom', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			connection.query(`SELECT t1.phone,t2.phone from custom as t1,user as t2 WHERE t1.phone = '${param.phone}' and t2.phone = '${param.phone}'`, function (err, rows) {
+			connection.query(`SELECT phone,email FROM custom WHERE phone = '${param.phone}' OR email='${param.email}'`, function (err, rows) {
 				if (err) {
 					res.json({
 						status: 1,
@@ -504,11 +520,11 @@ module.exports = function (app, passport) {
 			addOne(sql, res)
 		}
 	})
-	// 修改来电客户信息
+	// 修改客户信息
 	app.post('/api/updateCustom', isLoggedIn, function (req, res, next) {
 		if (req.body) {
 			let param = req.body;
-			connection.query(`SELECT t1.phone,t2.phone from custom as t1,user as t2 WHERE t1.phone = '${param.phone}' and t2.phone = '${param.phone}'`, function (err, rows) {
+			connection.query(`SELECT id,phone,email FROM custom WHERE id is not '${param.id}' and phone = '${param.phone}' OR email='${param.email}'`, function (err, rows) {
 				if (err) {
 					res.json({
 						status: 1,
@@ -516,7 +532,7 @@ module.exports = function (app, passport) {
 					})
 				} else {
 					if (rows.length > 0) {
-						res.json({
+						res.json({ 
 							status: 1,
 							data: '已经含有相同号码'
 						})
@@ -580,8 +596,12 @@ module.exports = function (app, passport) {
 		}
 	})
 	//登出
-	app.get('/logout', function (req, res) {
+	app.get('/api/logout', function (req, res) {
 		req.logout();
+		res.json({
+			status: 0,
+			data: '退出成功'
+		})
 	})
 	// 判断是否登录的中间件
 	function isLoggedIn(req, res, next) {
@@ -670,7 +690,7 @@ module.exports = function (app, passport) {
 	}
 	//查找函数
 	function findOne(sql, res, callback) {
-		connection.query(sql, function(err, rows) {
+		connection.query(sql, function (err, rows) {
 			if (err) {
 				res.json({
 					status: 1,

@@ -124,7 +124,7 @@
                 this.$message.success("提交成功");
                 this.$refs[ruleForm].resetFields();
               } else {
-                this.$message.error("提交失败");
+                this.$message.error("提交失败,电话或邮箱已存在！");
               }
             });
           } else {

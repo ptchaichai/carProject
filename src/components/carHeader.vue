@@ -38,13 +38,13 @@
     },
     methods: {
       back: function (command) {
-        this.$http.get('/logout').then((result) => {
-          if (result.data.status === 0) {
+        this.$http.get('/api/logout').then((result) => {
+          // if (result.data.status === 0) {
             this.$router.push({ path: "/login" });
             this.$message.success("退出成功");
-          } else {
-            this.$message.error("退出失败");
-          }
+          // } else {
+          //   this.$message.error("退出失败");
+          // }
         })
       },
       go() {
