@@ -61,10 +61,12 @@
     },
     methods: {
       onSubmit: function (ruleForm) {
+        const md5Old = crypto.createHash('md5');
+        const md5New = crypto.createHash('md5');
         const form = {
           id: sessionStorage.getItem('id'),
-          old_password: bcrypt.hashSync(this.ruleForm.oldPwd,null, null),
-          new_password: bcrypt.hashSync(this.ruleForm.newPwdTwo, null, null)
+          old_password: md5Old.update(this.ruleForm.oldPwd).digest('hex'),
+          new_password: md5New.update(this.ruleForm.newPwdTwo).digest('hex')
         };
         this.$refs[ruleForm].validate(valid => {
           if (valid) {

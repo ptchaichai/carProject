@@ -26,7 +26,6 @@
 <script>
   import API from "./api.js";
   import crypto from 'crypto'
-  const md5 = crypto.createHash('md5');
   const validatevCode = (rule, value, callback) => {
     // 将用户输入数字转成字符串，同时转换成大写
     value = value + "";
@@ -127,12 +126,12 @@
         }
       },
       onSubmit: function (rulesForm) {
+        const md5 = crypto.createHash('md5');
         let codestatus = this.checkCode();
-        //if (codestatus === 1) {
-          console.log(codestatus);
+        if (codestatus === 1) {
           let param = {
             phone: this.rulesForm.account,
-            password: this.rulesForm.pwd
+            password: md5.update(this.rulesForm.pwd).digest('hex')
           };
           this.$http
             .post(API.LOGIN, this.qs.stringify(param))
@@ -150,13 +149,13 @@
                 this.createCode();
               }
             });
-        //} else if (codestatus === 0) {
-        //   this.$message.error("请输入验证码!");
-        //   this.createCode();
-        // } else if (codestatus === -1) {
-        //   this.$message.error("验证码输入错误!");
-        //   this.createCode();
-        // }
+        } else if (codestatus === 0) {
+          this.$message.error("请输入验证码!");
+          this.createCode();
+        } else if (codestatus === -1) {
+          this.$message.error("验证码输入错误!");
+          this.createCode();
+        }
       },
       resetForm: function (rulesForm) {
         this.$refs[rulesForm].resetFields();

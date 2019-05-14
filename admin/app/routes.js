@@ -57,20 +57,20 @@ module.exports = function (app, passport) {
 	})
 
 
-	app.post('/api/check', isLoggedIn, function (req, res, next) {
-		let count = 0;
-		findOne('SELECT * from user', res, function(ele){
-			let array = ele;
-			//debugger
-			console.log(array)
-				for(let i = 0; i<ele.length; i++) {
-					var md5 = crypto.createHash('md5');
-					findOne(`UPDATE user SET password='${md5.update(array[i].password).digest('hex')}' WHERE id=${array[i].id}`, res, function(result){
-						console.log(result)
-					})
-				}
-		})
-	})
+	// app.post('/api/check', isLoggedIn, function (req, res, next) {
+	// 	let count = 0;
+	// 	findOne('SELECT * from user', res, function(ele){
+	// 		let array = ele;
+	// 		//debugger
+	// 		console.log(array)
+	// 			for(let i = 0; i<ele.length; i++) {
+	// 				var md5 = crypto.createHash('md5');
+	// 				findOne(`UPDATE user SET password='${md5.update(array[i].password).digest('hex')}' WHERE id=${array[i].id}`, res, function(result){
+	// 					console.log(result)
+	// 				})
+	// 			}
+	// 	})
+	// })
 
 
 	//查看个人信息
@@ -120,6 +120,7 @@ module.exports = function (app, passport) {
 							data: '已经含有相同号码'
 						})
 					} else {
+						var md5 = crypto.createHash('md5');
 						let sql = `INSERT INTO user (username, password,role, phone, store_id, sex) VALUES ('${param.username}', '${md5.update('123456').digest('hex')}','${param.role}','${param.phone}', '${param.store_id}', 0)`;
 						addOne(sql, res)
 					}
